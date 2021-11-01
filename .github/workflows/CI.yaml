@@ -82,11 +82,11 @@ jobs:
 
       - name: Install Composer dependencies
         if: ${{ matrix.dependencies != 'low' }}
-        run: composer install --no-interaction
+        run: composer update --no-interaction
 
       - name: Install Composer dependencies
         if: ${{ matrix.dependencies == 'low' }}
-        run: composer install -vvv --prefer-lowest --prefer-stable --no-interaction
+        run: composer update -vvv --prefer-lowest --prefer-stable --no-interaction
 
       - name: Validate files
         run: composer validate-files
