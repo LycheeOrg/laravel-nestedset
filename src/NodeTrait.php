@@ -627,7 +627,31 @@ trait NodeTrait
             ? 'forceDelete'
             : 'delete';
 
-        $this->descendants()->{$method}();
+        // We must delete the nodes in correct order to avoid failing
+        // foreign key constraints when we delete an entire subtree.
+        // For MySQL we must avoid that a parent is deleted before its
+        // children although the complete subtree will be deleted eventually.
+        // Hence, deletion must start with the deepest node, i.e. with the
+        // highest _lft value first.
+        // Note: `DELETE ... ORDER BY` is non-standard SQL but required by
+        // MySQL (see https://dev.mysql.com/doc/refman/8.0/en/delete.html),
+        // because MySQL only supports "row consistency".
+        // This means the DB must be consistent before and after every single
+        // operation on a row.
+        // This is contrasted by statement and transaction consistency which
+        // means that the DB must be consistent before and after every
+        // completed statement/transaction.
+        // (See https://dev.mysql.com/doc/refman/8.0/en/ansi-diff-foreign-keys.html)
+        // ANSI Standard SQL requires support for statement/transaction
+        // consistency, but only PostgreSQL supports it.
+        // (Good PosgreSQL :-) )
+        // PostgreSQL does not support `DELETE ... ORDER BY` but also has no
+        // need for it.
+        // The grammar compiler removes the superfluous "ORDER BY" for
+        // PostgreSQL.
+        $this->descendants()
+            ->orderBy($this->getLftName(), 'desc')
+            ->{$method}();
 
         if ($this->hardDeleting()) {
             $height = $rgt - $lft + 1;
