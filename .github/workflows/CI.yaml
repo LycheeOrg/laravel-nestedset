@@ -28,6 +28,7 @@ jobs:
     name: PHP ${{ matrix.php-versions }} - ${{ matrix.dependencies }}
 
     env:
+      COMPOSER_NO_INTERACTION: 1
       extensions: curl json libxml dom
       key: cache-v1 # can be any string, change to clear the extension cache.
 
