@@ -5,7 +5,7 @@ use Kalnoy\Nestedset\NestedSet;
 
 class ScopedNodeTest extends PHPUnit\Framework\TestCase
 {
-    public static function setUpBeforeClass() : void
+    public static function setUpBeforeClass(): void
     {
         $schema = Capsule::schema();
 
@@ -23,7 +23,7 @@ class ScopedNodeTest extends PHPUnit\Framework\TestCase
         Capsule::enableQueryLog();
     }
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $data = include __DIR__.'/data/menu_items.php';
 
@@ -36,7 +36,7 @@ class ScopedNodeTest extends PHPUnit\Framework\TestCase
         date_default_timezone_set('America/Denver');
     }
 
-    public function tearDown() : void
+    public function tearDown(): void
     {
         Capsule::table('menu_items')->truncate();
     }
@@ -162,6 +162,7 @@ class ScopedNodeTest extends PHPUnit\Framework\TestCase
     public function testInsertionToParentFromOtherScope()
     {
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+
         $node = MenuItem::create([ 'menu_id' => 2, 'parent_id' => 5 ]);
     }
 
@@ -202,6 +203,7 @@ class ScopedNodeTest extends PHPUnit\Framework\TestCase
     public function testAppendingToAnotherScopeFails()
     {
         $this->expectException(LogicException::class);
+
         $a = MenuItem::find(1);
         $b = MenuItem::find(3);
 
@@ -211,6 +213,7 @@ class ScopedNodeTest extends PHPUnit\Framework\TestCase
     public function testInsertingBeforeAnotherScopeFails()
     {
         $this->expectException(LogicException::class);
+
         $a = MenuItem::find(1);
         $b = MenuItem::find(3);
 

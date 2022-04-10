@@ -5,7 +5,7 @@ use Kalnoy\Nestedset\NestedSet;
 
 class NodeTest extends PHPUnit\Framework\TestCase
 {
-    public static function setUpBeforeClass() : void
+    public static function setUpBeforeClass(): void
     {
         $schema = Capsule::schema();
 
@@ -23,7 +23,7 @@ class NodeTest extends PHPUnit\Framework\TestCase
         Capsule::enableQueryLog();
     }
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $data = include __DIR__.'/data/categories.php';
 
@@ -36,7 +36,7 @@ class NodeTest extends PHPUnit\Framework\TestCase
         date_default_timezone_set('America/Denver');
     }
 
-    public function tearDown() : void
+    public function tearDown(): void
     {
         Capsule::table('categories')->truncate();
     }
@@ -233,6 +233,7 @@ class NodeTest extends PHPUnit\Framework\TestCase
     public function testFailsToAppendIntoItself()
     {
         $this->expectException(Exception::class);
+
         $node = $this->findCategory('notebooks');
 
         $node->appendToNode($node)->save();
@@ -241,6 +242,7 @@ class NodeTest extends PHPUnit\Framework\TestCase
     public function testFailsToPrependIntoItself()
     {
         $this->expectException(Exception::class);
+
         $node = $this->findCategory('notebooks');
 
         $node->prependTo($node)->save();
@@ -335,6 +337,7 @@ class NodeTest extends PHPUnit\Framework\TestCase
     public function testFailsToSaveNodeUntilNotInserted()
     {
         $this->expectException(Exception::class);
+
         $node = new Category;
         $node->save();
     }
@@ -400,6 +403,7 @@ class NodeTest extends PHPUnit\Framework\TestCase
     public function testFailsToSaveNodeUntilParentIsSaved()
     {
         $this->expectException(Exception::class);
+
         $node = new Category(array('title' => 'Node'));
         $parent = new Category(array('title' => 'Parent'));
 
@@ -634,6 +638,7 @@ class NodeTest extends PHPUnit\Framework\TestCase
     public function testWhereDescendantsOf()
     {
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+
         Category::whereDescendantOf(124)->get();
     }
 
@@ -843,6 +848,7 @@ class NodeTest extends PHPUnit\Framework\TestCase
     public function testRebuildFailsWithInvalidPK()
     {
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+
         Category::rebuildTree([ [ 'id' => 24 ] ]);
     }
 
