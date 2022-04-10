@@ -26,13 +26,13 @@
 
     "require-dev": {
         "php-parallel-lint/php-parallel-lint": "^1.2",
-        "phpunit/phpunit": "^9.5"
+        "phpunit/phpunit": "^9.5.20"
     },
 
     "scripts": {
         "run-tests": [
             "vendor/bin/phpunit -c phpunit.xml",
-            "vendor/bin/phpunit --coverage-clover=coverage.xml"
+            "vendor/bin/phpunit -c phpunit.xml --coverage-clover=coverage.xml"
         ],
         "validate-files": [
             "vendor/bin/parallel-lint --exclude vendor ."
