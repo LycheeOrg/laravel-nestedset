@@ -224,6 +224,7 @@ class NodeTest extends PHPUnit\Framework\TestCase
     public function testFailsToInsertIntoChild()
     {
         $this->expectException(Exception::class);
+
         $node = $this->findCategory('notebooks');
         $target = $node->children()->first();
 
