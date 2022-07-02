@@ -177,7 +177,6 @@ interface Node
 	 * Get query for the node siblings and the node itself.
 	 *
 	 * @param array<string> $columns
-	 * @phpstan-param array<model-property<TModelClass>> $columns
 	 *
 	 * @return EloquentCollection<TModelClass>
 	 */
@@ -471,7 +470,6 @@ interface Node
 	 * This can be either a next sibling or a next sibling of the parent node.
 	 *
 	 * @param string[] $columns
-	 * @phpstan-param array<model-property<TModelClass>|'*'> $columns
 	 *
 	 * @return TModelClass
 	 */
@@ -483,7 +481,6 @@ interface Node
 	 * This can be either a prev sibling or parent node.
 	 *
 	 * @param string[] $columns
-	 * @phpstan-param array<model-property<TModelClass>|'*'> $columns
 	 *
 	 * @return TModelClass
 	 */
@@ -491,7 +488,6 @@ interface Node
 
 	/**
 	 * @param string[] $columns
-	 * @phpstan-param array<model-property<TModelClass>|'*'> $columns
 	 *
 	 * @return Collection<TModelClass>
 	 */
@@ -499,7 +495,6 @@ interface Node
 
 	/**
 	 * @param string[] $columns
-	 * @phpstan-param array<model-property<TModelClass>|'*'> $columns
 	 *
 	 * @return Collection<TModelClass>
 	 */
@@ -507,7 +502,6 @@ interface Node
 
 	/**
 	 * @param string[] $columns
-	 * @phpstan-param array<model-property<TModelClass>|'*'> $columns
 	 *
 	 * @return Collection<TModelClass>
 	 */
@@ -515,7 +509,6 @@ interface Node
 
 	/**
 	 * @param string[] $columns
-	 * @phpstan-param array<model-property<TModelClass>|'*'> $columns
 	 *
 	 * @return Collection<TModelClass>
 	 */
@@ -523,7 +516,6 @@ interface Node
 
 	/**
 	 * @param string[] $columns
-	 * @phpstan-param array<model-property<TModelClass>|'*'> $columns
 	 *
 	 * @return Collection<TModelClass>
 	 */
@@ -531,7 +523,6 @@ interface Node
 
 	/**
 	 * @param string[] $columns
-	 * @phpstan-param array<model-property<TModelClass>|'*'> $columns
 	 *
 	 * @return TModelClass
 	 */
@@ -539,7 +530,6 @@ interface Node
 
 	/**
 	 * @param string[] $columns
-	 * @phpstan-param array<model-property<TModelClass>|'*'> $columns
 	 *
 	 * @return TModelClass
 	 */

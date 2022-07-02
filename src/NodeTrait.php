@@ -20,10 +20,10 @@ trait NodeTrait
 	/** @var bool $exists see {@link \Illuminate\Database\Eloquent\Model::$exists} */
 	public $exists = false;
 
-	/** @var array<model-property<TModelClass>, mixed> see {@link \Illuminate\Database\Eloquent\Concerns\HasAttributes::$attributes} */
+	/** @var array<string, mixed> see {@link \Illuminate\Database\Eloquent\Concerns\HasAttributes::$attributes} */
 	protected $attributes = [];
 
-	/** @var array<model-property<TModelClass>, mixed> see {@link \Illuminate\Database\Eloquent\Model::$original}
+	/** @var array<string, mixed> see {@link \Illuminate\Database\Eloquent\Model::$original}
 	 */
 	protected $original = [];
 
@@ -373,7 +373,6 @@ trait NodeTrait
      * Get query for the node siblings and the node itself.
      *
      * @param string[] $columns
-     * @phpstan-param array<model-property<TModelClass>|'*'> $columns
      *
      * @return EloquentCollection<TModelClass>
      */
@@ -812,7 +811,6 @@ trait NodeTrait
 
     /**
      * @return string[]
-     * @phpstan-return array<model-property<TModelClass>>
      */
     protected function getScopeAttributes(): array
     {
@@ -821,7 +819,6 @@ trait NodeTrait
 
     /**
      * @param array<string, mixed> $attributes
-     * @phpstan-param array<model-property<TModelClass>, mixed> $attributes
      *
      * @return QueryBuilder<TModelClass>
      */
@@ -848,7 +845,6 @@ trait NodeTrait
      * Use `children` key on `$attributes` to create child nodes.
      *
      * @param array<string, mixed> $attributes
-     * @phpstan-param array<model-property<TModelClass>, mixed> $attributes
      * @param TModelClass|null $parent
      *
      * @return TModelClass&self
@@ -1023,7 +1019,6 @@ trait NodeTrait
      * This can be either a prev sibling or parent node.
      *
      * @param array<string> $columns
-     * @phpstan-param array<model-property<static>|'*'> $columns
      *
      * @return TModelClass&$this
      */
@@ -1034,7 +1029,6 @@ trait NodeTrait
 
     /**
      * @param array<string> $columns
-     * @phpstan-param array<model-property<TModelClass>|'*'> $columns
      *
      * @return Collection<TModelClass>
      */
@@ -1045,7 +1039,6 @@ trait NodeTrait
 
     /**
      * @param array<string> $columns
-     * @phpstan-param array<model-property<TModelClass>|'*'> $columns
      *
      * @return Collection<TModelClass>
      */
@@ -1056,7 +1049,6 @@ trait NodeTrait
 
     /**
      * @param array<string> $columns
-     * @phpstan-param array<model-property<TModelClass>|'*'> $columns
      *
      * @return Collection<TModelClass>
      */
@@ -1067,7 +1059,6 @@ trait NodeTrait
 
     /**
      * @param array<string> $columns
-     * @phpstan-param array<model-property<TModelClass>|'*'> $columns
      *
      * @return Collection<TModelClass>
      */
@@ -1078,7 +1069,6 @@ trait NodeTrait
 
     /**
      * @param array<string> $columns
-     * @phpstan-param array<model-property<TModelClass>|'*'> $columns
      *
      * @return Collection<TModelClass>
      */
@@ -1089,7 +1079,6 @@ trait NodeTrait
 
     /**
      * @param array<string> $columns
-     * @phpstan-param array<model-property<TModelClass>|'*'> $columns
      *
      * @return TModelClass&self
      */
@@ -1100,7 +1089,6 @@ trait NodeTrait
 
     /**
      * @param array<string> $columns
-     * @phpstan-param array<model-property<static>> $columns
      *
      * @return TModelClass&self
      */

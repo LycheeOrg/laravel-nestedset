@@ -32,7 +32,6 @@ class QueryBuilder extends EloquentBuilder
 	 * Execute the query as a "select" statement.
 	 *
 	 * @param  array<string>|string  $columns
-	 * @phpstan-param array<model-property<TModelClass>|'*'>|model-property<TModelClass>|'*' $columns
 	 * @return Collection<TModelClass>
 	 */
 	public function get($columns = ['*']): Collection
@@ -187,7 +186,6 @@ class QueryBuilder extends EloquentBuilder
      *
      * @param int|string $id
      * @param array<string> $columns
-     * @phpstan-param array<model-property<TModelClass>|'*'> $columns
      *
      * @return Collection<TModelClass>
      * @since 2.0
@@ -201,7 +199,6 @@ class QueryBuilder extends EloquentBuilder
     /**
      * @param int|string $id
      * @param array<string> $columns
-     * @phpstan-param array<model-property<TModelClass>|'*'> $columns
      *
      * @return Collection<TModelClass>
      */
@@ -321,7 +318,6 @@ class QueryBuilder extends EloquentBuilder
      *
      * @param TModelClass|int|string $modelOrId
      * @param array<string> $columns
-     * @phpstan-param array<model-property<TModelClass>|'*'> $columns
      * @param bool $andSelf
      *
      * @return Collection<TModelClass>
@@ -334,7 +330,6 @@ class QueryBuilder extends EloquentBuilder
     /**
      * @param TModelClass|int|string $modelOrId
      * @param array<string> $columns
-     * @phpstan-param array<model-property<TModelClass>|'*'> $columns
      *
      * @return Collection<TModelClass>
      */
@@ -419,7 +414,6 @@ class QueryBuilder extends EloquentBuilder
 
     /**
      * @param array<string> $columns
-     * @phpstan-param array<model-property<TModelClass>|'*'> $columns
      *
      * @return Collection<TModelClass>
      */
@@ -1007,8 +1001,6 @@ class QueryBuilder extends EloquentBuilder
 	 * @param TModelClass|int|string|null $rootNodeOrId
 	 *
 	 * @return int
-	 *
-	 * @phpstan-param array<array<model-property<TModelClass>, mixed>> $data
 	 */
 	public function rebuildTree(
 		array $data, bool $delete = false, Node|int|string|null $rootNodeOrId = null
@@ -1072,8 +1064,6 @@ class QueryBuilder extends EloquentBuilder
 	 * @param bool $delete
 	 *
 	 * @return int
-	 *
-	 * @phpstan-param array<array<model-property<TModelClass>, mixed>> $data
 	 */
 	public function rebuildSubtree(Node|int|string|null $rootNodeOrId, array $data, bool $delete = false): int
 	{
@@ -1085,8 +1075,6 @@ class QueryBuilder extends EloquentBuilder
 	 * @param array<array<string, mixed>> $data
 	 * @param array<int|string, TModelClass> $existing
 	 * @param int|string|null $parentId
-	 *
-	 * @phpstan-param array<array<model-property<TModelClass>, mixed>> $data
 	 */
 	protected function buildRebuildDictionary(array           &$dictionary,
 	                                          array           $data,
@@ -1097,7 +1085,6 @@ class QueryBuilder extends EloquentBuilder
 
 		/**
 		 * @var array<string, mixed> $itemData
-		 * @phpstan-var array<model-property<TModelClass>, mixed> $itemData
 		 */
 		foreach ($data as $itemData) {
 			if ( ! isset($itemData[$keyName])) {
@@ -1155,7 +1142,6 @@ class QueryBuilder extends EloquentBuilder
      * Get the root node.
      *
      * @param array<string> $columns
-     * @phpstan-param array<model-property<TModelClass>|'*'> $columns
      *
      * @return TModelClass
      */
