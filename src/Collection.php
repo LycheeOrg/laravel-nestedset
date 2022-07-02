@@ -51,11 +51,11 @@ class Collection extends EloquentCollection
      *
      * If `$root` is provided, the tree will contain only descendants of that node.
      *
-     * @param ?TValue $root
+     * @param TValue|int|string|null $rootNodeOrId
      *
      * @return self
      */
-    public function toTree(?Node $root = null): Collection
+    public function toTree(Node|int|string|null $rootNodeOrId = null): Collection
     {
         if ($this->isEmpty()) {
             return new self();
@@ -65,7 +65,11 @@ class Collection extends EloquentCollection
 
         $items = [ ];
 
-        $rootId = $this->getRootNodeId($root);
+		if ($rootNodeOrId === null || $rootNodeOrId instanceof Model) {
+            $rootId = $this->getRootNodeId($rootNodeOrId);
+		} else {
+			$rootId = $rootNodeOrId;
+		}
 
         /** @var TValue $node */
         foreach ($this->items as $node) {
