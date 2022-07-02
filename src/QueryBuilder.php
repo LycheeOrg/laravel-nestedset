@@ -17,14 +17,14 @@ use LogicException;
 use Illuminate\Database\Query\Expression;
 
 /**
- * @template TNodeModel of \Illuminate\Database\Eloquent\Model&\Kalnoy\Nestedset\Node
- * @extends EloquentBuilder<TNodeModel>
+ * @template TModelClass of \Illuminate\Database\Eloquent\Model&\Kalnoy\Nestedset\Node
+ * @extends EloquentBuilder<TModelClass>
  */
 class QueryBuilder extends EloquentBuilder
 {
     /**
      * @var Model&Node $model
-     * @phpstan-var TNodeModel $model
+     * @phpstan-var TModelClass $model
      */
     protected $model;
 
@@ -32,8 +32,7 @@ class QueryBuilder extends EloquentBuilder
 	 * Execute the query as a "select" statement.
 	 *
 	 * @param  array<string>|string  $columns
-	 * @phpstan-param array<model-property<TNodeModel>|'*'>|model-property<TNodeModel>|'*' $columns
-	 * @return Collection<TNodeModel>
+	 * @return Collection<TModelClass>
 	 */
 	public function get($columns = ['*']): Collection
 	{
@@ -101,7 +100,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function whereIsRoot(): static
+    public function whereIsRoot(): self
     {
         $this->query->whereNull($this->model->getParentIdName());
 
@@ -113,14 +112,14 @@ class QueryBuilder extends EloquentBuilder
      *
      * @since 2.0
      *
-     * @param TNodeModel|int|string $nodeOrId
+     * @param TModelClass|int|string $nodeOrId
      * @param bool $andSelf
      *
      * @param string $boolean
      *
      * @return $this
      */
-    public function whereAncestorOf(Node|int|string $nodeOrId, bool $andSelf = false, string $boolean = 'and'): static
+    public function whereAncestorOf(Node|int|string $nodeOrId, bool $andSelf = false, string $boolean = 'and'): self
     {
         $keyName = $this->model->getTable() . '.' . $this->model->getKeyName();
 
@@ -167,7 +166,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function orWhereAncestorOf(int|string $id, bool $andSelf = false): static
+    public function orWhereAncestorOf(int|string $id, bool $andSelf = false): self
     {
         return $this->whereAncestorOf($id, $andSelf, 'or');
     }
@@ -177,7 +176,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function whereAncestorOrSelf(int|string $id): static
+    public function whereAncestorOrSelf(int|string $id): self
     {
         return $this->whereAncestorOf($id, true);
     }
@@ -187,9 +186,8 @@ class QueryBuilder extends EloquentBuilder
      *
      * @param int|string $id
      * @param array<string> $columns
-     * @phpstan-param array<model-property<TNodeModel>|'*'> $columns
      *
-     * @return Collection<TNodeModel>
+     * @return Collection<TModelClass>
      * @since 2.0
      *
      */
@@ -201,9 +199,8 @@ class QueryBuilder extends EloquentBuilder
     /**
      * @param int|string $id
      * @param array<string> $columns
-     * @phpstan-param array<model-property<TNodeModel>|'*'> $columns
      *
-     * @return Collection<TNodeModel>
+     * @return Collection<TModelClass>
      */
     public function ancestorsAndSelf(int|string $id, array $columns = ['*']): Collection
     {
@@ -221,7 +218,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function whereNodeBetween(array $values, string $boolean = 'and', bool $not = false): static
+    public function whereNodeBetween(array $values, string $boolean = 'and', bool $not = false): self
     {
         $this->query->whereBetween($this->model->getTable() . '.' . $this->model->getLftName(), $values, $boolean, $not);
 
@@ -237,7 +234,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function orWhereNodeBetween(array $values): static
+    public function orWhereNodeBetween(array $values): self
     {
         return $this->whereNodeBetween($values, 'or');
     }
@@ -247,7 +244,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @since 2.0
      *
-     * @param TNodeModel|int|string $modelOrId
+     * @param TModelClass|int|string $modelOrId
      * @param string $boolean
      * @param bool $not
      * @param bool $andSelf
@@ -256,7 +253,7 @@ class QueryBuilder extends EloquentBuilder
      */
     public function whereDescendantOf(Node|int|string $modelOrId, string $boolean = 'and', bool $not = false,
                                       bool $andSelf = false
-    ): static {
+    ): self {
         if ($modelOrId instanceof Node) {
             $data = $modelOrId->getBounds();
         } else {
@@ -273,43 +270,43 @@ class QueryBuilder extends EloquentBuilder
     }
 
     /**
-     * @param TNodeModel|int|string $modelOrId
+     * @param TModelClass|int|string $modelOrId
      *
      * @return $this
      */
-    public function whereNotDescendantOf(Node|int|string $modelOrId): static
+    public function whereNotDescendantOf(Node|int|string $modelOrId): self
     {
         return $this->whereDescendantOf($modelOrId, 'and', true);
     }
 
     /**
-     * @param TNodeModel|int|string $modelOrId
+     * @param TModelClass|int|string $modelOrId
      *
      * @return $this
      */
-    public function orWhereDescendantOf(Node|int|string $modelOrId): static
+    public function orWhereDescendantOf(Node|int|string $modelOrId): self
     {
         return $this->whereDescendantOf($modelOrId, 'or');
     }
 
     /**
-     * @param TNodeModel|int|string $modelOrId
+     * @param TModelClass|int|string $modelOrId
      *
      * @return $this
      */
-    public function orWhereNotDescendantOf(Node|int|string $modelOrId): static
+    public function orWhereNotDescendantOf(Node|int|string $modelOrId): self
     {
         return $this->whereDescendantOf($modelOrId, 'or', true);
     }
 
     /**
-     * @param TNodeModel|int|string $modelOrId
+     * @param TModelClass|int|string $modelOrId
      * @param string $boolean
      * @param bool $not
      *
      * @return $this
      */
-    public function whereDescendantOrSelf(Node|int|string $modelOrId, string $boolean = 'and', bool $not = false): static
+    public function whereDescendantOrSelf(Node|int|string $modelOrId, string $boolean = 'and', bool $not = false): self
     {
         return $this->whereDescendantOf($modelOrId, $boolean, $not, true);
     }
@@ -319,12 +316,11 @@ class QueryBuilder extends EloquentBuilder
      *
      * @since 2.0
      *
-     * @param TNodeModel|int|string $modelOrId
+     * @param TModelClass|int|string $modelOrId
      * @param array<string> $columns
-     * @phpstan-param array<model-property<TNodeModel>|'*'> $columns
      * @param bool $andSelf
      *
-     * @return Collection<TNodeModel>
+     * @return Collection<TModelClass>
      */
     public function descendantsOf(Node|int|string $modelOrId, array $columns = ['*'], bool $andSelf = false): Collection
     {
@@ -332,11 +328,10 @@ class QueryBuilder extends EloquentBuilder
     }
 
     /**
-     * @param TNodeModel|int|string $modelOrId
+     * @param TModelClass|int|string $modelOrId
      * @param array<string> $columns
-     * @phpstan-param array<model-property<TNodeModel>|'*'> $columns
      *
-     * @return Collection<TNodeModel>
+     * @return Collection<TModelClass>
      */
     public function descendantsAndSelf(Node|int|string $modelOrId, array $columns = ['*']): Collection
     {
@@ -344,13 +339,13 @@ class QueryBuilder extends EloquentBuilder
     }
 
     /**
-     * @param TNodeModel|int|string $nodeOrId
+     * @param TModelClass|int|string $nodeOrId
      * @param string $operator
      * @param string $boolean
      *
      * @return $this
      */
-    protected function whereIsBeforeOrAfter(Node|int|string $nodeOrId, string $operator, string $boolean = 'and'): static
+    protected function whereIsBeforeOrAfter(Node|int|string $nodeOrId, string $operator, string $boolean = 'and'): self
     {
         if ($nodeOrId instanceof Node) {
             $value = '?';
@@ -381,12 +376,12 @@ class QueryBuilder extends EloquentBuilder
      *
      * @since 2.0
      *
-     * @param TNodeModel|int|string $nodeOrId
+     * @param TModelClass|int|string $nodeOrId
      * @param string $boolean
      *
      * @return $this
      */
-    public function whereIsAfter(Node|int|string $nodeOrId, string $boolean = 'and'): static
+    public function whereIsAfter(Node|int|string $nodeOrId, string $boolean = 'and'): self
     {
         return $this->whereIsBeforeOrAfter($nodeOrId, '>', $boolean);
     }
@@ -396,12 +391,12 @@ class QueryBuilder extends EloquentBuilder
      *
      * @since 2.0
      *
-     * @param TNodeModel|int|string $nodeOrId
+     * @param TModelClass|int|string $nodeOrId
      * @param string $boolean
      *
      * @return $this
      */
-    public function whereIsBefore(Node|int|string $nodeOrId, string $boolean = 'and'): static
+    public function whereIsBefore(Node|int|string $nodeOrId, string $boolean = 'and'): self
     {
         return $this->whereIsBeforeOrAfter($nodeOrId, '<', $boolean);
     }
@@ -409,7 +404,7 @@ class QueryBuilder extends EloquentBuilder
     /**
      * @return $this
      */
-    public function whereIsLeaf(): static
+    public function whereIsLeaf(): self
     {
         list($lft, $rgt) = $this->wrappedColumns();
         $this->query->whereRaw("$lft = $rgt - 1");
@@ -419,9 +414,8 @@ class QueryBuilder extends EloquentBuilder
 
     /**
      * @param array<string> $columns
-     * @phpstan-param array<model-property<TNodeModel>|'*'> $columns
      *
-     * @return Collection<TNodeModel>
+     * @return Collection<TModelClass>
      */
     public function leaves(array $columns = ['*']): Collection
     {
@@ -435,7 +429,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function withDepth(string $as = 'depth'): static
+    public function withDepth(string $as = 'depth'): self
     {
         if ($this->query->columns === null) $this->query->columns = ['*'];
 
@@ -504,7 +498,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function withoutRoot(): static
+    public function withoutRoot(): self
     {
         $this->query->whereNotNull($this->model->getParentIdName());
 
@@ -519,7 +513,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function hasParent(): static
+    public function hasParent(): self
     {
         $this->query->whereNotNull($this->model->getParentIdName());
 
@@ -534,7 +528,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function hasChildren(): static
+    public function hasChildren(): self
     {
         list($lft, $rgt) = $this->wrappedColumns();
 
@@ -550,7 +544,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function defaultOrder(string $dir = 'asc'): static
+    public function defaultOrder(string $dir = 'asc'): self
     {
         $this->query->orders = [];
 
@@ -564,7 +558,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function reversed(): static
+    public function reversed(): self
     {
         return $this->defaultOrder('desc');
     }
@@ -889,7 +883,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * Nodes with invalid parent are saved as roots.
      *
-     * @param TNodeModel|null $root
+     * @param TModelClass|null $root
      *
      * @return int The number of changed nodes
      */
@@ -916,7 +910,7 @@ class QueryBuilder extends EloquentBuilder
     }
 
     /**
-     * @param TNodeModel $root
+     * @param TModelClass $root
      *
      * @return int
      */
@@ -926,8 +920,8 @@ class QueryBuilder extends EloquentBuilder
     }
 
     /**
-     * @param array<int|string, array<TNodeModel>> $dictionary
-     * @param TNodeModel|null $parent
+     * @param array<int|string, array<TModelClass>> $dictionary
+     * @param TModelClass|null $parent
      *
      * @return int
      */
@@ -964,8 +958,8 @@ class QueryBuilder extends EloquentBuilder
     }
 
     /**
-     * @param array<int|string, array<TNodeModel>> $dictionary
-     * @param array<TNodeModel> $updated
+     * @param array<int|string, array<TModelClass>> $dictionary
+     * @param array<TModelClass> $updated
      * @param int|string|null $parentId
      * @param int $cut
      *
@@ -1004,11 +998,9 @@ class QueryBuilder extends EloquentBuilder
 	 * @param array<array<string, mixed>> $data
 	 * @param bool $delete Whether to delete nodes that exist but not in the data
 	 *                     array
-	 * @param TNodeModel|int|string|null $rootNodeOrId
+	 * @param TModelClass|int|string|null $rootNodeOrId
 	 *
 	 * @return int
-	 *
-	 * @phpstan-param array<array<model-property<TNodeModel>, mixed>> $data
 	 */
 	public function rebuildTree(
 		array $data, bool $delete = false, Node|int|string|null $rootNodeOrId = null
@@ -1025,7 +1017,7 @@ class QueryBuilder extends EloquentBuilder
 		if ($rootNodeOrId !== null) {
 			$this->whereDescendantOf($rootNodeOrId);
 		}
-		/** @var array<int|string, TNodeModel> $existing */
+		/** @var array<int|string, TModelClass> $existing */
 		$existing = $this->get()->getDictionary();
 
 		$dictionary = [];
@@ -1044,7 +1036,7 @@ class QueryBuilder extends EloquentBuilder
 			} else {
 				/**
 				 * @var Model&Node $model
-				 * @phpstan-var TNodeModel $model
+				 * @phpstan-var TModelClass $model
 				 */
 				foreach ($existing as $model) {
 					$dictionary[$model->getParentId()][] = $model;
@@ -1067,13 +1059,11 @@ class QueryBuilder extends EloquentBuilder
 	}
 
 	/**
-	 * @param TNodeModel|int|string|null $rootNodeOrId
+	 * @param TModelClass|int|string|null $rootNodeOrId
 	 * @param array<array<string, mixed>> $data
 	 * @param bool $delete
 	 *
 	 * @return int
-	 *
-	 * @phpstan-param array<array<model-property<TNodeModel>, mixed>> $data
 	 */
 	public function rebuildSubtree(Node|int|string|null $rootNodeOrId, array $data, bool $delete = false): int
 	{
@@ -1081,12 +1071,10 @@ class QueryBuilder extends EloquentBuilder
 	}
 
 	/**
-	 * @param array<int|string|null, array<TNodeModel>> $dictionary
+	 * @param array<int|string|null, array<TModelClass>> $dictionary
 	 * @param array<array<string, mixed>> $data
-	 * @param array<int|string, TNodeModel> $existing
+	 * @param array<int|string, TModelClass> $existing
 	 * @param int|string|null $parentId
-	 *
-	 * @phpstan-param array<array<model-property<TNodeModel>, mixed>> $data
 	 */
 	protected function buildRebuildDictionary(array           &$dictionary,
 	                                          array           $data,
@@ -1097,13 +1085,12 @@ class QueryBuilder extends EloquentBuilder
 
 		/**
 		 * @var array<string, mixed> $itemData
-		 * @phpstan-var array<model-property<TNodeModel>, mixed> $itemData
 		 */
 		foreach ($data as $itemData) {
 			if ( ! isset($itemData[$keyName])) {
 				/**
 				 * @var Model&Node $model
-				 * @phpstan-var TNodeModel $model
+				 * @phpstan-var TModelClass $model
 				 */
 				$model = $this->model->newInstance($this->model->getAttributes());
 
@@ -1116,7 +1103,7 @@ class QueryBuilder extends EloquentBuilder
 
 				/**
 				 * @var Model&Node $model
-				 * @phpstan-var TNodeModel $model
+				 * @phpstan-var TModelClass $model
 				 */
 				$model = $existing[$key];
 
@@ -1144,7 +1131,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function applyNestedSetScope(string $table = null): static
+    public function applyNestedSetScope(string $table = null): self
     {
         $this->model->applyNestedSetScope($this, $table);
 
@@ -1155,9 +1142,8 @@ class QueryBuilder extends EloquentBuilder
      * Get the root node.
      *
      * @param array<string> $columns
-     * @phpstan-param array<model-property<TNodeModel>|'*'> $columns
      *
-     * @return TNodeModel
+     * @return TModelClass
      */
     public function root(array $columns = ['*']): Node
     {

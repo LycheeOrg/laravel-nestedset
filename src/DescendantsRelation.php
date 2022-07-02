@@ -5,8 +5,8 @@ namespace Kalnoy\Nestedset;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @template TNodeModel of \Illuminate\Database\Eloquent\Model&\Kalnoy\Nestedset\Node
- * @phpstan-extends BaseRelation<TNodeModel>
+ * @template TRelatedModel of \Illuminate\Database\Eloquent\Model&\Kalnoy\Nestedset\Node
+ * @phpstan-extends BaseRelation<TRelatedModel>
  */
 class DescendantsRelation extends BaseRelation
 {
@@ -24,8 +24,8 @@ class DescendantsRelation extends BaseRelation
     }
 
     /**
-     * @param QueryBuilder<TNodeModel> $query
-     * @param TNodeModel $model
+     * @param QueryBuilder<TRelatedModel> $query
+     * @param TRelatedModel $model
      */
     protected function addEagerConstraint(QueryBuilder $query, Model $model): void
     {
@@ -33,8 +33,8 @@ class DescendantsRelation extends BaseRelation
     }
 
     /**
-     * @param TNodeModel $model
-     * @param TNodeModel $related
+     * @param TRelatedModel $model
+     * @param TRelatedModel $related
      *
      * @return bool
      */

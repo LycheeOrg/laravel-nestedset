@@ -9,31 +9,31 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder;
 
 /**
- * @template TNodeModel of \Illuminate\Database\Eloquent\Model&\Kalnoy\Nestedset\Node
- * @phpstan-extends Relation<TNodeModel>
+ * @template TRelatedModel of \Illuminate\Database\Eloquent\Model&\Kalnoy\Nestedset\Node
+ * @phpstan-extends Relation<TRelatedModel>
  */
 abstract class BaseRelation extends Relation
 {
     /**
-     * @var QueryBuilder<TNodeModel>
+     * @var QueryBuilder<TRelatedModel>
      */
     protected $query;
 
     /**
-     * @var TNodeModel
+     * @var TRelatedModel
      */
     protected $parent;
 
 	/**
-	 * @var TNodeModel
+	 * @var TRelatedModel
 	 */
 	protected $related;
 
     /**
      * AncestorsRelation constructor.
      *
-     * @param QueryBuilder<TNodeModel> $builder
-     * @param TNodeModel $model
+     * @param QueryBuilder<TRelatedModel> $builder
+     * @param TRelatedModel $model
      */
     public function __construct(QueryBuilder $builder, Model $model)
     {
@@ -41,16 +41,16 @@ abstract class BaseRelation extends Relation
     }
 
     /**
-     * @param TNodeModel $model
-     * @param TNodeModel $related
+     * @param TRelatedModel $model
+     * @param TRelatedModel $related
      *
      * @return bool
      */
     abstract protected function matches(Model $model, Model $related): bool;
 
     /**
-     * @param QueryBuilder<TNodeModel> $query
-     * @param TNodeModel $model
+     * @param QueryBuilder<TRelatedModel> $query
+     * @param TRelatedModel $model
      *
      * @return void
      */
@@ -67,11 +67,11 @@ abstract class BaseRelation extends Relation
     abstract protected function relationExistenceCondition(string $hash, string $table, string $lft, string $rgt): string;
 
     /**
-     * @param EloquentBuilder<TNodeModel> $query
-     * @param EloquentBuilder<TNodeModel> $parentQuery
+     * @param EloquentBuilder<TRelatedModel> $query
+     * @param EloquentBuilder<TRelatedModel> $parentQuery
      * @param array<string> $columns
      *
-     * @return QueryBuilder<TNodeModel>
+     * @return QueryBuilder<TRelatedModel>
      */
     public function getRelationExistenceQuery(EloquentBuilder $query, EloquentBuilder $parentQuery, $columns = ['*']): QueryBuilder
     {
@@ -97,10 +97,10 @@ abstract class BaseRelation extends Relation
     /**
      * Initialize the relation on a set of models.
      *
-     * @param  array<TNodeModel> $models
+     * @param  array<TRelatedModel> $models
      * @param  string $relation
      *
-     * @return array<TNodeModel>
+     * @return array<TRelatedModel>
      */
     public function initRelation(array $models, $relation): array
     {
@@ -115,13 +115,13 @@ abstract class BaseRelation extends Relation
      */
     public function getRelationCountHash($incrementJoinCount = true): string
     {
-        return 'nested_set_'.($incrementJoinCount ? static::$selfJoinCount++ : static::$selfJoinCount);
+        return 'nested_set_'.($incrementJoinCount ? self::$selfJoinCount++ : self::$selfJoinCount);
     }
 
     /**
      * Get the results of the relationship.
      *
-     * @return Collection<TNodeModel>
+     * @return Collection<TRelatedModel>
      */
     public function getResults(): Collection
     {
@@ -131,7 +131,7 @@ abstract class BaseRelation extends Relation
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param  array<TNodeModel> $models
+     * @param  array<TRelatedModel> $models
      *
      * @return void
      */
@@ -153,11 +153,11 @@ abstract class BaseRelation extends Relation
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  array<TNodeModel> $models
-     * @param  EloquentCollection<TNodeModel> $results
+     * @param  array<TRelatedModel> $models
+     * @param  EloquentCollection<TRelatedModel> $results
      * @param  string $relation
      *
-     * @return array<TNodeModel>
+     * @return array<TRelatedModel>
      */
     public function match(array $models, EloquentCollection $results, $relation): array
     {
@@ -171,10 +171,10 @@ abstract class BaseRelation extends Relation
     }
 
     /**
-     * @param TNodeModel $model
-     * @param EloquentCollection<TNodeModel> $results
+     * @param TRelatedModel $model
+     * @param EloquentCollection<TRelatedModel> $results
      *
-     * @return Collection<TNodeModel>
+     * @return Collection<TRelatedModel>
      */
     protected function matchForModel(Model $model, EloquentCollection $results): Collection
     {

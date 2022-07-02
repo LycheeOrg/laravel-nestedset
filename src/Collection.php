@@ -7,19 +7,11 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @template TNodeModel of \Illuminate\Database\Eloquent\Model&\Kalnoy\Nestedset\Node
- * @phpstan-extends EloquentCollection<TNodeModel>
+ * @template TValue of \Illuminate\Database\Eloquent\Model&\Kalnoy\Nestedset\Node
+ * @phpstan-extends EloquentCollection<TValue>
  */
 class Collection extends EloquentCollection
 {
-	/**
-	 * @param iterable<TNodeModel> $items
-	 */
-	public final function __construct($items = [])
-	{
-		parent::__construct($items);
-	}
-
 	/**
      * Fill `parent` and `children` relationships for every node in the collection.
      *
@@ -27,13 +19,13 @@ class Collection extends EloquentCollection
      *
      * @return $this
      */
-    public function linkNodes(): static
+    public function linkNodes(): Collection
     {
         if ($this->isEmpty()) return $this;
 
         $groupedNodes = $this->groupBy($this->first()->getParentIdName());
 
-        /** @var TNodeModel $node */
+        /** @var TValue $node */
         foreach ($this->items as $node) {
             if ($node->getParentId() !== null) {
                 $node->setRelation('parent', null);
@@ -41,7 +33,7 @@ class Collection extends EloquentCollection
 
             $children = $groupedNodes->get($node->getKey(), [ ]);
 
-            /** @var TNodeModel $child */
+            /** @var TValue $child */
             foreach ($children as $child) {
                 $child->setRelation('parent', $node);
             }
@@ -59,34 +51,38 @@ class Collection extends EloquentCollection
      *
      * If `$root` is provided, the tree will contain only descendants of that node.
      *
-     * @param ?TNodeModel $root
+     * @param TValue|int|string|null $rootNodeOrId
      *
-     * @return static
+     * @return self
      */
-    public function toTree(?Node $root = null): static
+    public function toTree(Node|int|string|null $rootNodeOrId = null): Collection
     {
         if ($this->isEmpty()) {
-            return new static();
+            return new self();
         }
 
         $this->linkNodes();
 
         $items = [ ];
 
-        $rootId = $this->getRootNodeId($root);
+		if ($rootNodeOrId === null || $rootNodeOrId instanceof Model) {
+            $rootId = $this->getRootNodeId($rootNodeOrId);
+		} else {
+			$rootId = $rootNodeOrId;
+		}
 
-        /** @var TNodeModel $node */
+        /** @var TValue $node */
         foreach ($this->items as $node) {
             if ($node->getParentId() === $rootId) {
                 $items[] = $node;
             }
         }
 
-        return new static($items);
+        return new self($items);
     }
 
     /**
-     * @param ?TNodeModel $root
+     * @param ?TValue $root
      *
      * @return int|string|null
      */
@@ -100,7 +96,7 @@ class Collection extends EloquentCollection
         // least lft value as root node id.
         $leastValue = null;
 
-        /** @var TNodeModel $node */
+        /** @var TValue $node */
         foreach ($this->items as $node) {
             if ($leastValue === null || $node->getLft() < $leastValue) {
                 $leastValue = $node->getLft();
@@ -115,13 +111,13 @@ class Collection extends EloquentCollection
      * Build a list of nodes that retain the order that they were pulled from
      * the database.
      *
-     * @param TNodeModel|null $root
+     * @param TValue|null $root
      *
-     * @return static
+     * @return self
      */
-    public function toFlatTree(?Model $root = null): static
+    public function toFlatTree(?Model $root = null): Collection
     {
-        $result = new static();
+        $result = new self();
 
         if ($this->isEmpty()) return $result;
 
@@ -133,12 +129,12 @@ class Collection extends EloquentCollection
     /**
      * Flatten a tree into a non-recursive array.
      *
-     * @param BaseCollection<BaseCollection<TNodeModel>> $groupedNodes
+     * @param BaseCollection<int|string, BaseCollection<int|string, TValue>> $groupedNodes
      * @param int|string|null $parentId
      *
      * @return $this
      */
-    protected function flattenTree(BaseCollection $groupedNodes, int|string|null $parentId): static
+    protected function flattenTree(BaseCollection $groupedNodes, int|string|null $parentId): Collection
     {
         foreach ($groupedNodes->get($parentId, []) as $node) {
             $this->push($node);

@@ -66,5 +66,8 @@ jobs:
       - name: Validate files
         run: composer validate-files
 
+      - name: Validate files
+        run: composer run-phpstan
+      
       - name: Run tests
         run: composer run-tests

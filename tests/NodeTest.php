@@ -27,7 +27,7 @@ class NodeTest extends TestCase
 
         $schema->dropIfExists('categories');
 
-        Capsule::disableQueryLog();
+        Capsule::connection()->disableQueryLog();
 
         $schema->create('categories', function (Blueprint $table) {
             $table->increments('id');
@@ -36,7 +36,7 @@ class NodeTest extends TestCase
             NestedSet::columns($table);
         });
 
-        Capsule::enableQueryLog();
+        Capsule::connection()->enableQueryLog();
     }
 
     public function setUp(): void
@@ -45,7 +45,7 @@ class NodeTest extends TestCase
 
         Capsule::table('categories')->insert($data);
 
-        Capsule::flushQueryLog();
+        Capsule::connection()->flushQueryLog();
 
         Category::resetActionsPerformed();
 
@@ -482,8 +482,8 @@ class NodeTest extends TestCase
         $node = $this->findCategory('mobile');
         $nodes = Category::query()->whereBetween('_lft', [8, 17])->get();
 
-        $tree1 = NSCollection::make($nodes)->toTree(5);
-        $tree2 = NSCollection::make($nodes)->toTree($node);
+        $tree1 = (new NSCollection($nodes))->toTree(5);
+        $tree2 = (new NSCollection($nodes))->toTree($node);
 
         self::assertEquals(4, $tree1->count());
         self::assertEquals(4, $tree2->count());
@@ -912,9 +912,10 @@ class NodeTest extends TestCase
         $output = [];
 
         foreach ($categories as $category) {
-            $output["{$category->name} ({$category->id})}"] = $category->ancestors->count()
-                ? implode(' > ', $category->ancestors->map(function ($cat) { return "{$cat->name} ({$cat->id})"; })->toArray())
-                : '';
+            $output["{$category->name} ({$category->id})}"] =
+	            $category->ancestors->count() !== 0 ?
+		            implode(' > ', $category->ancestors->map(function ($cat) { return "{$cat->name} ({$cat->id})"; })->toArray()) :
+		            '';
         }
 
         self::assertEquals($expectedShape, $output);
@@ -944,9 +945,10 @@ class NodeTest extends TestCase
         $output = [];
 
         foreach ($categories as $category) {
-            $output["{$category->name} ({$category->id})}"] = $category->ancestors->count()
-                ? implode(' > ', $category->ancestors->map(function ($cat) { return "{$cat->name} ({$cat->id})"; })->toArray())
-                : '';
+            $output["{$category->name} ({$category->id})}"] =
+	            $category->ancestors->count() !== 0 ?
+                    implode(' > ', $category->ancestors->map(function ($cat) { return "{$cat->name} ({$cat->id})"; })->toArray()) :
+                    '';
         }
 
         // assert that there is number of original query + 1 + number of rows to fulfill the relation
