@@ -13,21 +13,13 @@ use Illuminate\Database\Eloquent\Model;
 class Collection extends EloquentCollection
 {
 	/**
-	 * @param iterable<TValue> $items
-	 */
-	public final function __construct($items = [])
-	{
-		parent::__construct($items);
-	}
-
-	/**
      * Fill `parent` and `children` relationships for every node in the collection.
      *
      * This will overwrite any previously set relations.
      *
      * @return $this
      */
-    public function linkNodes(): static
+    public function linkNodes(): Collection
     {
         if ($this->isEmpty()) return $this;
 
@@ -61,12 +53,12 @@ class Collection extends EloquentCollection
      *
      * @param ?TValue $root
      *
-     * @return static
+     * @return self
      */
-    public function toTree(?Node $root = null): static
+    public function toTree(?Node $root = null): Collection
     {
         if ($this->isEmpty()) {
-            return new static();
+            return new self();
         }
 
         $this->linkNodes();
@@ -82,7 +74,7 @@ class Collection extends EloquentCollection
             }
         }
 
-        return new static($items);
+        return new self($items);
     }
 
     /**
@@ -117,11 +109,11 @@ class Collection extends EloquentCollection
      *
      * @param TValue|null $root
      *
-     * @return static
+     * @return self
      */
-    public function toFlatTree(?Model $root = null): static
+    public function toFlatTree(?Model $root = null): Collection
     {
-        $result = new static();
+        $result = new self();
 
         if ($this->isEmpty()) return $result;
 
@@ -138,7 +130,7 @@ class Collection extends EloquentCollection
      *
      * @return $this
      */
-    protected function flattenTree(BaseCollection $groupedNodes, int|string|null $parentId): static
+    protected function flattenTree(BaseCollection $groupedNodes, int|string|null $parentId): Collection
     {
         foreach ($groupedNodes->get($parentId, []) as $node) {
             $this->push($node);
