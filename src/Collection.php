@@ -125,7 +125,7 @@ class Collection extends EloquentCollection
     /**
      * Flatten a tree into a non-recursive array.
      *
-     * @param BaseCollection<BaseCollection<TValue>> $groupedNodes
+     * @param BaseCollection<int|string, BaseCollection<int|string, TValue>> $groupedNodes
      * @param int|string|null $parentId
      *
      * @return $this
