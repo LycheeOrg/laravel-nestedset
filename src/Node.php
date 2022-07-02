@@ -222,7 +222,7 @@ interface Node
 	 *
 	 * @return TModelClass&$this
 	 */
-	public function makeRoot(): static;
+	public function makeRoot(): self;
 
 	/**
 	 * Save node as root.

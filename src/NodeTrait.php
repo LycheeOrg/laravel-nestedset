@@ -185,10 +185,9 @@ trait NodeTrait
      *
      * @param string $action
      *
-     * @return $this
-     * @phpstan-return $this
+     * @return TModelClass&$this
      */
-    protected function setNodeAction(string $action): static
+    protected function setNodeAction(string $action): self
     {
         $this->pending = func_get_args();
 
@@ -277,9 +276,9 @@ trait NodeTrait
      *
      * @param TModelClass|null $parentNode
      *
-     * @return $this
+     * @return TModelClass&$this
      */
-    protected function setParent(?Node $parentNode): static
+    protected function setParent(?Node $parentNode): self
     {
         $this->setParentId($parentNode?->getKey())
             ->setRelation('parent', $parentNode);
@@ -440,7 +439,7 @@ trait NodeTrait
      *
      * @return TModelClass&$this
      */
-    public function makeRoot(): static
+    public function makeRoot(): self
     {
         $this->setParent(null)->dirtyBounds();
 

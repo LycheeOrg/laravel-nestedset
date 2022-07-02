@@ -100,7 +100,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function whereIsRoot(): static
+    public function whereIsRoot(): self
     {
         $this->query->whereNull($this->model->getParentIdName());
 
@@ -119,7 +119,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function whereAncestorOf(Node|int|string $nodeOrId, bool $andSelf = false, string $boolean = 'and'): static
+    public function whereAncestorOf(Node|int|string $nodeOrId, bool $andSelf = false, string $boolean = 'and'): self
     {
         $keyName = $this->model->getTable() . '.' . $this->model->getKeyName();
 
@@ -166,7 +166,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function orWhereAncestorOf(int|string $id, bool $andSelf = false): static
+    public function orWhereAncestorOf(int|string $id, bool $andSelf = false): self
     {
         return $this->whereAncestorOf($id, $andSelf, 'or');
     }
@@ -176,7 +176,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function whereAncestorOrSelf(int|string $id): static
+    public function whereAncestorOrSelf(int|string $id): self
     {
         return $this->whereAncestorOf($id, true);
     }
@@ -218,7 +218,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function whereNodeBetween(array $values, string $boolean = 'and', bool $not = false): static
+    public function whereNodeBetween(array $values, string $boolean = 'and', bool $not = false): self
     {
         $this->query->whereBetween($this->model->getTable() . '.' . $this->model->getLftName(), $values, $boolean, $not);
 
@@ -234,7 +234,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function orWhereNodeBetween(array $values): static
+    public function orWhereNodeBetween(array $values): self
     {
         return $this->whereNodeBetween($values, 'or');
     }
@@ -253,7 +253,7 @@ class QueryBuilder extends EloquentBuilder
      */
     public function whereDescendantOf(Node|int|string $modelOrId, string $boolean = 'and', bool $not = false,
                                       bool $andSelf = false
-    ): static {
+    ): self {
         if ($modelOrId instanceof Node) {
             $data = $modelOrId->getBounds();
         } else {
@@ -274,7 +274,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function whereNotDescendantOf(Node|int|string $modelOrId): static
+    public function whereNotDescendantOf(Node|int|string $modelOrId): self
     {
         return $this->whereDescendantOf($modelOrId, 'and', true);
     }
@@ -284,7 +284,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function orWhereDescendantOf(Node|int|string $modelOrId): static
+    public function orWhereDescendantOf(Node|int|string $modelOrId): self
     {
         return $this->whereDescendantOf($modelOrId, 'or');
     }
@@ -294,7 +294,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function orWhereNotDescendantOf(Node|int|string $modelOrId): static
+    public function orWhereNotDescendantOf(Node|int|string $modelOrId): self
     {
         return $this->whereDescendantOf($modelOrId, 'or', true);
     }
@@ -306,7 +306,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function whereDescendantOrSelf(Node|int|string $modelOrId, string $boolean = 'and', bool $not = false): static
+    public function whereDescendantOrSelf(Node|int|string $modelOrId, string $boolean = 'and', bool $not = false): self
     {
         return $this->whereDescendantOf($modelOrId, $boolean, $not, true);
     }
@@ -345,7 +345,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    protected function whereIsBeforeOrAfter(Node|int|string $nodeOrId, string $operator, string $boolean = 'and'): static
+    protected function whereIsBeforeOrAfter(Node|int|string $nodeOrId, string $operator, string $boolean = 'and'): self
     {
         if ($nodeOrId instanceof Node) {
             $value = '?';
@@ -381,7 +381,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function whereIsAfter(Node|int|string $nodeOrId, string $boolean = 'and'): static
+    public function whereIsAfter(Node|int|string $nodeOrId, string $boolean = 'and'): self
     {
         return $this->whereIsBeforeOrAfter($nodeOrId, '>', $boolean);
     }
@@ -396,7 +396,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function whereIsBefore(Node|int|string $nodeOrId, string $boolean = 'and'): static
+    public function whereIsBefore(Node|int|string $nodeOrId, string $boolean = 'and'): self
     {
         return $this->whereIsBeforeOrAfter($nodeOrId, '<', $boolean);
     }
@@ -404,7 +404,7 @@ class QueryBuilder extends EloquentBuilder
     /**
      * @return $this
      */
-    public function whereIsLeaf(): static
+    public function whereIsLeaf(): self
     {
         list($lft, $rgt) = $this->wrappedColumns();
         $this->query->whereRaw("$lft = $rgt - 1");
@@ -429,7 +429,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function withDepth(string $as = 'depth'): static
+    public function withDepth(string $as = 'depth'): self
     {
         if ($this->query->columns === null) $this->query->columns = ['*'];
 
@@ -498,7 +498,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function withoutRoot(): static
+    public function withoutRoot(): self
     {
         $this->query->whereNotNull($this->model->getParentIdName());
 
@@ -513,7 +513,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function hasParent(): static
+    public function hasParent(): self
     {
         $this->query->whereNotNull($this->model->getParentIdName());
 
@@ -528,7 +528,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function hasChildren(): static
+    public function hasChildren(): self
     {
         list($lft, $rgt) = $this->wrappedColumns();
 
@@ -544,7 +544,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function defaultOrder(string $dir = 'asc'): static
+    public function defaultOrder(string $dir = 'asc'): self
     {
         $this->query->orders = [];
 
@@ -558,7 +558,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function reversed(): static
+    public function reversed(): self
     {
         return $this->defaultOrder('desc');
     }
@@ -1131,7 +1131,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @return $this
      */
-    public function applyNestedSetScope(string $table = null): static
+    public function applyNestedSetScope(string $table = null): self
     {
         $this->model->applyNestedSetScope($this, $table);
 
