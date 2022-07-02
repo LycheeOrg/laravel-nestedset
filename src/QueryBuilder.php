@@ -998,12 +998,12 @@ class QueryBuilder extends EloquentBuilder
 	 * @param array<array<string, mixed>> $data
 	 * @param bool $delete Whether to delete nodes that exist but not in the data
 	 *                     array
-	 * @param TModelClass|int|string|null $rootNodeOrId
+	 * @param TModelClass|null $rootNode
 	 *
 	 * @return int
 	 */
 	public function rebuildTree(
-		array $data, bool $delete = false, Node|int|string|null $rootNodeOrId = null
+		array $data, bool $delete = false, ?Node $rootNode = null
 	): int {
 		if ($this->model instanceof NodeWithSoftDelete) {
 			/**
@@ -1014,15 +1014,15 @@ class QueryBuilder extends EloquentBuilder
 			$this->withTrashed();
 		}
 
-		if ($rootNodeOrId !== null) {
-			$this->whereDescendantOf($rootNodeOrId);
+		if ($rootNode !== null) {
+			$this->whereDescendantOf($rootNode);
 		}
 		/** @var array<int|string, TModelClass> $existing */
 		$existing = $this->get()->getDictionary();
 
 		$dictionary = [];
 		/** @var int|string|null $parentId */
-		$parentId = $rootNodeOrId instanceof Node ? $rootNodeOrId->getKey() : $rootNodeOrId;
+		$parentId = $rootNode?->getKey();
 
 		$this->buildRebuildDictionary($dictionary, $data, $existing, $parentId);
 
@@ -1055,19 +1055,19 @@ class QueryBuilder extends EloquentBuilder
 		}
 
 		// TODO: If this line is commented out and returns a fixed value, PHPstan can analyze the code, but with this function call PHPstan crashes with an out-of-memory error.
-		return $this->fixNodes($dictionary, $rootNodeOrId);
+		return $this->fixNodes($dictionary, $rootNode);
 	}
 
 	/**
-	 * @param TModelClass|int|string|null $rootNodeOrId
+	 * @param TModelClass $rootNode
 	 * @param array<array<string, mixed>> $data
 	 * @param bool $delete
 	 *
 	 * @return int
 	 */
-	public function rebuildSubtree(Node|int|string|null $rootNodeOrId, array $data, bool $delete = false): int
+	public function rebuildSubtree(Node $rootNode, array $data, bool $delete = false): int
 	{
-		return $this->rebuildTree($data, $delete, $rootNodeOrId);
+		return $this->rebuildTree($data, $delete, $rootNode);
 	}
 
 	/**
