@@ -1,36 +1,8 @@
 includes:
 	- vendor/nunomaduro/larastan/extension.neon
-	- vendor/phpstan/phpstan-deprecation-rules/rules.neon
-	- vendor/thecodingmachine/phpstan-safe-rule/phpstan-safe-rule.neon
-	- vendor/phpstan/phpstan-strict-rules/rules.neon
-
-services:
-	-
-		class: Ergebnis\PHPStan\Rules\Expressions\NoErrorSuppressionRule
-		tags:
-			- phpstan.rules.rule
-	-
-		class: SlamPhpStan\UnusedVariableRule
-		tags:
-			- phpstan.rules.rule
-
-	-
-		class: PHPStan\Rules\DisallowedConstructs\DisallowedLooseComparisonRule # only required until https://github.com/phpstan/phpstan-strict-rules/pull/177 becomes part of phpstan-strict-rules 1.2.4
-		tags:
-			- phpstan.rules.rule
-	-
-		class: PHPStan\Rules\DisallowedConstructs\DisallowedBooleanCastRule
-		tags:
-			- phpstan.rules.rule
-	-
-		class: PHPStan\Rules\DisallowedConstructs\DisallowedBooleanConversionRule
-		tags:
-			- phpstan.rules.rule
+	- vendor/lychee-org/phpstan-lychee/phpstan.neon
 
 parameters:
-	level: 7
-	reportMaybesInPropertyPhpDocTypes: false
-	checkMissingIterableValueType: false
 	paths:
 		- src
 	ignoreErrors:

@@ -19,8 +19,15 @@ jobs:
       matrix:
         operating-system: [ubuntu-20.04]
         php-versions: ['8.0', '8.1']
+        beta: ['beta', '']
+        dependencies: ['locked', 'lowest', 'highest']
+        exclude:
+          - beta: 'beta'
+            dependencies: 'locked'
+          - beta: 'beta'
+            dependencies: 'lowest'
 
-    name: PHP ${{ matrix.php-versions }}
+    name: PHP ${{ matrix.php-versions }} -- ${{ matrix.beta }} ${{ matrix.dependencies }}
 
     env:
       COMPOSER_NO_INTERACTION: 1
@@ -31,50 +38,30 @@ jobs:
 
       # Checks out a copy of your repository on the ubuntu machine
       - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Setup cache environment
-        id: extcache
-        uses: shivammathur/cache-extensions@v1
-        with:
-          php-version: ${{ matrix.php-versions }}
-          extensions: ${{ env.extensions }}
-          key: ${{ env.key }}
-
-      - name: Cache PHP Extensions
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.extcache.outputs.dir }}
-          key: ${{ steps.extcache.outputs.key }}
-          restore-keys: ${{ steps.extcache.outputs.key }}
-
-      - name: Cache Composer Dependencies
-        uses: actions/cache@v1
-        with:
-          path: ~/.composer/cache/files
-          key: dependencies-composer-${{ hashFiles('composer.json') }}
+        uses: actions/checkout@v3
 
       - name: Setup PHP Action
-        uses: shivammathur/setup-php@2.8.0
+        uses: shivammathur/setup-php@2.15.0
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: ${{ env.extensions }}
           coverage: xdebug
           tools: pecl, composer
-      
+
+      - name: Fix beta
+        if: ${{ matrix.beta == 'beta' }}
+        run: perl -pi -e 's/^}$/,"minimum-stability":"beta"}/' composer.json
+
       - name: PHP Show modules
         run: php -m
 
-      - name: Get composer cache directory
-        id: composer-cache
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-      - name: Cache dependencies
-        uses: actions/cache@v2
+      # Install dependencies and handle caching in one go.
+      # Dependencies need to be installed to make sure the PHPUnit classes are recognized.
+      # @link https://github.com/marketplace/actions/install-composer-dependencies
+      - name: Install Composer dependencies
+        uses: "ramsey/composer-install@v2"
         with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
+          dependency-versions: "${{ matrix.dependencies }}"
 
       - name: Validate files
         run: composer validate-files
