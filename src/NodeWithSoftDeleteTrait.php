@@ -5,14 +5,14 @@ namespace Kalnoy\Nestedset;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @template TNodeModel of \Illuminate\Database\Eloquent\Model&\Kalnoy\Nestedset\NodeWithSoftDelete
+ * @template TModelClass of \Illuminate\Database\Eloquent\Model&\Kalnoy\Nestedset\NodeWithSoftDelete
  */
 trait NodeWithSoftDeleteTrait
 {
 	use SoftDeletes {
 		restore as private restoreOrig;
 	}
-	/** @phpstan-use NodeTrait<TNodeModel> */
+	/** @phpstan-use NodeTrait<TModelClass> */
 	use NodeTrait {
 		deleteDescendants as private deleteDescendantsOrig;
 	}
@@ -36,13 +36,13 @@ trait NodeWithSoftDeleteTrait
 	 */
 	protected function restoreDescendants(\DateTimeInterface|int|float $deletedAt): void
 	{
-		/** @var Collection<TNodeModel> $descendants */
+		/** @var Collection<TModelClass> $descendants */
 		$descendants = $this->descendants()
 			->where($this->getDeletedAtColumn(), '>=', $deletedAt)
 			->get();
 		/**
 		 * @var \Illuminate\Database\Eloquent\Model&\Kalnoy\Nestedset\NodeWithSoftDelete $descendant
-		 * @phpstan-var TNodeModel $descendant
+		 * @phpstan-var TModelClass $descendant
 		 */
 		foreach ($descendants as $descendant) {
 			$descendant->restore();
@@ -75,7 +75,7 @@ trait NodeWithSoftDeleteTrait
 	 * Get a new base query that includes deleted nodes.
 	 *
 	 * @param string|null $table
-	 * @return QueryBuilder<TNodeModel>
+	 * @return QueryBuilder<TModelClass>
 	 * @since 1.1
 	 *
 	 */

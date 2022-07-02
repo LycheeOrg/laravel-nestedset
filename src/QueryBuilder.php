@@ -17,14 +17,14 @@ use LogicException;
 use Illuminate\Database\Query\Expression;
 
 /**
- * @template TNodeModel of \Illuminate\Database\Eloquent\Model&\Kalnoy\Nestedset\Node
- * @extends EloquentBuilder<TNodeModel>
+ * @template TModelClass of \Illuminate\Database\Eloquent\Model&\Kalnoy\Nestedset\Node
+ * @extends EloquentBuilder<TModelClass>
  */
 class QueryBuilder extends EloquentBuilder
 {
     /**
      * @var Model&Node $model
-     * @phpstan-var TNodeModel $model
+     * @phpstan-var TModelClass $model
      */
     protected $model;
 
@@ -32,8 +32,8 @@ class QueryBuilder extends EloquentBuilder
 	 * Execute the query as a "select" statement.
 	 *
 	 * @param  array<string>|string  $columns
-	 * @phpstan-param array<model-property<TNodeModel>|'*'>|model-property<TNodeModel>|'*' $columns
-	 * @return Collection<TNodeModel>
+	 * @phpstan-param array<model-property<TModelClass>|'*'>|model-property<TModelClass>|'*' $columns
+	 * @return Collection<TModelClass>
 	 */
 	public function get($columns = ['*']): Collection
 	{
@@ -113,7 +113,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @since 2.0
      *
-     * @param TNodeModel|int|string $nodeOrId
+     * @param TModelClass|int|string $nodeOrId
      * @param bool $andSelf
      *
      * @param string $boolean
@@ -187,9 +187,9 @@ class QueryBuilder extends EloquentBuilder
      *
      * @param int|string $id
      * @param array<string> $columns
-     * @phpstan-param array<model-property<TNodeModel>|'*'> $columns
+     * @phpstan-param array<model-property<TModelClass>|'*'> $columns
      *
-     * @return Collection<TNodeModel>
+     * @return Collection<TModelClass>
      * @since 2.0
      *
      */
@@ -201,9 +201,9 @@ class QueryBuilder extends EloquentBuilder
     /**
      * @param int|string $id
      * @param array<string> $columns
-     * @phpstan-param array<model-property<TNodeModel>|'*'> $columns
+     * @phpstan-param array<model-property<TModelClass>|'*'> $columns
      *
-     * @return Collection<TNodeModel>
+     * @return Collection<TModelClass>
      */
     public function ancestorsAndSelf(int|string $id, array $columns = ['*']): Collection
     {
@@ -247,7 +247,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @since 2.0
      *
-     * @param TNodeModel|int|string $modelOrId
+     * @param TModelClass|int|string $modelOrId
      * @param string $boolean
      * @param bool $not
      * @param bool $andSelf
@@ -273,7 +273,7 @@ class QueryBuilder extends EloquentBuilder
     }
 
     /**
-     * @param TNodeModel|int|string $modelOrId
+     * @param TModelClass|int|string $modelOrId
      *
      * @return $this
      */
@@ -283,7 +283,7 @@ class QueryBuilder extends EloquentBuilder
     }
 
     /**
-     * @param TNodeModel|int|string $modelOrId
+     * @param TModelClass|int|string $modelOrId
      *
      * @return $this
      */
@@ -293,7 +293,7 @@ class QueryBuilder extends EloquentBuilder
     }
 
     /**
-     * @param TNodeModel|int|string $modelOrId
+     * @param TModelClass|int|string $modelOrId
      *
      * @return $this
      */
@@ -303,7 +303,7 @@ class QueryBuilder extends EloquentBuilder
     }
 
     /**
-     * @param TNodeModel|int|string $modelOrId
+     * @param TModelClass|int|string $modelOrId
      * @param string $boolean
      * @param bool $not
      *
@@ -319,12 +319,12 @@ class QueryBuilder extends EloquentBuilder
      *
      * @since 2.0
      *
-     * @param TNodeModel|int|string $modelOrId
+     * @param TModelClass|int|string $modelOrId
      * @param array<string> $columns
-     * @phpstan-param array<model-property<TNodeModel>|'*'> $columns
+     * @phpstan-param array<model-property<TModelClass>|'*'> $columns
      * @param bool $andSelf
      *
-     * @return Collection<TNodeModel>
+     * @return Collection<TModelClass>
      */
     public function descendantsOf(Node|int|string $modelOrId, array $columns = ['*'], bool $andSelf = false): Collection
     {
@@ -332,11 +332,11 @@ class QueryBuilder extends EloquentBuilder
     }
 
     /**
-     * @param TNodeModel|int|string $modelOrId
+     * @param TModelClass|int|string $modelOrId
      * @param array<string> $columns
-     * @phpstan-param array<model-property<TNodeModel>|'*'> $columns
+     * @phpstan-param array<model-property<TModelClass>|'*'> $columns
      *
-     * @return Collection<TNodeModel>
+     * @return Collection<TModelClass>
      */
     public function descendantsAndSelf(Node|int|string $modelOrId, array $columns = ['*']): Collection
     {
@@ -344,7 +344,7 @@ class QueryBuilder extends EloquentBuilder
     }
 
     /**
-     * @param TNodeModel|int|string $nodeOrId
+     * @param TModelClass|int|string $nodeOrId
      * @param string $operator
      * @param string $boolean
      *
@@ -381,7 +381,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @since 2.0
      *
-     * @param TNodeModel|int|string $nodeOrId
+     * @param TModelClass|int|string $nodeOrId
      * @param string $boolean
      *
      * @return $this
@@ -396,7 +396,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * @since 2.0
      *
-     * @param TNodeModel|int|string $nodeOrId
+     * @param TModelClass|int|string $nodeOrId
      * @param string $boolean
      *
      * @return $this
@@ -419,9 +419,9 @@ class QueryBuilder extends EloquentBuilder
 
     /**
      * @param array<string> $columns
-     * @phpstan-param array<model-property<TNodeModel>|'*'> $columns
+     * @phpstan-param array<model-property<TModelClass>|'*'> $columns
      *
-     * @return Collection<TNodeModel>
+     * @return Collection<TModelClass>
      */
     public function leaves(array $columns = ['*']): Collection
     {
@@ -889,7 +889,7 @@ class QueryBuilder extends EloquentBuilder
      *
      * Nodes with invalid parent are saved as roots.
      *
-     * @param TNodeModel|null $root
+     * @param TModelClass|null $root
      *
      * @return int The number of changed nodes
      */
@@ -916,7 +916,7 @@ class QueryBuilder extends EloquentBuilder
     }
 
     /**
-     * @param TNodeModel $root
+     * @param TModelClass $root
      *
      * @return int
      */
@@ -926,8 +926,8 @@ class QueryBuilder extends EloquentBuilder
     }
 
     /**
-     * @param array<int|string, array<TNodeModel>> $dictionary
-     * @param TNodeModel|null $parent
+     * @param array<int|string, array<TModelClass>> $dictionary
+     * @param TModelClass|null $parent
      *
      * @return int
      */
@@ -964,8 +964,8 @@ class QueryBuilder extends EloquentBuilder
     }
 
     /**
-     * @param array<int|string, array<TNodeModel>> $dictionary
-     * @param array<TNodeModel> $updated
+     * @param array<int|string, array<TModelClass>> $dictionary
+     * @param array<TModelClass> $updated
      * @param int|string|null $parentId
      * @param int $cut
      *
@@ -1004,11 +1004,11 @@ class QueryBuilder extends EloquentBuilder
 	 * @param array<array<string, mixed>> $data
 	 * @param bool $delete Whether to delete nodes that exist but not in the data
 	 *                     array
-	 * @param TNodeModel|int|string|null $rootNodeOrId
+	 * @param TModelClass|int|string|null $rootNodeOrId
 	 *
 	 * @return int
 	 *
-	 * @phpstan-param array<array<model-property<TNodeModel>, mixed>> $data
+	 * @phpstan-param array<array<model-property<TModelClass>, mixed>> $data
 	 */
 	public function rebuildTree(
 		array $data, bool $delete = false, Node|int|string|null $rootNodeOrId = null
@@ -1025,7 +1025,7 @@ class QueryBuilder extends EloquentBuilder
 		if ($rootNodeOrId !== null) {
 			$this->whereDescendantOf($rootNodeOrId);
 		}
-		/** @var array<int|string, TNodeModel> $existing */
+		/** @var array<int|string, TModelClass> $existing */
 		$existing = $this->get()->getDictionary();
 
 		$dictionary = [];
@@ -1044,7 +1044,7 @@ class QueryBuilder extends EloquentBuilder
 			} else {
 				/**
 				 * @var Model&Node $model
-				 * @phpstan-var TNodeModel $model
+				 * @phpstan-var TModelClass $model
 				 */
 				foreach ($existing as $model) {
 					$dictionary[$model->getParentId()][] = $model;
@@ -1067,13 +1067,13 @@ class QueryBuilder extends EloquentBuilder
 	}
 
 	/**
-	 * @param TNodeModel|int|string|null $rootNodeOrId
+	 * @param TModelClass|int|string|null $rootNodeOrId
 	 * @param array<array<string, mixed>> $data
 	 * @param bool $delete
 	 *
 	 * @return int
 	 *
-	 * @phpstan-param array<array<model-property<TNodeModel>, mixed>> $data
+	 * @phpstan-param array<array<model-property<TModelClass>, mixed>> $data
 	 */
 	public function rebuildSubtree(Node|int|string|null $rootNodeOrId, array $data, bool $delete = false): int
 	{
@@ -1081,12 +1081,12 @@ class QueryBuilder extends EloquentBuilder
 	}
 
 	/**
-	 * @param array<int|string|null, array<TNodeModel>> $dictionary
+	 * @param array<int|string|null, array<TModelClass>> $dictionary
 	 * @param array<array<string, mixed>> $data
-	 * @param array<int|string, TNodeModel> $existing
+	 * @param array<int|string, TModelClass> $existing
 	 * @param int|string|null $parentId
 	 *
-	 * @phpstan-param array<array<model-property<TNodeModel>, mixed>> $data
+	 * @phpstan-param array<array<model-property<TModelClass>, mixed>> $data
 	 */
 	protected function buildRebuildDictionary(array           &$dictionary,
 	                                          array           $data,
@@ -1097,13 +1097,13 @@ class QueryBuilder extends EloquentBuilder
 
 		/**
 		 * @var array<string, mixed> $itemData
-		 * @phpstan-var array<model-property<TNodeModel>, mixed> $itemData
+		 * @phpstan-var array<model-property<TModelClass>, mixed> $itemData
 		 */
 		foreach ($data as $itemData) {
 			if ( ! isset($itemData[$keyName])) {
 				/**
 				 * @var Model&Node $model
-				 * @phpstan-var TNodeModel $model
+				 * @phpstan-var TModelClass $model
 				 */
 				$model = $this->model->newInstance($this->model->getAttributes());
 
@@ -1116,7 +1116,7 @@ class QueryBuilder extends EloquentBuilder
 
 				/**
 				 * @var Model&Node $model
-				 * @phpstan-var TNodeModel $model
+				 * @phpstan-var TModelClass $model
 				 */
 				$model = $existing[$key];
 
@@ -1155,9 +1155,9 @@ class QueryBuilder extends EloquentBuilder
      * Get the root node.
      *
      * @param array<string> $columns
-     * @phpstan-param array<model-property<TNodeModel>|'*'> $columns
+     * @phpstan-param array<model-property<TModelClass>|'*'> $columns
      *
-     * @return TNodeModel
+     * @return TModelClass
      */
     public function root(array $columns = ['*']): Node
     {

@@ -7,13 +7,13 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @template TNodeModel of \Illuminate\Database\Eloquent\Model&\Kalnoy\Nestedset\Node
- * @phpstan-extends EloquentCollection<TNodeModel>
+ * @template TValue of \Illuminate\Database\Eloquent\Model&\Kalnoy\Nestedset\Node
+ * @phpstan-extends EloquentCollection<TValue>
  */
 class Collection extends EloquentCollection
 {
 	/**
-	 * @param iterable<TNodeModel> $items
+	 * @param iterable<TValue> $items
 	 */
 	public final function __construct($items = [])
 	{
@@ -33,7 +33,7 @@ class Collection extends EloquentCollection
 
         $groupedNodes = $this->groupBy($this->first()->getParentIdName());
 
-        /** @var TNodeModel $node */
+        /** @var TValue $node */
         foreach ($this->items as $node) {
             if ($node->getParentId() !== null) {
                 $node->setRelation('parent', null);
@@ -41,7 +41,7 @@ class Collection extends EloquentCollection
 
             $children = $groupedNodes->get($node->getKey(), [ ]);
 
-            /** @var TNodeModel $child */
+            /** @var TValue $child */
             foreach ($children as $child) {
                 $child->setRelation('parent', $node);
             }
@@ -59,7 +59,7 @@ class Collection extends EloquentCollection
      *
      * If `$root` is provided, the tree will contain only descendants of that node.
      *
-     * @param ?TNodeModel $root
+     * @param ?TValue $root
      *
      * @return static
      */
@@ -75,7 +75,7 @@ class Collection extends EloquentCollection
 
         $rootId = $this->getRootNodeId($root);
 
-        /** @var TNodeModel $node */
+        /** @var TValue $node */
         foreach ($this->items as $node) {
             if ($node->getParentId() === $rootId) {
                 $items[] = $node;
@@ -86,7 +86,7 @@ class Collection extends EloquentCollection
     }
 
     /**
-     * @param ?TNodeModel $root
+     * @param ?TValue $root
      *
      * @return int|string|null
      */
@@ -100,7 +100,7 @@ class Collection extends EloquentCollection
         // least lft value as root node id.
         $leastValue = null;
 
-        /** @var TNodeModel $node */
+        /** @var TValue $node */
         foreach ($this->items as $node) {
             if ($leastValue === null || $node->getLft() < $leastValue) {
                 $leastValue = $node->getLft();
@@ -115,7 +115,7 @@ class Collection extends EloquentCollection
      * Build a list of nodes that retain the order that they were pulled from
      * the database.
      *
-     * @param TNodeModel|null $root
+     * @param TValue|null $root
      *
      * @return static
      */
@@ -133,7 +133,7 @@ class Collection extends EloquentCollection
     /**
      * Flatten a tree into a non-recursive array.
      *
-     * @param BaseCollection<BaseCollection<TNodeModel>> $groupedNodes
+     * @param BaseCollection<BaseCollection<TValue>> $groupedNodes
      * @param int|string|null $parentId
      *
      * @return $this

@@ -3,8 +3,8 @@
 namespace Kalnoy\Nestedset;
 
 /**
- * @template TNodeModel of \Illuminate\Database\Eloquent\Model&\Kalnoy\Nestedset\NodeWithSoftDelete
- * @extends Node<TNodeModel>
+ * @template TModelClass of \Illuminate\Database\Eloquent\Model&\Kalnoy\Nestedset\NodeWithSoftDelete
+ * @extends Node<TModelClass>
  *
  * @internal This whole interface would not be necessary, if Laravel would not
  * only define a bunch of traits, but also proper interfaces for each of them.

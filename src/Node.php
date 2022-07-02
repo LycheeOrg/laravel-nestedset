@@ -19,16 +19,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * {@link \Kalnoy\Nestedset\NestedSet::isNode()} recognizes an object as a
  * node.
  *
- * @template TNodeModel of \Illuminate\Database\Eloquent\Model&\Kalnoy\Nestedset\Node
+ * @template TModelClass of \Illuminate\Database\Eloquent\Model&\Kalnoy\Nestedset\Node
  *
  * @property int $_lft
  * @property int $_rgt
  * @property int|string|null $parent_id
  * @property Node $parent
- * @phpstan-property TNodeModel $parent
- * @property Collection<TNodeModel> $children
- * @property Collection<TNodeModel> $descendants
- * @property Collection<TNodeModel> $ancestors
+ * @phpstan-property TModelClass $parent
+ * @property Collection<TModelClass> $children
+ * @property Collection<TModelClass> $descendants
+ * @property Collection<TModelClass> $ancestors
  */
 interface Node
 {
@@ -64,7 +64,7 @@ interface Node
 	/**
 	 * See {@link \Illuminate\Database\Eloquent\Model::newQuery()}.
 	 *
-	 * @return QueryBuilder<TNodeModel>
+	 * @return QueryBuilder<TModelClass>
 	 */
 	public function newQuery();
 
@@ -73,7 +73,7 @@ interface Node
 	 *
 	 * @param  string  $relation
 	 * @param  mixed  $value
-	 * @return TNodeModel&$this
+	 * @return TModelClass&$this
 	 */
 	public function setRelation($relation, $value);
 
@@ -84,7 +84,7 @@ interface Node
 	 * @param  string|null  $foreignKey
 	 * @param  string|null  $ownerKey
 	 * @param  string|null  $relation
-	 * @return BelongsTo<TNodeModel, TNodeModel>
+	 * @return BelongsTo<TModelClass, TModelClass>
 	 */
 	public function belongsTo($related, $foreignKey = null, $ownerKey = null, $relation = null);
 
@@ -94,7 +94,7 @@ interface Node
 	 * @param string $related
 	 * @param string|null $foreignKey
 	 * @param string|null  $localKey
-	 * @return HasMany<TNodeModel>
+	 * @return HasMany<TModelClass>
 	 */
 	public function hasMany($related, $foreignKey = null, $localKey = null);
 
@@ -127,7 +127,7 @@ interface Node
 	 *
 	 * @param  array  $attributes
 	 * @param  bool  $sync
-	 * @return TNodeModel&$this
+	 * @return TModelClass&$this
 	 */
 	public function setRawAttributes(array $attributes, $sync = false);
 
@@ -141,14 +141,14 @@ interface Node
 	/**
 	 * Relation to the parent.
 	 *
-	 * @return BelongsTo<TNodeModel, TNodeModel>
+	 * @return BelongsTo<TModelClass, TModelClass>
 	 */
 	public function parent(): BelongsTo;
 
 	/**
 	 * Relation to children.
 	 *
-	 * @return HasMany<TNodeModel>
+	 * @return HasMany<TModelClass>
 	 */
 	public function children(): HasMany;
 
@@ -162,14 +162,14 @@ interface Node
 	/**
 	 * Get query for siblings of the node.
 	 *
-	 * @return QueryBuilder<TNodeModel>
+	 * @return QueryBuilder<TModelClass>
 	 */
 	public function siblings(): QueryBuilder;
 
 	/**
 	 * Get the node siblings and the node itself.
 	 *
-	 * @return QueryBuilder<TNodeModel>
+	 * @return QueryBuilder<TModelClass>
 	 */
 	public function siblingsAndSelf(): QueryBuilder;
 
@@ -177,51 +177,51 @@ interface Node
 	 * Get query for the node siblings and the node itself.
 	 *
 	 * @param array<string> $columns
-	 * @phpstan-param array<model-property<TNodeModel>> $columns
+	 * @phpstan-param array<model-property<TModelClass>> $columns
 	 *
-	 * @return EloquentCollection<TNodeModel>
+	 * @return EloquentCollection<TModelClass>
 	 */
 	public function getSiblingsAndSelf(array $columns = ['*']): EloquentCollection;
 
 	/**
 	 * Get query for siblings after the node.
 	 *
-	 * @return QueryBuilder<TNodeModel>
+	 * @return QueryBuilder<TModelClass>
 	 */
 	public function nextSiblings(): QueryBuilder;
 
 	/**
 	 * Get query for siblings before the node.
 	 *
-	 * @return QueryBuilder<TNodeModel>
+	 * @return QueryBuilder<TModelClass>
 	 */
 	public function prevSiblings(): QueryBuilder;
 
 	/**
 	 * Get query for nodes after current node.
 	 *
-	 * @return QueryBuilder<TNodeModel>
+	 * @return QueryBuilder<TModelClass>
 	 */
 	public function nextNodes(): QueryBuilder;
 
 	/**
 	 * Get query for nodes before current node in reversed order.
 	 *
-	 * @return QueryBuilder<TNodeModel>
+	 * @return QueryBuilder<TModelClass>
 	 */
 	public function prevNodes(): QueryBuilder;
 
 	/**
 	 * Get query ancestors of the node.
 	 *
-	 * @return AncestorsRelation<TNodeModel>
+	 * @return AncestorsRelation<TModelClass>
 	 */
 	public function ancestors(): AncestorsRelation;
 
 	/**
 	 * Make this node a root node.
 	 *
-	 * @return TNodeModel&$this
+	 * @return TModelClass&$this
 	 */
 	public function makeRoot(): static;
 
@@ -235,7 +235,7 @@ interface Node
 	/**
 	 * Append and save a node.
 	 *
-	 * @param TNodeModel $node
+	 * @param TModelClass $node
 	 *
 	 * @return bool
 	 */
@@ -244,7 +244,7 @@ interface Node
 	/**
 	 * Prepend and save a node.
 	 *
-	 * @param TNodeModel $node
+	 * @param TModelClass $node
 	 *
 	 * @return bool
 	 */
@@ -253,59 +253,59 @@ interface Node
 	/**
 	 * Append a node to the new parent.
 	 *
-	 * @param TNodeModel $parent
+	 * @param TModelClass $parent
 	 *
-	 * @return TNodeModel&$this
+	 * @return TModelClass&$this
 	 */
 	public function appendToNode(Node $parent): self;
 
 	/**
 	 * Prepend a node to the new parent.
 	 *
-	 * @param TNodeModel $parent
+	 * @param TModelClass $parent
 	 *
-	 * @return TNodeModel&$this
+	 * @return TModelClass&$this
 	 */
 	public function prependToNode(Node $parent): self;
 
 	/**
-	 * @param TNodeModel $parent
+	 * @param TModelClass $parent
 	 * @param bool $prepend
 	 *
-	 * @return TNodeModel&$this
+	 * @return TModelClass&$this
 	 */
 	public function appendOrPrependTo(Node $parent, bool $prepend = false): self;
 
 	/**
 	 * Insert self after a node.
 	 *
-	 * @param TNodeModel $node
+	 * @param TModelClass $node
 	 *
-	 * @return TNodeModel&$this
+	 * @return TModelClass&$this
 	 */
 	public function afterNode(Node $node): self;
 
 	/**
 	 * Insert self before node.
 	 *
-	 * @param TNodeModel $node
+	 * @param TModelClass $node
 	 *
-	 * @return TNodeModel&$this
+	 * @return TModelClass&$this
 	 */
 	public function beforeNode(Node $node): self;
 
 	/**
-	 * @param TNodeModel $node
+	 * @param TModelClass $node
 	 * @param bool $after
 	 *
-	 * @return TNodeModel&$this
+	 * @return TModelClass&$this
 	 */
 	public function beforeOrAfterNode(Node $node, bool $after = false): self;
 
 	/**
 	 * Insert self after a node and save.
 	 *
-	 * @param TNodeModel $node
+	 * @param TModelClass $node
 	 *
 	 * @return bool
 	 */
@@ -314,7 +314,7 @@ interface Node
 	/**
 	 * Insert self before a node and save.
 	 *
-	 * @param TNodeModel $node
+	 * @param TModelClass $node
 	 *
 	 * @return bool
 	 */
@@ -325,7 +325,7 @@ interface Node
 	 * @param int $rgt
 	 * @param int|string|null $parentId
 	 *
-	 * @return TNodeModel&$this
+	 * @return TModelClass&$this
 	 */
 	public function rawNode(int $lft, int $rgt, int|string|null $parentId): self;
 
@@ -349,7 +349,7 @@ interface Node
 
 	/**
 	 * @param BaseBuilder $query
-	 * @return QueryBuilder<TNodeModel>
+	 * @return QueryBuilder<TModelClass>
 	 */
 	public function newEloquentBuilder($query);
 
@@ -357,7 +357,7 @@ interface Node
 	 * Get a new base query that includes deleted nodes.
 	 *
 	 * @param string|null $table
-	 * @return QueryBuilder<TNodeModel>
+	 * @return QueryBuilder<TModelClass>
 	 * @since 1.1
 	 */
 	public function newNestedSetQuery(?string $table = null): QueryBuilder;
@@ -365,22 +365,22 @@ interface Node
 	/**
 	 * @param ?string $table
 	 *
-	 * @return QueryBuilder<TNodeModel>
+	 * @return QueryBuilder<TModelClass>
 	 */
 	public function newScopedQuery(?string $table = null): QueryBuilder;
 
 	/**
-	 * @param QueryBuilder<TNodeModel>|BaseBuilder   $query
+	 * @param QueryBuilder<TModelClass>|BaseBuilder   $query
 	 * @param ?string $table
 	 *
-	 * @return QueryBuilder<TNodeModel>|BaseBuilder
-	 * @phpstan-return ($query is BaseBuilder ? BaseBuilder : QueryBuilder<TNodeModel>)
+	 * @return QueryBuilder<TModelClass>|BaseBuilder
+	 * @phpstan-return ($query is BaseBuilder ? BaseBuilder : QueryBuilder<TModelClass>)
 	 */
 	public function applyNestedSetScope(QueryBuilder|BaseBuilder $query, ?string $table = null): QueryBuilder|BaseBuilder;
 
 	/**
-	 * @param array<TNodeModel> $models
-	 * @return Collection<TNodeModel>
+	 * @param array<TModelClass> $models
+	 * @return Collection<TModelClass>
 	 */
 	public function newCollection(array $models = []): Collection;
 
@@ -405,7 +405,7 @@ interface Node
 	 *
 	 * @param int|string|null $value
 	 *
-	 * @return TNodeModel&$this
+	 * @return TModelClass&$this
 	 *
 	 * @throws \Exception If parent node doesn't exists
 	 */
@@ -471,9 +471,9 @@ interface Node
 	 * This can be either a next sibling or a next sibling of the parent node.
 	 *
 	 * @param string[] $columns
-	 * @phpstan-param array<model-property<TNodeModel>|'*'> $columns
+	 * @phpstan-param array<model-property<TModelClass>|'*'> $columns
 	 *
-	 * @return TNodeModel
+	 * @return TModelClass
 	 */
 	public function getNextNode(array $columns = ['*']): self;
 
@@ -483,72 +483,72 @@ interface Node
 	 * This can be either a prev sibling or parent node.
 	 *
 	 * @param string[] $columns
-	 * @phpstan-param array<model-property<TNodeModel>|'*'> $columns
+	 * @phpstan-param array<model-property<TModelClass>|'*'> $columns
 	 *
-	 * @return TNodeModel
+	 * @return TModelClass
 	 */
 	public function getPrevNode(array $columns = ['*']): self;
 
 	/**
 	 * @param string[] $columns
-	 * @phpstan-param array<model-property<TNodeModel>|'*'> $columns
+	 * @phpstan-param array<model-property<TModelClass>|'*'> $columns
 	 *
-	 * @return Collection<TNodeModel>
+	 * @return Collection<TModelClass>
 	 */
 	public function getAncestors(array $columns = ['*']): Collection;
 
 	/**
 	 * @param string[] $columns
-	 * @phpstan-param array<model-property<TNodeModel>|'*'> $columns
+	 * @phpstan-param array<model-property<TModelClass>|'*'> $columns
 	 *
-	 * @return Collection<TNodeModel>
+	 * @return Collection<TModelClass>
 	 */
 	public function getDescendants(array $columns = ['*']): Collection;
 
 	/**
 	 * @param string[] $columns
-	 * @phpstan-param array<model-property<TNodeModel>|'*'> $columns
+	 * @phpstan-param array<model-property<TModelClass>|'*'> $columns
 	 *
-	 * @return Collection<TNodeModel>
+	 * @return Collection<TModelClass>
 	 */
 	public function getSiblings(array $columns = ['*']): Collection;
 
 	/**
 	 * @param string[] $columns
-	 * @phpstan-param array<model-property<TNodeModel>|'*'> $columns
+	 * @phpstan-param array<model-property<TModelClass>|'*'> $columns
 	 *
-	 * @return Collection<TNodeModel>
+	 * @return Collection<TModelClass>
 	 */
 	public function getNextSiblings(array $columns = ['*']): Collection;
 
 	/**
 	 * @param string[] $columns
-	 * @phpstan-param array<model-property<TNodeModel>|'*'> $columns
+	 * @phpstan-param array<model-property<TModelClass>|'*'> $columns
 	 *
-	 * @return Collection<TNodeModel>
+	 * @return Collection<TModelClass>
 	 */
 	public function getPrevSiblings(array $columns = ['*']): Collection;
 
 	/**
 	 * @param string[] $columns
-	 * @phpstan-param array<model-property<TNodeModel>|'*'> $columns
+	 * @phpstan-param array<model-property<TModelClass>|'*'> $columns
 	 *
-	 * @return TNodeModel
+	 * @return TModelClass
 	 */
 	public function getNextSibling(array $columns = ['*']): self;
 
 	/**
 	 * @param string[] $columns
-	 * @phpstan-param array<model-property<TNodeModel>|'*'> $columns
+	 * @phpstan-param array<model-property<TModelClass>|'*'> $columns
 	 *
-	 * @return TNodeModel
+	 * @return TModelClass
 	 */
 	public function getPrevSibling(array $columns = ['*']): self;
 
 	/**
 	 * Get whether a node is a descendant of other node.
 	 *
-	 * @param TNodeModel $other
+	 * @param TModelClass $other
 	 *
 	 * @return bool
 	 */
@@ -557,7 +557,7 @@ interface Node
 	/**
 	 * Get whether a node is itself or a descendant of other node.
 	 *
-	 * @param TNodeModel $other
+	 * @param TModelClass $other
 	 *
 	 * @return bool
 	 */
@@ -566,7 +566,7 @@ interface Node
 	/**
 	 * Get whether the node is immediate children of other node.
 	 *
-	 * @param TNodeModel $other
+	 * @param TModelClass $other
 	 *
 	 * @return bool
 	 */
@@ -575,7 +575,7 @@ interface Node
 	/**
 	 * Get whether the node is a sibling of another node.
 	 *
-	 * @param TNodeModel $other
+	 * @param TModelClass $other
 	 *
 	 * @return bool
 	 */
@@ -584,7 +584,7 @@ interface Node
 	/**
 	 * Get whether the node is an ancestor of other node, including immediate parent.
 	 *
-	 * @param TNodeModel $other
+	 * @param TModelClass $other
 	 *
 	 * @return bool
 	 */
@@ -593,7 +593,7 @@ interface Node
 	/**
 	 * Get whether the node is itself or an ancestor of other node, including immediate parent.
 	 *
-	 * @param TNodeModel $other
+	 * @param TModelClass $other
 	 *
 	 * @return bool
 	 */
@@ -614,28 +614,28 @@ interface Node
 	/**
 	 * @param int $value
 	 *
-	 * @return TNodeModel&$this
+	 * @return TModelClass&$this
 	 */
 	public function setLft(int $value): self;
 
 	/**
 	 * @param int $value
 	 *
-	 * @return TNodeModel&$this
+	 * @return TModelClass&$this
 	 */
 	public function setRgt(int $value): self;
 
 	/**
 	 * @param int|string|null $value
 	 *
-	 * @return TNodeModel&$this
+	 * @return TModelClass&$this
 	 */
 	public function setParentId(int|string|null $value): self;
 
 	/**
 	 * @param array|null $except
 	 *
-	 * @return TNodeModel&$this
+	 * @return TModelClass&$this
 	 */
 	public function replicate(array $except = null): self;
 }
