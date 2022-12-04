@@ -1,44 +1,50 @@
 {
     "name": "lychee-org/nestedset",
     "description": "Nested Set Model for Laravel 5.7 and up (fork with patches for Lychee)",
-    "keywords": ["laravel", "nested sets", "nsm", "database", "hierarchy"],
+    "keywords": [
+        "laravel",
+        "nested sets",
+        "nsm",
+        "database",
+        "hierarchy"
+    ],
     "license": "MIT",
-
     "authors": [
         {
             "name": "Alexander Kalnoy",
             "email": "lazychaser@gmail.com"
         }
     ],
-
     "repositories": [
         {
             "type": "vcs",
             "url": "https://github.com/LycheeOrg/phpstan-lychee"
         }
     ],
-
     "require": {
         "php": "^8.0",
         "illuminate/support": "^9.0",
         "illuminate/database": "^9.0",
         "illuminate/events": "^9.0"
     },
-
-    "autoload": {
-        "psr-4": {
-            "Kalnoy\\Nestedset\\": "src/"
-        }
-    },
-
     "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.3",
         "php-parallel-lint/php-parallel-lint": "^1.2",
         "phpunit/phpunit": "^9.5.20",
         "lychee-org/phpstan-lychee": "dev-master",
         "nunomaduro/larastan": "^2.0",
         "orchestra/testbench": "^7.15"
     },
-
+    "autoload": {
+        "psr-4": {
+            "Kalnoy\\Nestedset\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
     "scripts": {
         "run-tests": [
             "vendor/bin/phpunit -c phpunit.xml",
@@ -47,13 +53,16 @@
         "validate-files": [
             "vendor/bin/parallel-lint --exclude vendor ."
         ],
+        "format": [
+            "rm .php_cs.cache 2> /dev/null || true",
+            "vendor/bin/php-cs-fixer fix -v --config=.php-cs-fixer.php"
+        ],
         "phpstan": [
-        	"vendor/bin/phpstan analyze"
+            "vendor/bin/phpstan analyze"
         ]
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
-
     "config": {
         "platform": {
             "php": "8.0.2"
@@ -62,12 +71,10 @@
         "sort-packages": true,
         "optimize-autoloader": true
     },
-
     "extra": {
         "branch-alias": {
             "dev-master": "v5.0.x-dev"
         },
-
         "laravel": {
             "providers": [
                 "Kalnoy\\Nestedset\\NestedSetServiceProvider"

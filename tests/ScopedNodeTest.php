@@ -5,218 +5,218 @@ use Kalnoy\Nestedset\NestedSet;
 
 class ScopedNodeTest extends PHPUnit\Framework\TestCase
 {
-    public static function setUpBeforeClass(): void
-    {
-        $schema = Capsule::schema();
+	public static function setUpBeforeClass(): void
+	{
+		$schema = Capsule::schema();
 
-        $schema->dropIfExists('menu_items');
+		$schema->dropIfExists('menu_items');
 
-        Capsule::disableQueryLog();
+		Capsule::disableQueryLog();
 
-        $schema->create('menu_items', function (\Illuminate\Database\Schema\Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedInteger('menu_id');
-            $table->string('title')->nullable();
-            NestedSet::columns($table);
-        });
+		$schema->create('menu_items', function (Illuminate\Database\Schema\Blueprint $table) {
+			$table->increments('id');
+			$table->unsignedInteger('menu_id');
+			$table->string('title')->nullable();
+			NestedSet::columns($table);
+		});
 
-        Capsule::enableQueryLog();
-    }
+		Capsule::enableQueryLog();
+	}
 
-    public function setUp(): void
-    {
-        $data = include __DIR__.'/data/menu_items.php';
+	public function setUp(): void
+	{
+		$data = include __DIR__ . '/data/menu_items.php';
 
-        Capsule::table('menu_items')->insert($data);
+		Capsule::table('menu_items')->insert($data);
 
-        Capsule::flushQueryLog();
+		Capsule::flushQueryLog();
 
-        MenuItem::resetActionsPerformed();
+		MenuItem::resetActionsPerformed();
 
-        date_default_timezone_set('America/Denver');
-    }
+		date_default_timezone_set('America/Denver');
+	}
 
-    public function tearDown(): void
-    {
-        Capsule::table('menu_items')->truncate();
-    }
+	public function tearDown(): void
+	{
+		Capsule::table('menu_items')->truncate();
+	}
 
-    public function assertTreeNotBroken($menuId)
-    {
-        $this->assertFalse(MenuItem::scoped([ 'menu_id' => $menuId ])->isBroken());
-    }
+	public function assertTreeNotBroken($menuId)
+	{
+		$this->assertFalse(MenuItem::scoped(['menu_id' => $menuId])->isBroken());
+	}
 
-    public function testNotBroken()
-    {
-        $this->assertTreeNotBroken(1);
-        $this->assertTreeNotBroken(2);
-    }
+	public function testNotBroken()
+	{
+		$this->assertTreeNotBroken(1);
+		$this->assertTreeNotBroken(2);
+	}
 
-    public function testMovingNodeNotAffectingOtherMenu()
-    {
-        $node = MenuItem::where('menu_id', '=', 1)->first();
+	public function testMovingNodeNotAffectingOtherMenu()
+	{
+		$node = MenuItem::where('menu_id', '=', 1)->first();
 
-        $node->down();
+		$node->down();
 
-        $node = MenuItem::where('menu_id', '=', 2)->first();
+		$node = MenuItem::where('menu_id', '=', 2)->first();
 
-        $this->assertEquals(1, $node->getLft());
-    }
+		$this->assertEquals(1, $node->getLft());
+	}
 
-    public function testScoped()
-    {
-        $node = MenuItem::scoped([ 'menu_id' => 2 ])->first();
+	public function testScoped()
+	{
+		$node = MenuItem::scoped(['menu_id' => 2])->first();
 
-        $this->assertEquals(3, $node->getKey());
-    }
+		$this->assertEquals(3, $node->getKey());
+	}
 
-    public function testSiblings()
-    {
-        $node = MenuItem::find(1);
+	public function testSiblings()
+	{
+		$node = MenuItem::find(1);
 
-        $result = $node->getSiblings();
+		$result = $node->getSiblings();
 
-        $this->assertEquals(1, $result->count());
-        $this->assertEquals(2, $result->first()->getKey());
+		$this->assertEquals(1, $result->count());
+		$this->assertEquals(2, $result->first()->getKey());
 
-        $result = $node->getNextSiblings();
+		$result = $node->getNextSiblings();
 
-        $this->assertEquals(2, $result->first()->getKey());
+		$this->assertEquals(2, $result->first()->getKey());
 
-        $node = MenuItem::find(2);
+		$node = MenuItem::find(2);
 
-        $result = $node->getPrevSiblings();
+		$result = $node->getPrevSiblings();
 
-        $this->assertEquals(1, $result->first()->getKey());
-    }
+		$this->assertEquals(1, $result->first()->getKey());
+	}
 
-    public function testDescendants()
-    {
-        $node = MenuItem::find(2);
+	public function testDescendants()
+	{
+		$node = MenuItem::find(2);
 
-        $result = $node->getDescendants();
+		$result = $node->getDescendants();
 
-        $this->assertEquals(1, $result->count());
-        $this->assertEquals(5, $result->first()->getKey());
+		$this->assertEquals(1, $result->count());
+		$this->assertEquals(5, $result->first()->getKey());
 
-        $node = MenuItem::scoped([ 'menu_id' => 1 ])->with('descendants')->find(2);
+		$node = MenuItem::scoped(['menu_id' => 1])->with('descendants')->find(2);
 
-        $result = $node->descendants;
+		$result = $node->descendants;
 
-        $this->assertEquals(1, $result->count());
-        $this->assertEquals(5, $result->first()->getKey());
-    }
+		$this->assertEquals(1, $result->count());
+		$this->assertEquals(5, $result->first()->getKey());
+	}
 
-    public function testAncestors()
-    {
-        $node = MenuItem::find(5);
+	public function testAncestors()
+	{
+		$node = MenuItem::find(5);
 
-        $result = $node->getAncestors();
+		$result = $node->getAncestors();
 
-        $this->assertEquals(1, $result->count());
-        $this->assertEquals(2, $result->first()->getKey());
+		$this->assertEquals(1, $result->count());
+		$this->assertEquals(2, $result->first()->getKey());
 
-        $node = MenuItem::scoped([ 'menu_id' => 1 ])->with('ancestors')->find(5);
+		$node = MenuItem::scoped(['menu_id' => 1])->with('ancestors')->find(5);
 
-        $result = $node->ancestors;
+		$result = $node->ancestors;
 
-        $this->assertEquals(1, $result->count());
-        $this->assertEquals(2, $result->first()->getKey());
-    }
+		$this->assertEquals(1, $result->count());
+		$this->assertEquals(2, $result->first()->getKey());
+	}
 
-    public function testDepth()
-    {
-        $node = MenuItem::scoped([ 'menu_id' => 1 ])->withDepth()->where('id', '=', 5)->first();
+	public function testDepth()
+	{
+		$node = MenuItem::scoped(['menu_id' => 1])->withDepth()->where('id', '=', 5)->first();
 
-        $this->assertEquals(1, $node->depth);
+		$this->assertEquals(1, $node->depth);
 
-        $node = MenuItem::find(2);
+		$node = MenuItem::find(2);
 
-        $result = $node->children()->withDepth()->get();
+		$result = $node->children()->withDepth()->get();
 
-        $this->assertEquals(1, $result->first()->depth);
-    }
+		$this->assertEquals(1, $result->first()->depth);
+	}
 
-    public function testSaveAsRoot()
-    {
-        $node = MenuItem::find(5);
+	public function testSaveAsRoot()
+	{
+		$node = MenuItem::find(5);
 
-        $node->saveAsRoot();
+		$node->saveAsRoot();
 
-        $this->assertEquals(5, $node->getLft());
-        $this->assertEquals(null, $node->parent_id);
+		$this->assertEquals(5, $node->getLft());
+		$this->assertEquals(null, $node->parent_id);
 
-        $this->assertOtherScopeNotAffected();
-    }
+		$this->assertOtherScopeNotAffected();
+	}
 
-    public function testInsertion()
-    {
-        $node = MenuItem::create([ 'menu_id' => 1, 'parent_id' => 5 ]);
+	public function testInsertion()
+	{
+		$node = MenuItem::create(['menu_id' => 1, 'parent_id' => 5]);
 
-        $this->assertEquals(5, $node->parent_id);
-        $this->assertEquals(5, $node->getLft());
+		$this->assertEquals(5, $node->parent_id);
+		$this->assertEquals(5, $node->getLft());
 
-        $this->assertOtherScopeNotAffected();
-    }
+		$this->assertOtherScopeNotAffected();
+	}
 
-    public function testInsertionToParentFromOtherScope()
-    {
-        $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+	public function testInsertionToParentFromOtherScope()
+	{
+		$this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
 
-        $node = MenuItem::create([ 'menu_id' => 2, 'parent_id' => 5 ]);
-    }
+		$node = MenuItem::create(['menu_id' => 2, 'parent_id' => 5]);
+	}
 
-    public function testDeletion()
-    {
-        $node = MenuItem::find(2)->delete();
+	public function testDeletion()
+	{
+		$node = MenuItem::find(2)->delete();
 
-        $node = MenuItem::find(1);
+		$node = MenuItem::find(1);
 
-        $this->assertEquals(2, $node->getRgt());
+		$this->assertEquals(2, $node->getRgt());
 
-        $this->assertOtherScopeNotAffected();
-    }
+		$this->assertOtherScopeNotAffected();
+	}
 
-    public function testMoving()
-    {
-        $node = MenuItem::find(1);
-        $this->assertTrue($node->down());
+	public function testMoving()
+	{
+		$node = MenuItem::find(1);
+		$this->assertTrue($node->down());
 
-        $this->assertOtherScopeNotAffected();
-    }
+		$this->assertOtherScopeNotAffected();
+	}
 
-    protected function assertOtherScopeNotAffected()
-    {
-        $node = MenuItem::find(3);
+	protected function assertOtherScopeNotAffected()
+	{
+		$node = MenuItem::find(3);
 
-        $this->assertEquals(1, $node->getLft());
-    }
+		$this->assertEquals(1, $node->getLft());
+	}
 
-    // Commented, cause there is no assertion here and otherwise the test is marked as risky in PHPUnit 7.
-    // What's the purpose of this method? @todo: remove/update?
-    /*public function testRebuildsTree()
-    {
-        $data = [];
-        MenuItem::scoped([ 'menu_id' => 2 ])->rebuildTree($data);
-    }*/
+	// Commented, cause there is no assertion here and otherwise the test is marked as risky in PHPUnit 7.
+	// What's the purpose of this method? @todo: remove/update?
+	/*public function testRebuildsTree()
+	{
+		$data = [];
+		MenuItem::scoped([ 'menu_id' => 2 ])->rebuildTree($data);
+	}*/
 
-    public function testAppendingToAnotherScopeFails()
-    {
-        $this->expectException(LogicException::class);
+	public function testAppendingToAnotherScopeFails()
+	{
+		$this->expectException(LogicException::class);
 
-        $a = MenuItem::find(1);
-        $b = MenuItem::find(3);
+		$a = MenuItem::find(1);
+		$b = MenuItem::find(3);
 
-        $a->appendToNode($b)->save();
-    }
+		$a->appendToNode($b)->save();
+	}
 
-    public function testInsertingBeforeAnotherScopeFails()
-    {
-        $this->expectException(LogicException::class);
+	public function testInsertingBeforeAnotherScopeFails()
+	{
+		$this->expectException(LogicException::class);
 
-        $a = MenuItem::find(1);
-        $b = MenuItem::find(3);
+		$a = MenuItem::find(1);
+		$b = MenuItem::find(3);
 
-        $a->insertAfterNode($b);
-    }
+		$a->insertAfterNode($b);
+	}
 }
