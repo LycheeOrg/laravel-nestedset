@@ -78,7 +78,7 @@ jobs:
       - name: Validate files
         run: composer validate-files
         
-      - name: Run PHPStan Composer dependencies
+      - name: Run PHPStan
         if: ${{ matrix.php-versions == '8.0' }}
         run: composer phpstan
       
