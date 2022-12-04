@@ -5,31 +5,27 @@ on:
   push:
     paths-ignore:
       - '**/*.md'
+      - '**/*.markdown'
   pull_request:
     paths-ignore:
       - '**/*.md'
+      - '**/*.markdown'
 
 jobs:
   tests:
-    runs-on: ${{ matrix.operating-system }}
+    runs-on: ubuntu-latest
     if: (github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository)
 
     strategy:
       fail-fast: false
       matrix:
-        operating-system: [ubuntu-20.04]
-        php-versions: ['7.4', '8.0', '8.1']
-        dependencies: ['no', 'low', 'beta']
-        exclude:
-          - operating-system: ubuntu-20.04
-            php-versions: '8.1'
-            dependencies: 'low'
+        php-versions: ['8.0', '8.1', '8.2']
 
-    name: PHP ${{ matrix.php-versions }} - ${{ matrix.dependencies }}
-
+    name: PHP ${{ matrix.php-versions }}
+    
     env:
       COMPOSER_NO_INTERACTION: 1
-      extensions: curl json libxml dom
+      extensions: curl, json, libxml, dom
       key: cache-v1 # can be any string, change to clear the extension cache.
 
     steps:
@@ -59,20 +55,13 @@ jobs:
           path: ~/.composer/cache/files
           key: dependencies-composer-${{ hashFiles('composer.json') }}
 
-      - name: Fix beta
-        if: ${{ matrix.dependencies == 'beta' }}
-        run: perl -pi -e 's/^}$/,"minimum-stability":"beta"}/' composer.json
-
       - name: Setup PHP Action
-        uses: shivammathur/setup-php@2.8.0
+        uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: ${{ env.extensions }}
           coverage: xdebug
           tools: pecl, composer
-      
-      - name: PHP Show modules
-        run: php -m
 
       - name: Get composer cache directory
         id: composer-cache
@@ -86,15 +75,13 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install Composer dependencies
-        if: ${{ matrix.dependencies != 'low' }}
-        run: composer update --no-interaction
-
-      - name: Install Composer dependencies
-        if: ${{ matrix.dependencies == 'low' }}
-        run: composer update -vvv --prefer-lowest --prefer-stable --no-interaction
+        run: composer install --no-interaction
 
       - name: Validate files
         run: composer validate-files
+
+      - name: Run PHPStan
+        run: composer phpstan
       
       - name: Run tests
         run: composer run-tests

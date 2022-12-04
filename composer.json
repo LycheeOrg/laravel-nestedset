@@ -11,11 +11,18 @@
         }
     ],
 
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/LycheeOrg/phpstan-lychee"
+        }
+    ],
+
     "require": {
-        "php": "^7.2.5|^8.0",
-        "illuminate/support": "^7.0|^8.0|^9.0",
-        "illuminate/database": "^7.0|^8.0|^9.0",
-        "illuminate/events": "^7.0|^8.0|^9.0"
+        "php": "^8.0",
+        "illuminate/support": "^9.0",
+        "illuminate/database": "^9.0",
+        "illuminate/events": "^9.0"
     },
 
     "autoload": {
@@ -26,7 +33,10 @@
 
     "require-dev": {
         "php-parallel-lint/php-parallel-lint": "^1.2",
-        "phpunit/phpunit": "^9.5.20"
+        "phpunit/phpunit": "^9.5.20",
+        "lychee-org/phpstan-lychee": "dev-master",
+        "nunomaduro/larastan": "^2.0",
+        "orchestra/testbench": "^7.15"
     },
 
     "scripts": {
@@ -36,10 +46,22 @@
         ],
         "validate-files": [
             "vendor/bin/parallel-lint --exclude vendor ."
+        ],
+        "phpstan": [
+        	"vendor/bin/phpstan analyze"
         ]
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
+
+    "config": {
+        "platform": {
+            "php": "8.0.2"
+        },
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "optimize-autoloader": true
+    },
 
     "extra": {
         "branch-alias": {
