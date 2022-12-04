@@ -360,4 +360,13 @@ interface Node
 	 * @return $this
 	 */
 	public function replicate(array $except = null);
+
+    /**
+     * Get whether the node is an ancestor of other node, including immediate parent.
+     *
+     * @param self $other
+     *
+     * @return bool
+     */
+    public function isAncestorOf(self $other): bool;
 }

@@ -25,7 +25,7 @@ class DescendantsRelation extends BaseRelation
      * @param QueryBuilder $query
      * @param Model $model
      */
-    protected function addEagerConstraint($query, $model)
+    protected function addEagerConstraint(QueryBuilder $query, Model $model): void
     {
         $query->orWhereDescendantOf($model);
     }
@@ -36,7 +36,7 @@ class DescendantsRelation extends BaseRelation
      *
      * @return mixed
      */
-    protected function matches(Model $model, $related)
+    protected function matches(Node $model, Node $related): bool
     {
         return $related->isDescendantOf($model);
     }

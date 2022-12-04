@@ -1075,7 +1075,7 @@ trait NodeTrait
      *
      * @return bool
      */
-    public function isAncestorOf(self $other)
+    public function isAncestorOf(self $other): bool
     {
         return $other->isDescendantOf($this);
     }

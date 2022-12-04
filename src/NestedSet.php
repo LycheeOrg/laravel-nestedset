@@ -75,7 +75,7 @@ class NestedSet
      *
      * @return bool
      */
-    public static function isNode($node)
+    public static function isNode($node): bool
     {
         return $node instanceof Node;
     }

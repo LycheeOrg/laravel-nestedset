@@ -49,7 +49,7 @@ abstract class BaseRelation extends Relation
      *
      * @return bool
      */
-    abstract protected function matches(Model $model, $related);
+    abstract protected function matches(Node $model, Node $related): bool;
 
     /**
      * @param QueryBuilder $query
@@ -57,7 +57,7 @@ abstract class BaseRelation extends Relation
      *
      * @return void
      */
-    abstract protected function addEagerConstraint($query, $model);
+    abstract protected function addEagerConstraint(QueryBuilder $query, Model $model): void;
 
     /**
      * @param $hash
@@ -67,7 +67,7 @@ abstract class BaseRelation extends Relation
      *
      * @return string
      */
-    abstract protected function relationExistenceCondition($hash, $table, $lft, $rgt);
+    abstract protected function relationExistenceCondition(string $hash, string $table, string $lft, string $rgt): string;
 
     /**
      * @param EloquentBuilder $query
@@ -78,7 +78,8 @@ abstract class BaseRelation extends Relation
      */
     public function getRelationExistenceQuery(EloquentBuilder $query, EloquentBuilder $parent,
                                               $columns = [ '*' ]
-    ) {
+    ): mixed
+    {
         $query = $this->getParent()->replicate()->newScopedQuery()->select($columns);
 
         $table = $query->getModel()->getTable();
@@ -106,7 +107,7 @@ abstract class BaseRelation extends Relation
      *
      * @return array
      */
-    public function initRelation(array $models, $relation)
+    public function initRelation(array $models, $relation): array
     {
         return $models;
     }
@@ -117,7 +118,7 @@ abstract class BaseRelation extends Relation
      * @param  bool $incrementJoinCount
      * @return string
      */
-    public function getRelationCountHash($incrementJoinCount = true)
+    public function getRelationCountHash($incrementJoinCount = true): string
     {
         return 'nested_set_'.($incrementJoinCount ? static::$selfJoinCount++ : static::$selfJoinCount);
     }
@@ -125,9 +126,9 @@ abstract class BaseRelation extends Relation
     /**
      * Get the results of the relationship.
      *
-     * @return mixed
+     * @return EloquentCollection|QueryBuilder[]
      */
-    public function getResults()
+    public function getResults(): EloquentCollection|array
     {
         return $this->query->get();
     }
@@ -139,7 +140,7 @@ abstract class BaseRelation extends Relation
      *
      * @return void
      */
-    public function addEagerConstraints(array $models)
+    public function addEagerConstraints(array $models): void
     {
         // The first model in the array is always the parent, so add the scope constraints based on that model.
         // @link https://github.com/laravel/framework/pull/25240
@@ -166,7 +167,7 @@ abstract class BaseRelation extends Relation
      *
      * @return array
      */
-    public function match(array $models, EloquentCollection $results, $relation)
+    public function match(array $models, EloquentCollection $results, $relation): array
     {
         foreach ($models as $model) {
             $related = $this->matchForModel($model, $results);
@@ -181,9 +182,9 @@ abstract class BaseRelation extends Relation
      * @param Model $model
      * @param EloquentCollection $results
      *
-     * @return Collection
+     * @return EloquentCollection
      */
-    protected function matchForModel(Model $model, EloquentCollection $results)
+    protected function matchForModel(Model $model, EloquentCollection $results): EloquentCollection
     {
         $result = $this->related->newCollection();
 
@@ -199,9 +200,9 @@ abstract class BaseRelation extends Relation
     /**
      * Get the plain foreign key.
      *
-     * @return mixed
+     * @return string
      */
-    public function getForeignKeyName()
+    public function getForeignKeyName(): string
     {
         // Return a stub value for relation
         // resolvers which need this function.
