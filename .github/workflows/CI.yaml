@@ -11,13 +11,12 @@ on:
 
 jobs:
   tests:
-    runs-on: ${{ matrix.operating-system }}
+    runs-on: ubuntu-latest
     if: (github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository)
 
     strategy:
       fail-fast: false
       matrix:
-        operating-system: [ubuntu-20.04]
         php-versions: ['8.0', '8.1']
 
     name: PHP ${{ matrix.php-versions }}
