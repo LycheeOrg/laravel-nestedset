@@ -20,8 +20,8 @@ jobs:
         operating-system: [ubuntu-20.04]
         php-versions: ['8.0', '8.1']
 
-    name: PHP ${{ matrix.php-versions }} - ${{ matrix.dependencies }}
-
+    name: PHP ${{ matrix.php-versions }}
+    
     env:
       COMPOSER_NO_INTERACTION: 1
       extensions: curl json libxml dom
