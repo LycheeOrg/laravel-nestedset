@@ -44,8 +44,8 @@ abstract class BaseRelation extends Relation
     }
 
     /**
-     * @param Model $model
-     * @param $related
+     * @param Node $model
+     * @param Node $related
      *
      * @return bool
      */
@@ -60,10 +60,10 @@ abstract class BaseRelation extends Relation
     abstract protected function addEagerConstraint(QueryBuilder $query, Model $model): void;
 
     /**
-     * @param $hash
-     * @param $table
-     * @param $lft
-     * @param $rgt
+     * @param string $hash
+     * @param string $table
+     * @param string $lft
+     * @param string $rgt
      *
      * @return string
      */
