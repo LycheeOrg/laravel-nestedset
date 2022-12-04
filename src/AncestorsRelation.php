@@ -20,8 +20,8 @@ class AncestorsRelation extends BaseRelation
     }
 
     /**
-     * @param Model $model
-     * @param Model $related
+     * @param Node $model
+     * @param Node $related
      *
      * @return bool
      */

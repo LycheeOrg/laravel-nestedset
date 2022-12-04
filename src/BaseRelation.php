@@ -17,7 +17,7 @@ abstract class BaseRelation extends Relation
     protected $query;
 
     /**
-     * @var NodeTrait|Model
+     * @var Model
      */
     protected $parent;
 
