@@ -22,7 +22,7 @@ jobs:
         php-versions: ['8.0', '8.1', '8.2']
 
     name: PHP ${{ matrix.php-versions }}
-    
+
     env:
       COMPOSER_NO_INTERACTION: 1
       extensions: curl, json, libxml, dom
@@ -80,8 +80,8 @@ jobs:
       - name: Validate files
         run: composer validate-files
 
-      - name: Run PHPStan
-        run: composer phpstan
-      
       - name: Run tests
         run: composer run-tests
+
+      - name: Run PHPStan
+        run: composer phpstan
