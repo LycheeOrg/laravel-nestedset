@@ -5,9 +5,11 @@ on:
   push:
     paths-ignore:
       - '**/*.md'
+      - '**/*.markdown'
   pull_request:
     paths-ignore:
       - '**/*.md'
+      - '**/*.markdown'
 
 jobs:
   tests:
@@ -77,9 +79,8 @@ jobs:
 
       - name: Validate files
         run: composer validate-files
-        
+
       - name: Run PHPStan
-        if: ${{ matrix.php-versions == '8.0' }}
         run: composer phpstan
       
       - name: Run tests
