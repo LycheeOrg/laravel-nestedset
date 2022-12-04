@@ -18,12 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         operating-system: [ubuntu-20.04]
-        php-versions: ['7.4', '8.0', '8.1']
-        dependencies: ['no', 'low', 'beta']
-        exclude:
-          - operating-system: ubuntu-20.04
-            php-versions: '8.1'
-            dependencies: 'low'
+        php-versions: ['8.0', '8.1']
 
     name: PHP ${{ matrix.php-versions }} - ${{ matrix.dependencies }}
 
@@ -59,10 +54,6 @@ jobs:
           path: ~/.composer/cache/files
           key: dependencies-composer-${{ hashFiles('composer.json') }}
 
-      - name: Fix beta
-        if: ${{ matrix.dependencies == 'beta' }}
-        run: perl -pi -e 's/^}$/,"minimum-stability":"beta"}/' composer.json
-
       - name: Setup PHP Action
         uses: shivammathur/setup-php@2.8.0
         with:
@@ -70,9 +61,6 @@ jobs:
           extensions: ${{ env.extensions }}
           coverage: xdebug
           tools: pecl, composer
-      
-      - name: PHP Show modules
-        run: php -m
 
       - name: Get composer cache directory
         id: composer-cache
@@ -86,15 +74,14 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install Composer dependencies
-        if: ${{ matrix.dependencies != 'low' }}
-        run: composer update --no-interaction
-
-      - name: Install Composer dependencies
-        if: ${{ matrix.dependencies == 'low' }}
-        run: composer update -vvv --prefer-lowest --prefer-stable --no-interaction
+        run: composer install --no-interaction
 
       - name: Validate files
         run: composer validate-files
+        
+      - name: Run PHPStan Composer dependencies
+        if: ${{ matrix.php-versions == '8.0' }}
+        run: composer phpstan
       
       - name: Run tests
         run: composer run-tests
