@@ -5,6 +5,7 @@ namespace Kalnoy\Nestedset;
 use Illuminate\Database\Eloquent\Collection as BaseCollection;
 use Illuminate\Database\Eloquent\Model;
 
+/** @phpstan-consistent-constructor */
 class Collection extends BaseCollection
 {
     /**
