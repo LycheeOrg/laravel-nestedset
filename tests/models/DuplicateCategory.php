@@ -2,11 +2,11 @@
 
 class DuplicateCategory extends \Illuminate\Database\Eloquent\Model implements \Kalnoy\Nestedset\Node
 {
-    use \Kalnoy\Nestedset\NodeTrait;
+	use \Kalnoy\Nestedset\NodeTrait;
 
-    protected $table = 'categories';
+	protected $table = 'categories';
 
-    protected $fillable = [ 'name' ];
+	protected $fillable = ['name'];
 
-    public $timestamps = false;
+	public $timestamps = false;
 }
