@@ -34,7 +34,9 @@
     "require-dev": {
         "php-parallel-lint/php-parallel-lint": "^1.2",
         "phpunit/phpunit": "^9.5.20",
-        "lychee-org/phpstan-lychee": "dev-master"
+        "lychee-org/phpstan-lychee": "dev-master",
+        "nunomaduro/larastan": "^2.0",
+		"orchestra/testbench": "^7.15"
     },
 
     "scripts": {
@@ -46,7 +48,7 @@
             "vendor/bin/parallel-lint --exclude vendor ."
         ],
         "phpstan": [
-        	"vendor/bin/phpstan analyze src/"
+        	"vendor/bin/phpstan analyze"
         ]
     },
     "minimum-stability": "dev",
