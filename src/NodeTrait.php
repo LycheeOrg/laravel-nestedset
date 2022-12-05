@@ -841,7 +841,7 @@ trait NodeTrait
 	 *
 	 * @param int $value
 	 *
-	 * @throws Exception If parent node doesn't exists
+	 * @throws \Exception If parent node doesn't exists
 	 */
 	public function setParentIdAttribute($value)
 	{
@@ -1202,7 +1202,7 @@ trait NodeTrait
 	protected function assertNotDescendant(self $node)
 	{
 		if ($node == $this || $node->isDescendantOf($this)) {
-			throw new LogicException('Node must not be a descendant.');
+			throw new \LogicException('Node must not be a descendant.');
 		}
 
 		return $this;
@@ -1216,7 +1216,7 @@ trait NodeTrait
 	protected function assertNodeExists(self $node)
 	{
 		if (!$node->getLft() || !$node->getRgt()) {
-			throw new LogicException('Node must exists.');
+			throw new \LogicException('Node must exists.');
 		}
 
 		return $this;
@@ -1233,7 +1233,7 @@ trait NodeTrait
 
 		foreach ($scoped as $attr) {
 			if ($this->getAttribute($attr) != $node->getAttribute($attr)) {
-				throw new LogicException('Nodes must be in the same scope');
+				throw new \LogicException('Nodes must be in the same scope');
 			}
 		}
 	}

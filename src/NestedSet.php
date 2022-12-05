@@ -75,18 +75,6 @@ class NestedSet
 	 *
 	 * @return bool
 	 */
-	public static function isNode($node): bool
-	{
-		return $node instanceof Node;
-	}
-
-	/**
-	 * Replaces instanceof calls for this trait.
-	 *
-	 * @param mixed $node
-	 *
-	 * @return bool
-	 */
 	public static function isNode($node)
 	{
 		return $node instanceof Node;
