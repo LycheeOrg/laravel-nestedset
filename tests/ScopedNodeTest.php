@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Kalnoy\Nestedset\NestedSet;
+use Tests\Models\MenuItem;
 
 class ScopedNodeTest extends PHPUnit\Framework\TestCase
 {

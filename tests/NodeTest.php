@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Kalnoy\Nestedset\NestedSet;
+use Tests\Models\Category;
 
 class NodeTest extends PHPUnit\Framework\TestCase
 {
