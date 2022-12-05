@@ -7,5 +7,3 @@ $capsule->addConnection([ 'driver' => 'sqlite', 'database' => ':memory:', 'prefi
 $capsule->setEventDispatcher(new \Illuminate\Events\Dispatcher);
 $capsule->bootEloquent();
 $capsule->setAsGlobal();
-
-include __DIR__.'/tests/models/Category.php';

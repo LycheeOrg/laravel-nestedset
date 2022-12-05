@@ -1,6 +1,6 @@
 {
     "name": "lychee-org/nestedset",
-    "description": "Nested Set Model for Laravel 5.7 and up (fork with patches for Lychee)",
+    "description": "Nested Set Model for Laravel 9 (fork with patches for Lychee)",
     "keywords": [
         "laravel",
         "nested sets",
