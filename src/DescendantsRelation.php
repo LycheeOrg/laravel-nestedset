@@ -49,7 +49,7 @@ class DescendantsRelation extends BaseRelation
 	 *
 	 * @return string
 	 */
-	protected function relationExistenceCondition($hash, $table, $lft, $rgt)
+	protected function relationExistenceCondition($hash, $table, $lft, $rgt): string
 	{
 		return "{$hash}.{$lft} between {$table}.{$lft} + 1 and {$table}.{$rgt}";
 	}
