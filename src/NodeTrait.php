@@ -1035,13 +1035,13 @@ trait NodeTrait
 	/**
 	 * Get whether a node is a descendant of other node.
 	 *
-	 * @param self $other
+	 * @param Node $other
 	 *
 	 * @return bool
 	 */
-	public function isDescendantOf(self $other)
+	public function isDescendantOf(Node $other): bool
 	{
-		return $this->getLft() > $other->getLft() &&
+		return $other instanceof self && $this->getLft() > $other->getLft() &&
 			$this->getLft() < $other->getRgt();
 	}
 
@@ -1085,11 +1085,11 @@ trait NodeTrait
 	/**
 	 * Get whether the node is an ancestor of other node, including immediate parent.
 	 *
-	 * @param self $other
+	 * @param Node $other
 	 *
 	 * @return bool
 	 */
-	public function isAncestorOf(self $other): bool
+	public function isAncestorOf(Node $other): bool
 	{
 		return $other->isDescendantOf($this);
 	}

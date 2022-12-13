@@ -364,9 +364,9 @@ interface Node
 	/**
 	 * Get whether the node is an ancestor of other node, including immediate parent.
 	 *
-	 * @param self $other
+	 * @param Node $other
 	 *
 	 * @return bool
 	 */
-	public function isAncestorOf(self $other): bool;
+	public function isAncestorOf(Node $other): bool;
 }
