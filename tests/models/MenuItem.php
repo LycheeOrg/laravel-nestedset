@@ -1,8 +1,12 @@
 <?php
 
-class MenuItem extends \Illuminate\Database\Eloquent\Model implements \Kalnoy\Nestedset\Node
+use Illuminate\Database\Eloquent\Model;
+use Kalnoy\Nestedset\Node;
+use Kalnoy\Nestedset\NodeTrait;
+
+class MenuItem extends Model implements Node
 {
-	use \Kalnoy\Nestedset\NodeTrait;
+	use NodeTrait;
 
 	public $timestamps = false;
 

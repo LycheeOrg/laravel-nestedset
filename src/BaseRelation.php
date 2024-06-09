@@ -8,6 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder;
 
+/**
+ * @template Tmodelkey
+ * @template Tmodel of Model&Node<Tmodelkey,Model>
+ *
+ * @extends Relation<Tmodel>
+ *
+ * @property Tmodel $related
+ * @property Tmodel $parent
+ *
+ * @method Tmodel getParent()
+ */
 abstract class BaseRelation extends Relation
 {
 	/**
@@ -16,7 +27,7 @@ abstract class BaseRelation extends Relation
 	protected $query;
 
 	/**
-	 * @var NodeTrait|Model
+	 * @var Node&Model
 	 */
 	protected $parent;
 
@@ -43,12 +54,12 @@ abstract class BaseRelation extends Relation
 	}
 
 	/**
-	 * @param Model $model
-	 * @param $related
+	 * @param Model&Node $model
+	 * @param Node       $related
 	 *
 	 * @return bool
 	 */
-	abstract protected function matches(Model $model, $related);
+	abstract protected function matches(Model&Node $model, Node $related): bool;
 
 	/**
 	 * @param QueryBuilder $query
@@ -59,24 +70,24 @@ abstract class BaseRelation extends Relation
 	abstract protected function addEagerConstraint($query, $model);
 
 	/**
-	 * @param $hash
-	 * @param $table
-	 * @param $lft
-	 * @param $rgt
+	 * @param string $hash
+	 * @param string $table
+	 * @param string $lft
+	 * @param string $rgt
 	 *
 	 * @return string
 	 */
-	abstract protected function relationExistenceCondition($hash, $table, $lft, $rgt);
+	abstract protected function relationExistenceCondition(string $hash, string $table, string $lft, string $rgt): string;
 
 	/**
 	 * @param EloquentBuilder $query
 	 * @param EloquentBuilder $parent
-	 * @param array           $columns
+	 * @param mixed           $columns
 	 *
-	 * @return mixed
+	 * @return EloquentBuilder
 	 */
 	public function getRelationExistenceQuery(EloquentBuilder $query, EloquentBuilder $parent,
-											  $columns = ['*']
+		$columns = ['*']
 	) {
 		$query = $this->getParent()->replicate()->newScopedQuery()->select($columns);
 
@@ -100,10 +111,10 @@ abstract class BaseRelation extends Relation
 	/**
 	 * Initialize the relation on a set of models.
 	 *
-	 * @param array  $models
-	 * @param string $relation
+	 * @param array<int,Tmodel> $models
+	 * @param string            $relation
 	 *
-	 * @return array
+	 * @return array<int,Tmodel>
 	 */
 	public function initRelation(array $models, $relation)
 	{
@@ -135,7 +146,7 @@ abstract class BaseRelation extends Relation
 	/**
 	 * Set the constraints for an eager load of the relation.
 	 *
-	 * @param array $models
+	 * @param array<int,Tmodel> $models
 	 *
 	 * @return void
 	 */
@@ -160,11 +171,11 @@ abstract class BaseRelation extends Relation
 	/**
 	 * Match the eagerly loaded results to their parents.
 	 *
-	 * @param array              $models
+	 * @param array<int,Tmodel>  $models
 	 * @param EloquentCollection $results
 	 * @param string             $relation
 	 *
-	 * @return array
+	 * @return array<int,Tmodel>
 	 */
 	public function match(array $models, EloquentCollection $results, $relation)
 	{
@@ -178,15 +189,17 @@ abstract class BaseRelation extends Relation
 	}
 
 	/**
-	 * @param Model              $model
+	 * @param Tmodel             $model
 	 * @param EloquentCollection $results
 	 *
 	 * @return Collection
 	 */
 	protected function matchForModel(Model $model, EloquentCollection $results)
 	{
+		/** @var Collection<int,Tmodel> */
 		$result = $this->related->newCollection();
 
+		/** @var Tmodel $related */
 		foreach ($results as $related) {
 			if ($this->matches($model, $related)) {
 				$result->push($related);

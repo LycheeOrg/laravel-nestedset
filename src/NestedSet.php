@@ -36,7 +36,7 @@ class NestedSet
 	 *
 	 * @param \Illuminate\Database\Schema\Blueprint $table
 	 */
-	public static function columns(Blueprint $table)
+	public static function columns(Blueprint $table): void
 	{
 		$table->unsignedInteger(self::LFT)->default(0);
 		$table->unsignedInteger(self::RGT)->default(0);
@@ -50,7 +50,7 @@ class NestedSet
 	 *
 	 * @param \Illuminate\Database\Schema\Blueprint $table
 	 */
-	public static function dropColumns(Blueprint $table)
+	public static function dropColumns(Blueprint $table): void
 	{
 		$columns = static::getDefaultColumns();
 
@@ -61,9 +61,9 @@ class NestedSet
 	/**
 	 * Get a list of default columns.
 	 *
-	 * @return array
+	 * @return string[]
 	 */
-	public static function getDefaultColumns()
+	public static function getDefaultColumns(): array
 	{
 		return [static::LFT, static::RGT, static::PARENT_ID];
 	}
@@ -75,7 +75,7 @@ class NestedSet
 	 *
 	 * @return bool
 	 */
-	public static function isNode($node)
+	public static function isNode(mixed $node): bool
 	{
 		return $node instanceof Node;
 	}

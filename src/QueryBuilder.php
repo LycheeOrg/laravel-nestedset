@@ -3,6 +3,7 @@
 namespace Kalnoy\Nestedset;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Query\Builder as BaseQueryBuilder;
@@ -10,10 +11,18 @@ use Illuminate\Database\Query\Builder as Query;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Arr;
 
+/**
+ * @template Tmodelkey
+ * @template Tmodel of \Illuminate\Database\Eloquent\Model
+ *
+ * @phpstan-type NodeModel Node<Tmodelkey,Tmodel>&Tmodel
+ *
+ * @extends Builder<NodeModel>
+ */
 class QueryBuilder extends Builder
 {
 	/**
-	 * @var NodeTrait|Model
+	 * @var NodeModel
 	 */
 	protected $model;
 
@@ -22,12 +31,12 @@ class QueryBuilder extends Builder
 	 *
 	 * @since 2.0
 	 *
-	 * @param mixed $id
-	 * @param bool  $required
+	 * @param Tmodelkey $id
+	 * @param bool      $required
 	 *
-	 * @return array
+	 * @return array<int,int>
 	 */
-	public function getNodeData($id, $required = false)
+	public function getNodeData(mixed $id, $required = false)
 	{
 		$query = $this->toBase();
 
@@ -36,7 +45,7 @@ class QueryBuilder extends Builder
 		$data = $query->first([$this->model->getLftName(),
 			$this->model->getRgtName(), ]);
 
-		if (!$data && $required) {
+		if ($data === null && $required) {
 			throw new ModelNotFoundException();
 		}
 
@@ -48,12 +57,12 @@ class QueryBuilder extends Builder
 	 *
 	 * @since 2.0
 	 *
-	 * @param mixed $id
-	 * @param bool  $required
+	 * @param Tmodelkey $id
+	 * @param bool      $required
 	 *
-	 * @return array
+	 * @return array<int,int>
 	 */
-	public function getPlainNodeData($id, $required = false)
+	public function getPlainNodeData(mixed $id, $required = false)
 	{
 		return array_values($this->getNodeData($id, $required));
 	}
@@ -61,9 +70,9 @@ class QueryBuilder extends Builder
 	/**
 	 * Scope limits query to select just root node.
 	 *
-	 * @return $this
+	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
-	public function whereIsRoot()
+	public function whereIsRoot(): QueryBuilder
 	{
 		$this->query->whereNull($this->model->getParentIdName());
 
@@ -75,13 +84,13 @@ class QueryBuilder extends Builder
 	 *
 	 * @since 2.0
 	 *
-	 * @param mixed  $id
-	 * @param bool   $andSelf
-	 * @param string $boolean
+	 * @param Tmodelkey $id
+	 * @param bool      $andSelf
+	 * @param string    $boolean
 	 *
-	 * @return $this
+	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
-	public function whereAncestorOf($id, $andSelf = false, $boolean = 'and')
+	public function whereAncestorOf(mixed $id, bool $andSelf = false, string $boolean = 'and')
 	{
 		$keyName = $this->model->getTable() . '.' . $this->model->getKeyName();
 
@@ -120,22 +129,22 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @param $id
-	 * @param bool $andSelf
+	 * @param Tmodelkey $id
+	 * @param bool      $andSelf
 	 *
-	 * @return $this
+	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
-	public function orWhereAncestorOf($id, $andSelf = false)
+	public function orWhereAncestorOf(mixed $id, $andSelf = false): QueryBuilder
 	{
 		return $this->whereAncestorOf($id, $andSelf, 'or');
 	}
 
 	/**
-	 * @param $id
+	 * @param Tmodelkey $id
 	 *
-	 * @return QueryBuilder
+	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
-	public function whereAncestorOrSelf($id)
+	public function whereAncestorOrSelf(mixed $id): QueryBuilder
 	{
 		return $this->whereAncestorOf($id, true);
 	}
@@ -145,23 +154,23 @@ class QueryBuilder extends Builder
 	 *
 	 * @since 2.0
 	 *
-	 * @param mixed $id
-	 * @param array $columns
+	 * @param Tmodelkey $id
+	 * @param string[]  $columns
 	 *
-	 * @return \Kalnoy\Nestedset\Collection
+	 * @return EloquentCollection<int,NodeModel>
 	 */
-	public function ancestorsOf($id, array $columns = ['*'])
+	public function ancestorsOf(mixed $id, array $columns = ['*'])
 	{
 		return $this->whereAncestorOf($id)->get($columns);
 	}
 
 	/**
-	 * @param $id
-	 * @param array $columns
+	 * @param Tmodelkey $id
+	 * @param string[]  $columns
 	 *
-	 * @return \Kalnoy\Nestedset\Collection
+	 * @return EloquentCollection<int,NodeModel>
 	 */
-	public function ancestorsAndSelf($id, array $columns = ['*'])
+	public function ancestorsAndSelf(mixed $id, array $columns = ['*'])
 	{
 		return $this->whereAncestorOf($id, true)->get($columns);
 	}
@@ -171,13 +180,13 @@ class QueryBuilder extends Builder
 	 *
 	 * @since 2.0
 	 *
-	 * @param array  $values
+	 * @param int[]  $values
 	 * @param string $boolean
 	 * @param bool   $not
 	 *
-	 * @return $this
+	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
-	public function whereNodeBetween($values, $boolean = 'and', $not = false)
+	public function whereNodeBetween(array $values, $boolean = 'and', $not = false)
 	{
 		$this->query->whereBetween($this->model->getTable() . '.' . $this->model->getLftName(), $values, $boolean, $not);
 
@@ -189,11 +198,11 @@ class QueryBuilder extends Builder
 	 *
 	 * @since 2.0
 	 *
-	 * @param array $values
+	 * @param int[] $values
 	 *
-	 * @return $this
+	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
-	public function orWhereNodeBetween($values)
+	public function orWhereNodeBetween(array $values)
 	{
 		return $this->whereNodeBetween($values, 'or');
 	}
@@ -203,15 +212,15 @@ class QueryBuilder extends Builder
 	 *
 	 * @since 2.0
 	 *
-	 * @param mixed  $id
-	 * @param string $boolean
-	 * @param bool   $not
-	 * @param bool   $andSelf
+	 * @param Tmodelkey $id
+	 * @param string    $boolean
+	 * @param bool      $not
+	 * @param bool      $andSelf
 	 *
-	 * @return $this
+	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
-	public function whereDescendantOf($id, $boolean = 'and', $not = false,
-									  $andSelf = false
+	public function whereDescendantOf(mixed $id, $boolean = 'and', $not = false,
+		$andSelf = false
 	) {
 		if (NestedSet::isNode($id)) {
 			$data = $id->getBounds();
@@ -229,43 +238,43 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @param mixed $id
+	 * @param Tmodelkey $id
 	 *
 	 * @return QueryBuilder
 	 */
-	public function whereNotDescendantOf($id)
+	public function whereNotDescendantOf(mixed $id)
 	{
 		return $this->whereDescendantOf($id, 'and', true);
 	}
 
 	/**
-	 * @param mixed $id
+	 * @param Tmodelkey $id
 	 *
 	 * @return QueryBuilder
 	 */
-	public function orWhereDescendantOf($id)
+	public function orWhereDescendantOf(mixed $id)
 	{
 		return $this->whereDescendantOf($id, 'or');
 	}
 
 	/**
-	 * @param mixed $id
+	 * @param Tmodelkey $id
 	 *
 	 * @return QueryBuilder
 	 */
-	public function orWhereNotDescendantOf($id)
+	public function orWhereNotDescendantOf(mixed $id)
 	{
 		return $this->whereDescendantOf($id, 'or', true);
 	}
 
 	/**
-	 * @param $id
-	 * @param string $boolean
-	 * @param bool   $not
+	 * @param Tmodelkey $id
+	 * @param string    $boolean
+	 * @param bool      $not
 	 *
-	 * @return $this
+	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
-	public function whereDescendantOrSelf($id, $boolean = 'and', $not = false)
+	public function whereDescendantOrSelf(mixed $id, string $boolean = 'and', bool $not = false)
 	{
 		return $this->whereDescendantOf($id, $boolean, $not, true);
 	}
@@ -275,13 +284,13 @@ class QueryBuilder extends Builder
 	 *
 	 * @since 2.0
 	 *
-	 * @param mixed $id
-	 * @param array $columns
-	 * @param bool  $andSelf
+	 * @param Tmodelkey $id
+	 * @param string[]  $columns
+	 * @param bool      $andSelf
 	 *
-	 * @return Collection
+	 * @return EloquentCollection<int,NodeModel>
 	 */
-	public function descendantsOf($id, array $columns = ['*'], $andSelf = false)
+	public function descendantsOf(mixed $id, array $columns = ['*'], bool $andSelf = false)
 	{
 		try {
 			return $this->whereDescendantOf($id, 'and', false, $andSelf)->get($columns);
@@ -291,10 +300,10 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @param $id
-	 * @param array $columns
+	 * @param Tmodelkey $id
+	 * @param string[]  $columns
 	 *
-	 * @return Collection
+	 * @return EloquentCollection<int,NodeModel>
 	 */
 	public function descendantsAndSelf($id, array $columns = ['*'])
 	{
@@ -302,13 +311,13 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @param $id
-	 * @param $operator
-	 * @param $boolean
+	 * @param Tmodelkey $id
+	 * @param string    $operator
+	 * @param string    $boolean
 	 *
-	 * @return $this
+	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
-	protected function whereIsBeforeOrAfter($id, $operator, $boolean)
+	protected function whereIsBeforeOrAfter(mixed $id, string $operator, string $boolean)
 	{
 		if (NestedSet::isNode($id)) {
 			$value = '?';
@@ -339,10 +348,10 @@ class QueryBuilder extends Builder
 	 *
 	 * @since 2.0
 	 *
-	 * @param mixed  $id
-	 * @param string $boolean
+	 * @param Tmodelkey $id
+	 * @param string    $boolean
 	 *
-	 * @return $this
+	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
 	public function whereIsAfter($id, $boolean = 'and')
 	{
@@ -354,10 +363,10 @@ class QueryBuilder extends Builder
 	 *
 	 * @since 2.0
 	 *
-	 * @param mixed  $id
-	 * @param string $boolean
+	 * @param Tmodelkey $id
+	 * @param string    $boolean
 	 *
-	 * @return $this
+	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
 	public function whereIsBefore($id, $boolean = 'and')
 	{
@@ -365,19 +374,19 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @return $this
+	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
 	public function whereIsLeaf()
 	{
 		list($lft, $rgt) = $this->wrappedColumns();
 
-		return $this->whereRaw("$lft = $rgt - 1");
+		return $this->whereRaw("$lft = $rgt - 1"); /** @phpstan-ignore-line */
 	}
 
 	/**
-	 * @param array $columns
+	 * @param string[] $columns
 	 *
-	 * @return Collection
+	 * @return EloquentCollection<int,NodeModel>
 	 */
 	public function leaves(array $columns = ['*'])
 	{
@@ -389,7 +398,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @param string $as
 	 *
-	 * @return $this
+	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
 	public function withDepth($as = 'depth')
 	{
@@ -421,9 +430,9 @@ class QueryBuilder extends Builder
 	 *
 	 * @since 2.0
 	 *
-	 * @return array
+	 * @return string[]
 	 */
-	protected function wrappedColumns()
+	protected function wrappedColumns(): array
 	{
 		$grammar = $this->query->getGrammar();
 
@@ -440,7 +449,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @return string
 	 */
-	protected function wrappedTable()
+	protected function wrappedTable(): string
 	{
 		return $this->query->getGrammar()->wrapTable($this->getQuery()->from);
 	}
@@ -452,7 +461,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @return string
 	 */
-	protected function wrappedKey()
+	protected function wrappedKey(): string
 	{
 		return $this->query->getGrammar()->wrap($this->model->getKeyName());
 	}
@@ -460,9 +469,9 @@ class QueryBuilder extends Builder
 	/**
 	 * Exclude root node from the result.
 	 *
-	 * @return $this
+	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
-	public function withoutRoot()
+	public function withoutRoot(): QueryBuilder
 	{
 		$this->query->whereNotNull($this->model->getParentIdName());
 
@@ -475,9 +484,9 @@ class QueryBuilder extends Builder
 	 * @since 2.0
 	 * @deprecated since v4.1
 	 *
-	 * @return $this
+	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
-	public function hasParent()
+	public function hasParent(): QueryBuilder
 	{
 		$this->query->whereNotNull($this->model->getParentIdName());
 
@@ -490,9 +499,9 @@ class QueryBuilder extends Builder
 	 * @since 2.0
 	 * @deprecated since v4.1
 	 *
-	 * @return $this
+	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
-	public function hasChildren()
+	public function hasChildren(): QueryBuilder
 	{
 		list($lft, $rgt) = $this->wrappedColumns();
 
@@ -506,11 +515,11 @@ class QueryBuilder extends Builder
 	 *
 	 * @param string $dir
 	 *
-	 * @return $this
+	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
-	public function defaultOrder($dir = 'asc')
+	public function defaultOrder($dir = 'asc'): QueryBuilder
 	{
-		$this->query->orders = null;
+		$this->query->orders = [];
 
 		$this->query->orderBy($this->model->getLftName(), $dir);
 
@@ -520,9 +529,9 @@ class QueryBuilder extends Builder
 	/**
 	 * Order by reversed node position.
 	 *
-	 * @return $this
+	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
-	public function reversed()
+	public function reversed(): QueryBuilder
 	{
 		return $this->defaultOrder('desc');
 	}
@@ -604,11 +613,11 @@ class QueryBuilder extends Builder
 	 *
 	 * @since 2.0
 	 *
-	 * @param array $params
+	 * @param array{height:int,cut?:int,distance?:int,lft?:int,rgt?:int,to?:int,from?:int} $params
 	 *
-	 * @return array
+	 * @return array<string,Expression>
 	 */
-	protected function patch(array $params)
+	protected function patch(array $params): array
 	{
 		$grammar = $this->query->getGrammar();
 
@@ -626,16 +635,15 @@ class QueryBuilder extends Builder
 	 *
 	 * @since 2.0
 	 *
-	 * @param string $col
-	 * @param array  $params
+	 * @param string                                                                       $col
+	 * @param array{height:int,cut?:int,distance?:int,lft?:int,rgt?:int,to?:int,from?:int} $params
 	 *
-	 * @return string
+	 * @return Expression
 	 */
-	protected function columnPatch($col, array $params)
+	protected function columnPatch(string $col, array $params): Expression
 	{
 		extract($params);
 
-		/** @var int $height */
 		if ($height > 0) {
 			$height = '+' . $height;
 		}
@@ -644,11 +652,10 @@ class QueryBuilder extends Builder
 			return new Expression("case when {$col} >= {$cut} then {$col}{$height} else {$col} end");
 		}
 
-		/** @var int $distance */
-		/** @var int $lft */
-		/** @var int $rgt */
-		/** @var int $from */
-		/** @var int $to */
+		if (!isset($distance) || !isset($lft) || !isset($rgt) || !isset($to) || !isset($from)) {
+			throw new NestedSetException('Incorrect Parameters');
+		}
+
 		if ($distance > 0) {
 			$distance = '+' . $distance;
 		}
@@ -665,9 +672,9 @@ class QueryBuilder extends Builder
 	 *
 	 * @since 2.0
 	 *
-	 * @return array
+	 * @return array{oddness:int,duplicates:int,wrong_parent:int,missing_parent:int}
 	 */
-	public function countErrors()
+	public function countErrors(): array
 	{
 		$checks = [];
 
@@ -691,6 +698,7 @@ class QueryBuilder extends Builder
 			$query->selectSub($inner, $key);
 		}
 
+		/** @var array{oddness:int,duplicates:int,wrong_parent:int,missing_parent:int} */
 		return (array) $query->first();
 	}
 
@@ -727,7 +735,7 @@ class QueryBuilder extends Builder
 		$query = $this->model
 			->newNestedSetQuery($firstAlias)
 			->toBase()
-			->from($this->query->raw("{$table} as {$waFirst}, {$table} {$waSecond}"))
+			->from($this->query->raw("{$table} as {$waFirst}, {$table} {$waSecond}")) /** @phpstan-ignore-line */
 			->whereRaw("{$waFirst}.{$keyName} < {$waSecond}.{$keyName}")
 			->whereNested(function (BaseQueryBuilder $inner) use ($waFirst, $waSecond) {
 				list($lft, $rgt) = $this->wrappedColumns();
@@ -764,7 +772,7 @@ class QueryBuilder extends Builder
 		$query = $this->model
 			->newNestedSetQuery('c')
 			->toBase()
-			->from($this->query->raw("{$table} as {$waChild}, {$table} as {$waParent}, $table as {$waInterm}"))
+			->from($this->query->raw("{$table} as {$waChild}, {$table} as {$waParent}, $table as {$waInterm}")) /** @phpstan-ignore-line */
 			->whereRaw("{$waChild}.{$parentIdName}={$waParent}.{$keyName}")
 			->whereRaw("{$waInterm}.{$keyName} <> {$waParent}.{$keyName}")
 			->whereRaw("{$waInterm}.{$keyName} <> {$waChild}.{$keyName}")
@@ -783,7 +791,7 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @return $this
+	 * @return BaseQueryBuilder
 	 */
 	protected function getMissingParentQuery()
 	{
@@ -803,7 +811,7 @@ class QueryBuilder extends Builder
 					->newNestedSetQuery()
 					->toBase()
 					->selectRaw('1')
-					->from($this->query->raw("{$table} as {$wrappedAlias}"))
+					->from($this->query->raw("{$table} as {$wrappedAlias}")) /** @phpstan-ignore-line */
 					->whereRaw("{$table}.{$parentIdName} = {$wrappedAlias}.{$keyName}")
 					->limit(1);
 
@@ -843,7 +851,7 @@ class QueryBuilder extends Builder
 	 *
 	 * Nodes with invalid parent are saved as roots.
 	 *
-	 * @param NodeTrait|Model|null $root
+	 * @param Tmodelkey|null $root
 	 *
 	 * @return int The number of changed nodes
 	 */
@@ -870,7 +878,7 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @param NodeTrait|Model $root
+	 * @param Tmodelkey $root
 	 *
 	 * @return int
 	 */
@@ -880,15 +888,15 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @param array                $dictionary
-	 * @param NodeTrait|Model|null $parent
+	 * @param array<Tmodelkey,NodeModel[]> $dictionary
+	 * @param NodeModel|null               $parent
 	 *
 	 * @return int
 	 */
 	protected function fixNodes(array &$dictionary, $parent = null)
 	{
-		$parentId = $parent ? $parent->getKey() : null;
-		$cut = $parent ? $parent->getLft() + 1 : 1;
+		$parentId = $parent !== null ? $parent->getKey() : null;
+		$cut = $parent !== null ? $parent->getLft() + 1 : 1;
 
 		$updated = [];
 		$moved = 0;
@@ -896,7 +904,7 @@ class QueryBuilder extends Builder
 		$cut = self::reorderNodes($dictionary, $updated, $parentId, $cut);
 
 		// Save nodes that have invalid parent as roots
-		while (!empty($dictionary)) {
+		while ($dictionary !== []) {
 			$dictionary[null] = reset($dictionary);
 
 			unset($dictionary[key($dictionary)]);
@@ -904,7 +912,7 @@ class QueryBuilder extends Builder
 			$cut = self::reorderNodes($dictionary, $updated, $parentId, $cut);
 		}
 
-		if ($parent && ($grown = $cut - $parent->getRgt()) != 0) {
+		if ($parent !== null && ($grown = $cut - $parent->getRgt()) !== 0) {
 			$moved = $this->model->newScopedQuery()->makeGap($parent->getRgt() + 1, $grown);
 
 			$updated[] = $parent->rawNode($parent->getLft(), $cut, $parent->getParentId());
@@ -918,10 +926,10 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @param array $dictionary
-	 * @param array $updated
-	 * @param $parentId
-	 * @param int $cut
+	 * @param array<Tmodelkey,NodeModel[]> $dictionary
+	 * @param NodeModel[]                  $updated
+	 * @param Tmodelkey|null               $parentId
+	 * @param int                          $cut
 	 *
 	 * @return int
 	 *
@@ -930,11 +938,10 @@ class QueryBuilder extends Builder
 	protected static function reorderNodes(
 		array &$dictionary, array &$updated, $parentId = null, $cut = 1
 	) {
-		if (!isset($dictionary[$parentId])) {
+		if (!array_key_exists($parentId, $dictionary)) {
 			return $cut;
 		}
 
-		/** @var Model|NodeTrait $model */
 		foreach ($dictionary[$parentId] as $model) {
 			$lft = $cut;
 
@@ -957,17 +964,17 @@ class QueryBuilder extends Builder
 	 *
 	 * If item data does not contain primary key, new node will be created.
 	 *
-	 * @param array $data
-	 * @param bool  $delete Whether to delete nodes that exists but not in the data
-	 *                      array
-	 * @param null  $root
+	 * @param array<string,mixed>[] $data
+	 * @param bool                  $delete Whether to delete nodes that exists but not in the data
+	 *                                      array
+	 * @param Tmodelkey|null        $root
 	 *
 	 * @return int
 	 */
 	public function rebuildTree(array $data, $delete = false, $root = null)
 	{
-		if ($this->model->usesSoftDelete()) {
-			$this->withTrashed();
+		if ($this->model->usesSoftDelete()) { /** @phpstan-ignore-line */
+			$this->withTrashed(); /** @phpstan-ignore-line */
 		}
 
 		$existing = $this
@@ -978,13 +985,12 @@ class QueryBuilder extends Builder
 			->getDictionary();
 
 		$dictionary = [];
-		$parentId = $root ? $root->getKey() : null;
+		$parentId = $root !== null ? $root->getKey() : null;
 
 		$this->buildRebuildDictionary($dictionary, $data, $existing, $parentId);
 
-		/** @var Model|NodeTrait $model */
-		if (!empty($existing)) {
-			if ($delete && !$this->model->usesSoftDelete()) {
+		if ($existing !== null && $existing !== []) {
+			if ($delete && !$this->model->usesSoftDelete()) { /** @phpstan-ignore-line */
 				$this->model
 					->newScopedQuery()
 					->whereIn($this->model->getKeyName(), array_keys($existing))
@@ -993,12 +999,12 @@ class QueryBuilder extends Builder
 				foreach ($existing as $model) {
 					$dictionary[$model->getParentId()][] = $model;
 
-					if ($delete && $this->model->usesSoftDelete() &&
-						!$model->{$model->getDeletedAtColumn()}
+					if ($delete && $this->model->usesSoftDelete() && /** @phpstan-ignore-line */
+						!$model->{$model->getDeletedAtColumn()} /** @phpstan-ignore-line */
 					) {
 						$time = $this->model->fromDateTime($this->model->freshTimestamp());
 
-						$model->{$model->getDeletedAtColumn()} = $time;
+						$model->{$model->getDeletedAtColumn()} = $time; /** @phpstan-ignore-line */
 					}
 				}
 			}
@@ -1008,9 +1014,9 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @param $root
-	 * @param array $data
-	 * @param bool  $delete
+	 * @param Tmodelkey|null        $root
+	 * @param array<string,mixed>[] $data
+	 * @param bool                  $delete
 	 *
 	 * @return int
 	 */
@@ -1020,27 +1026,29 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @param array $dictionary
-	 * @param array $data
-	 * @param array $existing
-	 * @param mixed $parentId
+	 * @param array<Tmodelkey,NodeModel[]> $dictionary
+	 * @param array<string,mixed>[]        $data
+	 * @param array<Tmodelkey,NodeModel>   $existing
+	 * @param Tmodelkey|null               $parentId
 	 */
 	protected function buildRebuildDictionary(array &$dictionary,
-											  array $data,
-											  array &$existing,
-													$parentId = null
-	) {
+		array $data,
+		array &$existing,
+		$parentId = null
+	): void {
 		$keyName = $this->model->getKeyName();
 
 		foreach ($data as $itemData) {
-			/** @var NodeTrait|Model $model */
+			/** @var NodeModel $model */
 			if (!isset($itemData[$keyName])) {
 				$model = $this->model->newInstance($this->model->getAttributes());
 
 				// Set some values that will be fixed later
 				$model->rawNode(0, 0, $parentId);
 			} else {
-				if (!isset($existing[$key = $itemData[$keyName]])) {
+				/** @var Tmodelkey */
+				$key = $itemData[$keyName];
+				if (!isset($existing[$key])) {
 					throw new ModelNotFoundException();
 				}
 
@@ -1070,7 +1078,7 @@ class QueryBuilder extends Builder
 	/**
 	 * @param string|null $table
 	 *
-	 * @return $this
+	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
 	public function applyNestedSetScope($table = null)
 	{
@@ -1080,12 +1088,13 @@ class QueryBuilder extends Builder
 	/**
 	 * Get the root node.
 	 *
-	 * @param array $columns
+	 * @param string[] $columns
 	 *
-	 * @return self
+	 * @return NodeModel|null
 	 */
-	public function root(array $columns = ['*'])
+	public function root(array $columns = ['*']): (Model&Node)|null
 	{
+		/** @var NodeModel|null */
 		return $this->whereIsRoot()->first($columns);
 	}
 }

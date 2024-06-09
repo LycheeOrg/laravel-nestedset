@@ -4,6 +4,9 @@ namespace Kalnoy\Nestedset;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @disregard P1037
+ */
 class AncestorsRelation extends BaseRelation
 {
 	/**
@@ -22,12 +25,12 @@ class AncestorsRelation extends BaseRelation
 	}
 
 	/**
-	 * @param Model $model
-	 * @param $related
+	 * @param Model&Node $model
+	 * @param Node       $related
 	 *
 	 * @return bool
 	 */
-	protected function matches(Model $model, $related)
+	protected function matches(Model $model, $related): bool
 	{
 		return $related->isAncestorOf($model);
 	}
@@ -44,14 +47,9 @@ class AncestorsRelation extends BaseRelation
 	}
 
 	/**
-	 * @param $hash
-	 * @param $table
-	 * @param $lft
-	 * @param $rgt
-	 *
-	 * @return string
+	 * {@inheritdoc}
 	 */
-	protected function relationExistenceCondition($hash, $table, $lft, $rgt)
+	protected function relationExistenceCondition(string $hash, string $table, string $lft, string $rgt): string
 	{
 		$key = $this->getBaseQuery()->getGrammar()->wrap($this->parent->getKeyName());
 
