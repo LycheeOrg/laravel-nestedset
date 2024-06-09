@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @template Tmodelkey
  * @template Tmodel of \Illuminate\Database\Eloquent\Model
- * 
+ *
  * @phpstan-type NodeModel Node<Tmodelkey,Tmodel>&Tmodel
  */
 interface Node
@@ -152,8 +152,9 @@ interface Node
 
 	/**
 	 * @since 2.0
+	 *
 	 * @param QueryBuilder<Tmodelkey,Tmodel> $query
-	 * 
+	 *
 	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
 	public function newEloquentBuilder(QueryBuilder $query): QueryBuilder;
@@ -162,6 +163,7 @@ interface Node
 	 * Get a new base query that includes deleted nodes.
 	 *
 	 * @since 1.1
+	 *
 	 * @param (QueryBuilder<Tmodelkey,Tmodel>)|string|null $table
 	 *
 	 * @return QueryBuilder<Tmodelkey,Tmodel>

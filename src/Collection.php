@@ -148,7 +148,7 @@ final class Collection extends EloquentCollection
 	 * Flatten a tree into a non recursive array.
 	 *
 	 * @param Collection<TKey,Tmodelkey,Tmodel> $groupedNodes
-	 * @param Tmodelkey                    $parentId
+	 * @param Tmodelkey                         $parentId
 	 *
 	 * @return Collection<TKey,Tmodelkey,Tmodel>
 	 */

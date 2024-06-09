@@ -13,7 +13,7 @@ use Illuminate\Database\Query\Builder;
  * @template Tmodel of Model
  *
  * @phpstan-type NodeModel Node<Tmodelkey,Tmodel>&Tmodel
- * 
+ *
  * @extends Relation<NodeModel>
  *
  * @property NodeModel $related
@@ -44,7 +44,7 @@ abstract class BaseRelation extends Relation
 	 * AncestorsRelation constructor.
 	 *
 	 * @param QueryBuilder<Tmodelkey,Tmodel> $builder
-	 * @param NodeModel        $model
+	 * @param NodeModel                      $model
 	 */
 	public function __construct(QueryBuilder $builder, Model $model)
 	{
@@ -65,7 +65,7 @@ abstract class BaseRelation extends Relation
 
 	/**
 	 * @param QueryBuilder<Tmodelkey,Tmodel> $query
-	 * @param NodeModel    $model
+	 * @param NodeModel                      $model
 	 *
 	 * @return void
 	 */
@@ -84,7 +84,7 @@ abstract class BaseRelation extends Relation
 	/**
 	 * @param EloquentBuilder<NodeModel> $query
 	 * @param EloquentBuilder<NodeModel> $parentQuery
-	 * @param mixed           $columns
+	 * @param mixed                      $columns
 	 *
 	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
@@ -173,9 +173,9 @@ abstract class BaseRelation extends Relation
 	/**
 	 * Match the eagerly loaded results to their parents.
 	 *
-	 * @param array<int,NodeModel>  $models
+	 * @param array<int,NodeModel>              $models
 	 * @param EloquentCollection<int,NodeModel> $results
-	 * @param string             $relation
+	 * @param string                            $relation
 	 *
 	 * @return array<int,NodeModel>
 	 */
@@ -192,7 +192,7 @@ abstract class BaseRelation extends Relation
 	}
 
 	/**
-	 * @param NodeModel          $model
+	 * @param NodeModel                         $model
 	 * @param EloquentCollection<int,NodeModel> $results
 	 *
 	 * @return Collection<int,Tmodelkey,Tmodel>

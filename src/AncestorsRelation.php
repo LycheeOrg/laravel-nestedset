@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @template Tmodelkey
  * @template Tmodel of Model
- * 
+ *
  * @phpstan-type NodeModel Node<Tmodelkey,Tmodel>&Tmodel
- * 
+ *
  * @disregard P1037
- * 
+ *
  * @extends BaseRelation<Tmodelkey,Tmodel>
  */
 class AncestorsRelation extends BaseRelation
@@ -44,7 +44,7 @@ class AncestorsRelation extends BaseRelation
 
 	/**
 	 * @param QueryBuilder<Tmodelkey,Tmodel> $query
-	 * @param NodeModel        $model
+	 * @param NodeModel                      $model
 	 *
 	 * @return void
 	 */
