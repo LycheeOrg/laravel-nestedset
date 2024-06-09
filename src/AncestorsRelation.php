@@ -5,7 +5,14 @@ namespace Kalnoy\Nestedset;
 use Illuminate\Database\Eloquent\Model;
 
 /**
+ * @template Tmodelkey
+ * @template Tmodel of Model
+ * 
+ * @phpstan-type NodeModel Node<Tmodelkey,Tmodel>&Tmodel
+ * 
  * @disregard P1037
+ * 
+ * @extends BaseRelation<Tmodelkey,Tmodel>
  */
 class AncestorsRelation extends BaseRelation
 {
@@ -25,8 +32,8 @@ class AncestorsRelation extends BaseRelation
 	}
 
 	/**
-	 * @param Model&Node $model
-	 * @param Node       $related
+	 * @param NodeModel $model
+	 * @param NodeModel $related
 	 *
 	 * @return bool
 	 */
@@ -36,8 +43,8 @@ class AncestorsRelation extends BaseRelation
 	}
 
 	/**
-	 * @param QueryBuilder $query
-	 * @param Model        $model
+	 * @param QueryBuilder<Tmodelkey,Tmodel> $query
+	 * @param NodeModel        $model
 	 *
 	 * @return void
 	 */

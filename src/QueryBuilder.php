@@ -84,7 +84,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @since 2.0
 	 *
-	 * @param Tmodelkey $id
+	 * @param Tmodelkey|NodeModel $id
 	 * @param bool      $andSelf
 	 * @param string    $boolean
 	 *
@@ -129,7 +129,7 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @param Tmodelkey $id
+	 * @param Tmodelkey|NodeModel $id
 	 * @param bool      $andSelf
 	 *
 	 * @return QueryBuilder<Tmodelkey,Tmodel>
@@ -140,7 +140,7 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @param Tmodelkey $id
+	 * @param Tmodelkey|NodeModel $id
 	 *
 	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
@@ -240,7 +240,7 @@ class QueryBuilder extends Builder
 	/**
 	 * @param Tmodelkey $id
 	 *
-	 * @return QueryBuilder
+	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
 	public function whereNotDescendantOf(mixed $id)
 	{
@@ -250,7 +250,7 @@ class QueryBuilder extends Builder
 	/**
 	 * @param Tmodelkey $id
 	 *
-	 * @return QueryBuilder
+	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
 	public function orWhereDescendantOf(mixed $id)
 	{
@@ -260,7 +260,7 @@ class QueryBuilder extends Builder
 	/**
 	 * @param Tmodelkey $id
 	 *
-	 * @return QueryBuilder
+	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
 	public function orWhereNotDescendantOf(mixed $id)
 	{
@@ -288,7 +288,7 @@ class QueryBuilder extends Builder
 	 * @param string[]  $columns
 	 * @param bool      $andSelf
 	 *
-	 * @return EloquentCollection<int,NodeModel>
+	 * @return EloquentCollection<int,NodeModel>|Collection<int,Tmodelkey,Tmodel>
 	 */
 	public function descendantsOf(mixed $id, array $columns = ['*'], bool $andSelf = false)
 	{

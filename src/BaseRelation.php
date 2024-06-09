@@ -10,24 +10,26 @@ use Illuminate\Database\Query\Builder;
 
 /**
  * @template Tmodelkey
- * @template Tmodel of Model&Node<Tmodelkey,Model>
+ * @template Tmodel of Model
  *
- * @extends Relation<Tmodel>
+ * @phpstan-type NodeModel Node<Tmodelkey,Tmodel>&Tmodel
+ * 
+ * @extends Relation<NodeModel>
  *
- * @property Tmodel $related
- * @property Tmodel $parent
+ * @property NodeModel $related
+ * @property NodeModel $parent
  *
- * @method Tmodel getParent()
+ * @method NodeModel getParent()
  */
 abstract class BaseRelation extends Relation
 {
 	/**
-	 * @var QueryBuilder
+	 * @var QueryBuilder<Tmodelkey,Tmodel>
 	 */
 	protected $query;
 
 	/**
-	 * @var Node&Model
+	 * @var NodeModel
 	 */
 	protected $parent;
 
@@ -41,29 +43,29 @@ abstract class BaseRelation extends Relation
 	/**
 	 * AncestorsRelation constructor.
 	 *
-	 * @param QueryBuilder $builder
-	 * @param Model        $model
+	 * @param QueryBuilder<Tmodelkey,Tmodel> $builder
+	 * @param NodeModel        $model
 	 */
 	public function __construct(QueryBuilder $builder, Model $model)
 	{
 		if (!NestedSet::isNode($model)) {
 			throw new \InvalidArgumentException('Model must be node.');
 		}
-
+		/** @disregard P1006 */
 		parent::__construct($builder, $model);
 	}
 
 	/**
-	 * @param Model&Node $model
-	 * @param Node       $related
+	 * @param NodeModel $model
+	 * @param NodeModel $related
 	 *
 	 * @return bool
 	 */
 	abstract protected function matches(Model&Node $model, Node $related): bool;
 
 	/**
-	 * @param QueryBuilder $query
-	 * @param Model        $model
+	 * @param QueryBuilder<Tmodelkey,Tmodel> $query
+	 * @param NodeModel    $model
 	 *
 	 * @return void
 	 */
@@ -80,11 +82,11 @@ abstract class BaseRelation extends Relation
 	abstract protected function relationExistenceCondition(string $hash, string $table, string $lft, string $rgt): string;
 
 	/**
-	 * @param EloquentBuilder $query
-	 * @param EloquentBuilder $parent
+	 * @param EloquentBuilder<NodeModel> $query
+	 * @param EloquentBuilder<NodeModel> $parent
 	 * @param mixed           $columns
 	 *
-	 * @return EloquentBuilder
+	 * @return EloquentBuilder<NodeModel>
 	 */
 	public function getRelationExistenceQuery(EloquentBuilder $query, EloquentBuilder $parent,
 		$columns = ['*']

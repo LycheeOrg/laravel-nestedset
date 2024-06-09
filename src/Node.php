@@ -20,6 +20,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @template Tmodelkey
  * @template Tmodel of \Illuminate\Database\Eloquent\Model
+ * 
+ * @phpstan-type NodeModel Node<Tmodelkey,Tmodel>&Tmodel
  */
 interface Node
 {
@@ -31,21 +33,21 @@ interface Node
 	/**
 	 * Relation to the parent.
 	 *
-	 * @return BelongsTo
+	 * @return BelongsTo<NodeModel,NodeModel>
 	 */
 	public function parent(): BelongsTo;
 
 	/**
 	 * Relation to children.
 	 *
-	 * @return HasMany
+	 * @return HasMany<NodeModel>
 	 */
 	public function children(): HasMany;
 
 	/**
 	 * Get query for descendants of the node.
 	 *
-	 * @return DescendantsRelation
+	 * @return DescendantsRelation<Tmodelkey,Tmodel>
 	 */
 	public function descendants(): DescendantsRelation;
 
@@ -68,7 +70,7 @@ interface Node
 	 *
 	 * @param string[] $columns
 	 *
-	 * @return EloquentCollection
+	 * @return EloquentCollection<int,NodeModel>
 	 */
 	public function getSiblingsAndSelf(array $columns = ['*']): EloquentCollection;
 
@@ -103,7 +105,7 @@ interface Node
 	/**
 	 * Get query ancestors of the node.
 	 *
-	 * @return AncestorsRelation
+	 * @return AncestorsRelation<Tmodelkey,Tmodel>
 	 */
 	public function ancestors(): AncestorsRelation;
 
@@ -150,6 +152,9 @@ interface Node
 
 	/**
 	 * @since 2.0
+	 * @param QueryBuilder<Tmodelkey,Tmodel> $query
+	 * 
+	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
 	public function newEloquentBuilder(QueryBuilder $query): QueryBuilder;
 
@@ -157,6 +162,7 @@ interface Node
 	 * Get a new base query that includes deleted nodes.
 	 *
 	 * @since 1.1
+	 * @param (QueryBuilder<Tmodelkey,Tmodel>)|string|null $table
 	 *
 	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
@@ -185,9 +191,9 @@ interface Node
 	public static function scoped(array $attributes): QueryBuilder;
 
 	/**
-	 * @param array<int,Tmodel&Node> $models
+	 * @param array<int,NodeModel> $models
 	 *
-	 * @return Collection<int,Tmodel&Node<Tmodelkey,Tmodel>>
+	 * @return Collection<int,Tmodelkey,Tmodel>
 	 */
 	public function newCollection(array $models = []): Collection;
 
@@ -258,7 +264,7 @@ interface Node
 	 *
 	 * @param string[] $columns
 	 *
-	 * @return self
+	 * @return NodeModel
 	 */
 	public function getNextNode(array $columns = ['*']): Node;
 
@@ -269,56 +275,56 @@ interface Node
 	 *
 	 * @param string[] $columns
 	 *
-	 * @return self
+	 * @return NodeModel
 	 */
 	public function getPrevNode(array $columns = ['*']): Node;
 
 	/**
 	 * @param string[] $columns
 	 *
-	 * @return Collection
+	 * @return Collection<int,Tmodelkey,Tmodel>
 	 */
 	public function getAncestors(array $columns = ['*']);
 
 	/**
 	 * @param string[] $columns
 	 *
-	 * @return Collection|self[]
+	 * @return Collection<int,Tmodelkey,Tmodel>
 	 */
 	public function getDescendants(array $columns = ['*']);
 
 	/**
 	 * @param string[] $columns
 	 *
-	 * @return Collection|self[]
+	 * @return Collection<int,Tmodelkey,Tmodel>
 	 */
 	public function getSiblings(array $columns = ['*']);
 
 	/**
 	 * @param string[] $columns
 	 *
-	 * @return Collection<self>
+	 * @return Collection<int,Tmodelkey,Tmodel>
 	 */
 	public function getNextSiblings(array $columns = ['*']);
 
 	/**
 	 * @param string[] $columns
 	 *
-	 * @return Collection<self>
+	 * @return Collection<int,Tmodelkey,Tmodel>
 	 */
 	public function getPrevSiblings(array $columns = ['*']);
 
 	/**
 	 * @param string[] $columns
 	 *
-	 * @return Node
+	 * @return NodeModel
 	 */
 	public function getNextSibling(array $columns = ['*']);
 
 	/**
 	 * @param string[] $columns
 	 *
-	 * @return Node
+	 * @return NodeModel
 	 */
 	public function getPrevSibling(array $columns = ['*']);
 
@@ -330,35 +336,35 @@ interface Node
 	/**
 	 * @param $value
 	 *
-	 * @return Node&Tmodel
+	 * @return NodeModel
 	 */
 	public function setLft(int $value): Node;
 
 	/**
 	 * @param $value
 	 *
-	 * @return Node&Tmodel
+	 * @return NodeModel
 	 */
 	public function setRgt(int $value): Node;
 
 	/**
 	 * @param Tmodelkey|null $id
 	 *
-	 * @return Node&Tmodel
+	 * @return NodeModel
 	 */
 	public function setParentId(mixed $id): Node;
 
 	/**
 	 * @param string[]|null $except
 	 *
-	 * @return Node
+	 * @return NodeModel
 	 */
 	public function replicate(?array $except = null): Node;
 
 	/**
 	 * Append and save a node.
 	 *
-	 * @param Node&Tmodel $node
+	 * @param NodeModel $node
 	 *
 	 * @return bool
 	 */
@@ -367,25 +373,25 @@ interface Node
 	/**
 	 * Append a node to the new parent.
 	 *
-	 * @param Node&Tmodel $parent
+	 * @param NodeModel $parent
 	 *
-	 * @return Node&Tmodel
+	 * @return NodeModel
 	 */
 	public function appendToNode(Node $parent): Node;
 
 	/**
 	 * Prepend a node to the new parent.
 	 *
-	 * @param Node $parent
+	 * @param NodeModel $parent
 	 *
-	 * @return Node&Tmodel
+	 * @return NodeModel
 	 */
 	public function prependToNode(Node $parent): Node;
 
 	/**
 	 * Get whether the node is an ancestor of other node, including immediate parent.
 	 *
-	 * @param Node $other
+	 * @param NodeModel $other
 	 *
 	 * @return bool
 	 */
@@ -394,7 +400,7 @@ interface Node
 	/**
 	 * Get whether a node is a descendant of other node.
 	 *
-	 * @param Node $other
+	 * @param NodeModel $other
 	 *
 	 * @return bool
 	 */
@@ -403,7 +409,7 @@ interface Node
 	/**
 	 * Get whether a node is itself or a descendant of other node.
 	 *
-	 * @param Node $other
+	 * @param NodeModel $other
 	 *
 	 * @return bool
 	 */
@@ -412,7 +418,7 @@ interface Node
 	/**
 	 * Create a new Query.
 	 *
-	 * @return QueryBuilder
+	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
 	public function newQuery();
 }

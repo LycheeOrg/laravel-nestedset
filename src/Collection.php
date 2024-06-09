@@ -7,9 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @template TKey of array-key
- * @template TModel of Model&Node
+ * @template Tmodelkey
+ * @template Tmodel of Model
  *
- * @extends EloquentCollection<TKey, TModel>
+ * @phpstan-type NodeModel Node<Tmodelkey,Tmodel>&Tmodel
+ *
+ * @extends EloquentCollection<TKey,NodeModel>
  */
 final class Collection extends EloquentCollection
 {
@@ -26,17 +29,17 @@ final class Collection extends EloquentCollection
 			return $this;
 		}
 
-		/** @var Node */
+		/** @var NodeModel */
 		$first = $this->first();
 		$groupedNodes = $this->groupBy($first->getParentIdName());
 
-		/** @var Node&Model $node */
+		/** @var NodeModel $node */
 		foreach ($this->items as $node) {
 			if ($node->getParentId() === null) {
 				$node->setRelation('parent', null);
 			}
 
-			/** @var array<int,Model&Node> */
+			/** @var array<int,NodeModel> */
 			$children = $groupedNodes->get($node->getKey(), []);
 
 			foreach ($children as $child) {
@@ -58,7 +61,7 @@ final class Collection extends EloquentCollection
 	 *
 	 * @param mixed $root
 	 *
-	 * @return Collection
+	 * @return Collection<TKey,Tmodelkey,Tmodel>
 	 */
 	public function toTree($root = false)
 	{
@@ -72,7 +75,7 @@ final class Collection extends EloquentCollection
 
 		$root = $this->getRootNodeId($root);
 
-		/** @var Model&Node $node */
+		/** @var NodeModel $node */
 		foreach ($this->items as $node) {
 			if ($node->getParentId() === $root) {
 				$items[] = $node;
@@ -101,7 +104,7 @@ final class Collection extends EloquentCollection
 		// least lft value as root node id.
 		$leastValue = null;
 
-		/** @var Model&Node $node */
+		/** @var NodeModel $node */
 		foreach ($this->items as $node) {
 			if ($leastValue === null || $node->getLft() < $leastValue) {
 				$leastValue = $node->getLft();
@@ -122,7 +125,7 @@ final class Collection extends EloquentCollection
 	 *
 	 * @param bool $root
 	 *
-	 * @return Collection
+	 * @return Collection<TKey,Tmodelkey,Tmodel>
 	 */
 	public function toFlatTree($root = false): Collection
 	{
@@ -143,10 +146,10 @@ final class Collection extends EloquentCollection
 	/**
 	 * Flatten a tree into a non recursive array.
 	 *
-	 * @param Collection<int|string,TModel> $groupedNodes
+	 * @param Collection<int|string,Tmodelkey,Tmodel> $groupedNodes
 	 * @param int|string                    $parentId
 	 *
-	 * @return Collection
+	 * @return Collection<TKey,Tmodelkey,Tmodel>
 	 */
 	protected function flattenTree(Collection $groupedNodes, $parentId): Collection
 	{
