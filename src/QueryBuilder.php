@@ -31,7 +31,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @since 2.0
 	 *
-	 * @param Tmodelkey $id
+	 * @param Tmodelkey|NodeModel $id
 	 * @param bool      $required
 	 *
 	 * @return array<int,int>
@@ -57,7 +57,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @since 2.0
 	 *
-	 * @param Tmodelkey $id
+	 * @param Tmodelkey|NodeModel $id
 	 * @param bool      $required
 	 *
 	 * @return array<int,int>
@@ -212,7 +212,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @since 2.0
 	 *
-	 * @param Tmodelkey $id
+	 * @param Tmodelkey|NodeModel $id
 	 * @param string    $boolean
 	 * @param bool      $not
 	 * @param bool      $andSelf
@@ -238,7 +238,7 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @param Tmodelkey $id
+	 * @param Tmodelkey|NodeModel $id
 	 *
 	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
@@ -248,7 +248,7 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @param Tmodelkey $id
+	 * @param Tmodelkey|NodeModel $id
 	 *
 	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */

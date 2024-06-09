@@ -83,12 +83,12 @@ abstract class BaseRelation extends Relation
 
 	/**
 	 * @param EloquentBuilder<NodeModel> $query
-	 * @param EloquentBuilder<NodeModel> $parent
+	 * @param EloquentBuilder<NodeModel> $parentQuery
 	 * @param mixed           $columns
 	 *
-	 * @return EloquentBuilder<NodeModel>
+	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
-	public function getRelationExistenceQuery(EloquentBuilder $query, EloquentBuilder $parent,
+	public function getRelationExistenceQuery(EloquentBuilder $query, EloquentBuilder $parentQuery,
 		$columns = ['*']
 	) {
 		$query = $this->getParent()->replicate()->newScopedQuery()->select($columns);
@@ -107,7 +107,7 @@ abstract class BaseRelation extends Relation
 			$grammar->wrap($this->parent->getLftName()),
 			$grammar->wrap($this->parent->getRgtName()));
 
-		return $query->whereRaw($condition);
+		return $query->whereRaw($condition); /** @phpstan-ignore-line */
 	}
 
 	/**
@@ -148,7 +148,7 @@ abstract class BaseRelation extends Relation
 	/**
 	 * Set the constraints for an eager load of the relation.
 	 *
-	 * @param array<int,Tmodel> $models
+	 * @param array<int,NodeModel> $models
 	 *
 	 * @return void
 	 */
@@ -173,15 +173,16 @@ abstract class BaseRelation extends Relation
 	/**
 	 * Match the eagerly loaded results to their parents.
 	 *
-	 * @param array<int,Tmodel>  $models
-	 * @param EloquentCollection $results
+	 * @param array<int,NodeModel>  $models
+	 * @param EloquentCollection<int,NodeModel> $results
 	 * @param string             $relation
 	 *
-	 * @return array<int,Tmodel>
+	 * @return array<int,NodeModel>
 	 */
 	public function match(array $models, EloquentCollection $results, $relation)
 	{
 		foreach ($models as $model) {
+			/** @disregard P1006 */
 			$related = $this->matchForModel($model, $results);
 
 			$model->setRelation($relation, $related);
@@ -191,18 +192,18 @@ abstract class BaseRelation extends Relation
 	}
 
 	/**
-	 * @param Tmodel             $model
-	 * @param EloquentCollection $results
+	 * @param NodeModel          $model
+	 * @param EloquentCollection<int,NodeModel> $results
 	 *
-	 * @return Collection
+	 * @return Collection<int,Tmodelkey,Tmodel>
 	 */
 	protected function matchForModel(Model $model, EloquentCollection $results)
 	{
-		/** @var Collection<int,Tmodel> */
+		/** @var Collection<int,Tmodelkey,Tmodel> */
 		$result = $this->related->newCollection();
 
-		/** @var Tmodel $related */
 		foreach ($results as $related) {
+			/** @disregard P1006 */
 			if ($this->matches($model, $related)) {
 				$result->push($related);
 			}

@@ -32,8 +32,8 @@ class DescendantsRelation extends BaseRelation
 	}
 
 	/**
-	 * @param QueryBuilder $query
-	 * @param Model        $model
+	 * @param QueryBuilder<Tmodelkey,Tmodel> $query
+	 * @param NodeModel    $model
 	 */
 	protected function addEagerConstraint($query, $model)
 	{
@@ -41,8 +41,8 @@ class DescendantsRelation extends BaseRelation
 	}
 
 	/**
-	 * @param Model&Node $model
-	 * @param Node       $related
+	 * @param NodeModel $model
+	 * @param NodeModel $related
 	 *
 	 * @return bool
 	 */

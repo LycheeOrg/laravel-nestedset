@@ -88,7 +88,7 @@ final class Collection extends EloquentCollection
 	/**
 	 * @param mixed $root
 	 *
-	 * @return int|string
+	 * @return Tmodelkey
 	 */
 	protected function getRootNodeId($root = false)
 	{
@@ -129,31 +129,32 @@ final class Collection extends EloquentCollection
 	 */
 	public function toFlatTree($root = false): Collection
 	{
+		/** @Var Collection<TKey,Tmodelkey,Tmodel> */
 		$result = new Collection();
 
 		if ($this->isEmpty()) {
-			return $result;
+			return $result; /** @phpstan-ignore-line */
 		}
 
-		/** @var Node */
+		/** @var NodeModel */
 		$first = $this->first();
-		/** @var Collection<int|string,TModel> */
+		/** @var Collection<TKey,Tmodelkey,NodeModel> */
 		$groupedNodes = $this->groupBy($first->getParentIdName());
 
-		return $result->flattenTree($groupedNodes, $this->getRootNodeId($root));
+		return $result->flattenTree($groupedNodes, $this->getRootNodeId($root)); /** @phpstan-ignore-line */
 	}
 
 	/**
 	 * Flatten a tree into a non recursive array.
 	 *
-	 * @param Collection<int|string,Tmodelkey,Tmodel> $groupedNodes
-	 * @param int|string                    $parentId
+	 * @param Collection<TKey,Tmodelkey,Tmodel> $groupedNodes
+	 * @param Tmodelkey                    $parentId
 	 *
 	 * @return Collection<TKey,Tmodelkey,Tmodel>
 	 */
 	protected function flattenTree(Collection $groupedNodes, $parentId): Collection
 	{
-		/** @var array<int,TModel> */
+		/** @var array<int,NodeModel> */
 		$nodes = $groupedNodes->get($parentId, []);
 		foreach ($nodes as $node) {
 			$this->push($node);
