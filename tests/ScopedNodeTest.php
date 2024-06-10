@@ -3,6 +3,8 @@
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Kalnoy\Nestedset\NestedSet;
 
+include __DIR__ . '/models/MenuItem.php';
+
 class ScopedNodeTest extends PHPUnit\Framework\TestCase
 {
 	public static function setUpBeforeClass(): void
@@ -219,4 +221,12 @@ class ScopedNodeTest extends PHPUnit\Framework\TestCase
 
 		$a->insertAfterNode($b);
 	}
+
+	// public function testEagerLoadingAncestorsWithScope()
+	// {
+	// 	$filteredNodes = MenuItem::where('title', 'menu item 3')->with(['ancestors'])->get();
+
+	// 	$this->assertEquals(2, $filteredNodes->find(5)->ancestors[0]->id);
+	// 	$this->assertEquals(4, $filteredNodes->find(6)->ancestors[0]->id);
+	// }
 }

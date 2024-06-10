@@ -1,8 +1,12 @@
 <?php
 
-class DuplicateCategory extends \Illuminate\Database\Eloquent\Model implements \Kalnoy\Nestedset\Node
+use Illuminate\Database\Eloquent\Model;
+use Kalnoy\Nestedset\Node;
+use Kalnoy\Nestedset\NodeTrait;
+
+class DuplicateCategory extends Model implements Node
 {
-	use \Kalnoy\Nestedset\NodeTrait;
+	use NodeTrait;
 
 	protected $table = 'categories';
 

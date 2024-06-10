@@ -2,10 +2,19 @@
 
 namespace Kalnoy\Nestedset;
 
-use Illuminate\Database\Eloquent\Collection as BaseCollection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 
-final class Collection extends BaseCollection
+/**
+ * @template TKey of array-key
+ * @template Tmodelkey
+ * @template Tmodel of Model
+ *
+ * @phpstan-type NodeModel Node<Tmodelkey,Tmodel>&Tmodel
+ *
+ * @extends EloquentCollection<TKey,NodeModel>
+ */
+final class Collection extends EloquentCollection
 {
 	/**
 	 * Fill `parent` and `children` relationships for every node in the collection.
@@ -20,22 +29,24 @@ final class Collection extends BaseCollection
 			return $this;
 		}
 
-		$groupedNodes = $this->groupBy($this->first()->getParentIdName());
+		/** @var NodeModel */
+		$first = $this->first();
+		$groupedNodes = $this->groupBy($first->getParentIdName());
 
-		/** @var NodeTrait|Model $node */
+		/** @var NodeModel $node */
 		foreach ($this->items as $node) {
-			if (!$node->getParentId()) {
+			if ($node->getParentId() === null) {
 				$node->setRelation('parent', null);
 			}
 
+			/** @var array<int,NodeModel> */
 			$children = $groupedNodes->get($node->getKey(), []);
 
-			/** @var Model|NodeTrait $child */
 			foreach ($children as $child) {
 				$child->setRelation('parent', $node);
 			}
 
-			$node->setRelation('children', BaseCollection::make($children));
+			$node->setRelation('children', EloquentCollection::make($children));
 		}
 
 		return $this;
@@ -50,7 +61,7 @@ final class Collection extends BaseCollection
 	 *
 	 * @param mixed $root
 	 *
-	 * @return Collection
+	 * @return Collection<TKey,Tmodelkey,Tmodel>
 	 */
 	public function toTree($root = false)
 	{
@@ -64,9 +75,9 @@ final class Collection extends BaseCollection
 
 		$root = $this->getRootNodeId($root);
 
-		/** @var Model|NodeTrait $node */
+		/** @var NodeModel $node */
 		foreach ($this->items as $node) {
-			if ($node->getParentId() == $root) {
+			if ($node->getParentId() === $root) {
 				$items[] = $node;
 			}
 		}
@@ -77,7 +88,7 @@ final class Collection extends BaseCollection
 	/**
 	 * @param mixed $root
 	 *
-	 * @return int
+	 * @return Tmodelkey
 	 */
 	protected function getRootNodeId($root = false)
 	{
@@ -93,12 +104,16 @@ final class Collection extends BaseCollection
 		// least lft value as root node id.
 		$leastValue = null;
 
-		/** @var Model|NodeTrait $node */
+		/** @var NodeModel $node */
 		foreach ($this->items as $node) {
 			if ($leastValue === null || $node->getLft() < $leastValue) {
 				$leastValue = $node->getLft();
 				$root = $node->getParentId();
 			}
+		}
+
+		if ($root === null || $root === false) {
+			throw new NestedSetException('root is null or false.');
 		}
 
 		return $root;
@@ -110,32 +125,38 @@ final class Collection extends BaseCollection
 	 *
 	 * @param bool $root
 	 *
-	 * @return static
+	 * @return Collection<TKey,Tmodelkey,Tmodel>
 	 */
-	public function toFlatTree($root = false)
+	public function toFlatTree($root = false): Collection
 	{
-		$result = new static();
+		/** @Var Collection<TKey,Tmodelkey,Tmodel> */
+		$result = new Collection();
 
 		if ($this->isEmpty()) {
-			return $result;
+			return $result; /** @phpstan-ignore-line */
 		}
 
-		$groupedNodes = $this->groupBy($this->first()->getParentIdName());
+		/** @var NodeModel */
+		$first = $this->first();
+		/** @var Collection<TKey,Tmodelkey,NodeModel> */
+		$groupedNodes = $this->groupBy($first->getParentIdName());
 
-		return $result->flattenTree($groupedNodes, $this->getRootNodeId($root));
+		return $result->flattenTree($groupedNodes, $this->getRootNodeId($root)); /** @phpstan-ignore-line */
 	}
 
 	/**
 	 * Flatten a tree into a non recursive array.
 	 *
-	 * @param Collection $groupedNodes
-	 * @param mixed      $parentId
+	 * @param Collection<TKey,Tmodelkey,Tmodel> $groupedNodes
+	 * @param Tmodelkey                         $parentId
 	 *
-	 * @return $this
+	 * @return Collection<TKey,Tmodelkey,Tmodel>
 	 */
-	protected function flattenTree(self $groupedNodes, $parentId)
+	protected function flattenTree(Collection $groupedNodes, $parentId): Collection
 	{
-		foreach ($groupedNodes->get($parentId, []) as $node) {
+		/** @var array<int,NodeModel> */
+		$nodes = $groupedNodes->get($parentId, []);
+		foreach ($nodes as $node) {
 			$this->push($node);
 
 			$this->flattenTree($groupedNodes, $node->getKey());

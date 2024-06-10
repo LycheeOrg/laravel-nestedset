@@ -4,6 +4,16 @@ namespace Kalnoy\Nestedset;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @template Tmodelkey
+ * @template Tmodel of Model
+ *
+ * @phpstan-type NodeModel Node<Tmodelkey,Tmodel>&Tmodel
+ *
+ * @disregard P1037
+ *
+ * @extends BaseRelation<Tmodelkey,Tmodel>
+ */
 class DescendantsRelation extends BaseRelation
 {
 	/**
@@ -22,8 +32,8 @@ class DescendantsRelation extends BaseRelation
 	}
 
 	/**
-	 * @param QueryBuilder $query
-	 * @param Model        $model
+	 * @param QueryBuilder<Tmodelkey,Tmodel> $query
+	 * @param NodeModel                      $model
 	 */
 	protected function addEagerConstraint($query, $model)
 	{
@@ -31,25 +41,20 @@ class DescendantsRelation extends BaseRelation
 	}
 
 	/**
-	 * @param Model $model
-	 * @param $related
+	 * @param NodeModel $model
+	 * @param NodeModel $related
 	 *
-	 * @return mixed
+	 * @return bool
 	 */
-	protected function matches(Model $model, $related)
+	protected function matches(Model $model, $related): bool
 	{
 		return $related->isDescendantOf($model);
 	}
 
 	/**
-	 * @param $hash
-	 * @param $table
-	 * @param $lft
-	 * @param $rgt
-	 *
-	 * @return string
+	 * {@inheritdoc}
 	 */
-	protected function relationExistenceCondition($hash, $table, $lft, $rgt)
+	protected function relationExistenceCondition(string $hash, string $table, string $lft, string $rgt): string
 	{
 		return "{$hash}.{$lft} between {$table}.{$lft} + 1 and {$table}.{$rgt}";
 	}
