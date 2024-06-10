@@ -683,12 +683,13 @@ trait NodeTrait
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * @param BaseQueryBuilder|EloquentBuilder<Tmodel>|QueryBuilder<Tmodelkey,Tmodel> $query
 	 *
-	 * @since 2.0
+	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
 	public function newEloquentBuilder($query): QueryBuilder
 	{
+		/** @disregard P1006 */
 		return new QueryBuilder($query);
 	}
 

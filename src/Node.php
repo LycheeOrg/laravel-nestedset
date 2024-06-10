@@ -2,9 +2,11 @@
 
 namespace Kalnoy\Nestedset;
 
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\Builder as BaseQueryBuilder;
 
 /**
  * Accompanies {@link \Kalnoy\Nestedset\NodeTrait}.
@@ -153,11 +155,11 @@ interface Node
 	/**
 	 * @since 2.0
 	 *
-	 * @param QueryBuilder<Tmodelkey,Tmodel> $query
+	 * @param BaseQueryBuilder|EloquentBuilder<Tmodel>|QueryBuilder<Tmodelkey,Tmodel> $query
 	 *
 	 * @return QueryBuilder<Tmodelkey,Tmodel>
 	 */
-	public function newEloquentBuilder(QueryBuilder $query): QueryBuilder;
+	public function newEloquentBuilder(BaseQueryBuilder|EloquentBuilder|QueryBuilder $query): QueryBuilder;
 
 	/**
 	 * Get a new base query that includes deleted nodes.
