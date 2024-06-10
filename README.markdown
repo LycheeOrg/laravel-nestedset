@@ -10,6 +10,7 @@ It is a fork of [lazychaser/laravel-nestedset](https://github.com/lazychaser/lar
  * Routines respect a foreign key constraint on the parent-child-relation by taking care that changes to the tree are applied in the correct order.
  * The code does not fail if the model which uses `NoteTrait` does not directly extend `Model` but indirectly inherits `Model` via another parent class.
 
+*   **Laravel 11.0** is supported in v9
 *   **Laravel 10.0** is supported in v8
 *   **Laravel 9.0** is supported in v7
 *   _**Laravel 8.0** is supported in v6.0.1_
