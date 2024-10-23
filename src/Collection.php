@@ -6,13 +6,11 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @template TKey of array-key
- * @template Tmodelkey
  * @template Tmodel of Model
  *
- * @phpstan-type NodeModel Node<Tmodelkey,Tmodel>&Tmodel
+ * @phpstan-type NodeModel Node<Tmodel>&Tmodel
  *
- * @extends EloquentCollection<TKey,NodeModel>
+ * @extends EloquentCollection<array-key,NodeModel>
  */
 final class Collection extends EloquentCollection
 {
@@ -61,7 +59,7 @@ final class Collection extends EloquentCollection
 	 *
 	 * @param mixed $root
 	 *
-	 * @return Collection<TKey,Tmodelkey,Tmodel>
+	 * @return Collection<Tmodel>
 	 */
 	public function toTree($root = false)
 	{
@@ -88,7 +86,7 @@ final class Collection extends EloquentCollection
 	/**
 	 * @param mixed $root
 	 *
-	 * @return Tmodelkey
+	 * @return array-key
 	 */
 	protected function getRootNodeId($root = false)
 	{
@@ -125,11 +123,11 @@ final class Collection extends EloquentCollection
 	 *
 	 * @param bool $root
 	 *
-	 * @return Collection<TKey,Tmodelkey,Tmodel>
+	 * @return Collection<Tmodel>
 	 */
 	public function toFlatTree($root = false): Collection
 	{
-		/** @Var Collection<TKey,Tmodelkey,Tmodel> */
+		/** @Var Collection<Tmodel> */
 		$result = new Collection();
 
 		if ($this->isEmpty()) {
@@ -138,7 +136,7 @@ final class Collection extends EloquentCollection
 
 		/** @var NodeModel */
 		$first = $this->first();
-		/** @var Collection<TKey,Tmodelkey,NodeModel> */
+		/** @var Collection<NodeModel> */
 		$groupedNodes = $this->groupBy($first->getParentIdName());
 
 		return $result->flattenTree($groupedNodes, $this->getRootNodeId($root)); /** @phpstan-ignore-line */
@@ -147,10 +145,10 @@ final class Collection extends EloquentCollection
 	/**
 	 * Flatten a tree into a non recursive array.
 	 *
-	 * @param Collection<TKey,Tmodelkey,Tmodel> $groupedNodes
-	 * @param Tmodelkey                         $parentId
+	 * @param Collection<Tmodel> $groupedNodes
+	 * @param array-key                         $parentId
 	 *
-	 * @return Collection<TKey,Tmodelkey,Tmodel>
+	 * @return Collection<Tmodel>
 	 */
 	protected function flattenTree(Collection $groupedNodes, $parentId): Collection
 	{

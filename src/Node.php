@@ -20,10 +20,9 @@ use Illuminate\Database\Query\Builder as BaseQueryBuilder;
  * {@link \Kalnoy\Nestedset\NestedSet::isNode()} recognizes an object as a
  * node.
  *
- * @template Tmodelkey
  * @template Tmodel of \Illuminate\Database\Eloquent\Model
  *
- * @phpstan-type NodeModel Node<Tmodelkey,Tmodel>&Tmodel
+ * @phpstan-type NodeModel Node<Tmodel>&Tmodel
  */
 interface Node
 {
@@ -42,28 +41,28 @@ interface Node
 	/**
 	 * Relation to children.
 	 *
-	 * @return HasMany<NodeModel>
+	 * @return HasMany<NodeModel,NodeModel>
 	 */
 	public function children(): HasMany;
 
 	/**
 	 * Get query for descendants of the node.
 	 *
-	 * @return DescendantsRelation<Tmodelkey,Tmodel>
+	 * @return DescendantsRelation<Tmodel>
 	 */
 	public function descendants(): DescendantsRelation;
 
 	/**
 	 * Get query for siblings of the node.
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function siblings(): QueryBuilder;
 
 	/**
 	 * Get the node siblings and the node itself.
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function siblingsAndSelf(): QueryBuilder;
 
@@ -79,35 +78,35 @@ interface Node
 	/**
 	 * Get query for siblings after the node.
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function nextSiblings(): QueryBuilder;
 
 	/**
 	 * Get query for siblings before the node.
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function prevSiblings(): QueryBuilder;
 
 	/**
 	 * Get query for nodes after current node.
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function nextNodes(): QueryBuilder;
 
 	/**
 	 * Get query for nodes before current node in reversed order.
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function prevNodes(): QueryBuilder;
 
 	/**
 	 * Get query ancestors of the node.
 	 *
-	 * @return AncestorsRelation<Tmodelkey,Tmodel>
+	 * @return AncestorsRelation<Tmodel>
 	 */
 	public function ancestors(): AncestorsRelation;
 
@@ -128,7 +127,7 @@ interface Node
 	/**
 	 * @param int       $lft
 	 * @param int       $rgt
-	 * @param Tmodelkey $parentId
+	 * @param array-key $parentId
 	 *
 	 * @return $this
 	 */
@@ -155,9 +154,9 @@ interface Node
 	/**
 	 * @since 2.0
 	 *
-	 * @param BaseQueryBuilder|EloquentBuilder<Tmodel>|QueryBuilder<Tmodelkey,Tmodel> $query
+	 * @param BaseQueryBuilder|EloquentBuilder<Tmodel>|QueryBuilder<Tmodel> $query
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function newEloquentBuilder(BaseQueryBuilder|EloquentBuilder|QueryBuilder $query): QueryBuilder;
 
@@ -166,16 +165,16 @@ interface Node
 	 *
 	 * @since 1.1
 	 *
-	 * @param (QueryBuilder<Tmodelkey,Tmodel>)|string|null $table
+	 * @param (QueryBuilder<Tmodel>)|string|null $table
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function newNestedSetQuery(QueryBuilder|string|null $table = null): QueryBuilder;
 
 	/**
 	 * @param ?string $table
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function newScopedQuery($table = null);
 
@@ -190,14 +189,14 @@ interface Node
 	/**
 	 * @param string[] $attributes
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public static function scoped(array $attributes): QueryBuilder;
 
 	/**
 	 * @param array<int,NodeModel> $models
 	 *
-	 * @return Collection<int,Tmodelkey,Tmodel>
+	 * @return Collection<Tmodel>
 	 */
 	public function newCollection(array $models = []): Collection;
 
@@ -216,7 +215,7 @@ interface Node
 	 *
 	 * Behind the scenes node is appended to found parent node.
 	 *
-	 * @param Tmodelkey|null $value
+	 * @param array-key|null $value
 	 *
 	 * @throws \Exception If parent node doesn't exists
 	 */
@@ -257,7 +256,7 @@ interface Node
 	/**
 	 * Get the value of the model's parent id key.
 	 *
-	 * @return Tmodelkey|null
+	 * @return array-key|null
 	 */
 	public function getParentId(): mixed;
 
@@ -286,35 +285,35 @@ interface Node
 	/**
 	 * @param string[] $columns
 	 *
-	 * @return Collection<int,Tmodelkey,Tmodel>
+	 * @return Collection<Tmodel>
 	 */
 	public function getAncestors(array $columns = ['*']);
 
 	/**
 	 * @param string[] $columns
 	 *
-	 * @return Collection<int,Tmodelkey,Tmodel>
+	 * @return Collection<Tmodel>
 	 */
 	public function getDescendants(array $columns = ['*']);
 
 	/**
 	 * @param string[] $columns
 	 *
-	 * @return Collection<int,Tmodelkey,Tmodel>
+	 * @return Collection<Tmodel>
 	 */
 	public function getSiblings(array $columns = ['*']);
 
 	/**
 	 * @param string[] $columns
 	 *
-	 * @return Collection<int,Tmodelkey,Tmodel>
+	 * @return Collection<Tmodel>
 	 */
 	public function getNextSiblings(array $columns = ['*']);
 
 	/**
 	 * @param string[] $columns
 	 *
-	 * @return Collection<int,Tmodelkey,Tmodel>
+	 * @return Collection<Tmodel>
 	 */
 	public function getPrevSiblings(array $columns = ['*']);
 
@@ -352,7 +351,7 @@ interface Node
 	public function setRgt(int $value): Node;
 
 	/**
-	 * @param Tmodelkey|null $id
+	 * @param array-key|null $id
 	 *
 	 * @return NodeModel
 	 */
@@ -422,7 +421,7 @@ interface Node
 	/**
 	 * Create a new Query.
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function newQuery();
 }

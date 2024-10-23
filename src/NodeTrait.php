@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
 
 /**
- * @template Tmodelkey
  * @template Tmodel extends Model
  */
 trait NodeTrait

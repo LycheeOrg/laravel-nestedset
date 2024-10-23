@@ -9,12 +9,11 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder;
 
 /**
- * @template Tmodelkey
  * @template Tmodel of Model
  *
- * @phpstan-type NodeModel Node<Tmodelkey,Tmodel>&Tmodel
+ * @phpstan-type NodeModel Node<Tmodel>&Tmodel
  *
- * @extends Relation<NodeModel>
+ * @extends Relation<NodeModel,NodeModel,EloquentCollection<int,NodeModel>>
  *
  * @property NodeModel $related
  * @property NodeModel $parent
@@ -24,7 +23,7 @@ use Illuminate\Database\Query\Builder;
 abstract class BaseRelation extends Relation
 {
 	/**
-	 * @var QueryBuilder<Tmodelkey,Tmodel>
+	 * @var QueryBuilder<Tmodel>
 	 */
 	protected $query;
 
@@ -43,7 +42,7 @@ abstract class BaseRelation extends Relation
 	/**
 	 * AncestorsRelation constructor.
 	 *
-	 * @param QueryBuilder<Tmodelkey,Tmodel> $builder
+	 * @param QueryBuilder<Tmodel> $builder
 	 * @param NodeModel                      $model
 	 */
 	public function __construct(QueryBuilder $builder, Model $model)
@@ -64,7 +63,7 @@ abstract class BaseRelation extends Relation
 	abstract protected function matches(Model&Node $model, Node $related): bool;
 
 	/**
-	 * @param QueryBuilder<Tmodelkey,Tmodel> $query
+	 * @param QueryBuilder<Tmodel> $query
 	 * @param NodeModel                      $model
 	 *
 	 * @return void
@@ -86,10 +85,10 @@ abstract class BaseRelation extends Relation
 	 * @param EloquentBuilder<NodeModel> $parentQuery
 	 * @param mixed                      $columns
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function getRelationExistenceQuery(EloquentBuilder $query, EloquentBuilder $parentQuery,
-		$columns = ['*']
+		$columns = ['*'],
 	) {
 		$query = $this->getParent()->replicate()->newScopedQuery()->select($columns);
 
@@ -113,10 +112,10 @@ abstract class BaseRelation extends Relation
 	/**
 	 * Initialize the relation on a set of models.
 	 *
-	 * @param array<int,Tmodel> $models
+	 * @param array<int,NodeModel> $models
 	 * @param string            $relation
 	 *
-	 * @return array<int,Tmodel>
+	 * @return array<int,NodeModel>
 	 */
 	public function initRelation(array $models, $relation)
 	{
@@ -138,11 +137,13 @@ abstract class BaseRelation extends Relation
 	/**
 	 * Get the results of the relationship.
 	 *
-	 * @return mixed
+	 * @return Collection<NodeModel>
 	 */
 	public function getResults()
 	{
-		return $this->query->get();
+		/** @var Collection<NodeModel> */
+		$result = $this->query->get();
+		return $result;
 	}
 
 	/**
@@ -195,11 +196,11 @@ abstract class BaseRelation extends Relation
 	 * @param NodeModel                         $model
 	 * @param EloquentCollection<int,NodeModel> $results
 	 *
-	 * @return Collection<int,Tmodelkey,Tmodel>
+	 * @return Collection<Tmodel>
 	 */
 	protected function matchForModel(Model $model, EloquentCollection $results)
 	{
-		/** @var Collection<int,Tmodelkey,Tmodel> */
+		/** @var Collection<Tmodel> */
 		$result = $this->related->newCollection();
 
 		foreach ($results as $related) {

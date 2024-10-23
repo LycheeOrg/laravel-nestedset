@@ -12,10 +12,9 @@ use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Arr;
 
 /**
- * @template Tmodelkey
  * @template Tmodel of \Illuminate\Database\Eloquent\Model
  *
- * @phpstan-type NodeModel Node<Tmodelkey,Tmodel>&Tmodel
+ * @phpstan-type NodeModel Node<Tmodel>&Tmodel
  *
  * @extends Builder<NodeModel>
  */
@@ -31,7 +30,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @since 2.0
 	 *
-	 * @param Tmodelkey|NodeModel $id
+	 * @param NodeModel $id
 	 * @param bool                $required
 	 *
 	 * @return array<int,int>
@@ -57,7 +56,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @since 2.0
 	 *
-	 * @param Tmodelkey|NodeModel $id
+	 * @param NodeModel $id
 	 * @param bool                $required
 	 *
 	 * @return array<int,int>
@@ -70,7 +69,7 @@ class QueryBuilder extends Builder
 	/**
 	 * Scope limits query to select just root node.
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function whereIsRoot(): QueryBuilder
 	{
@@ -84,11 +83,11 @@ class QueryBuilder extends Builder
 	 *
 	 * @since 2.0
 	 *
-	 * @param Tmodelkey|NodeModel $id
+	 * @param NodeModel $id
 	 * @param bool                $andSelf
 	 * @param string              $boolean
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function whereAncestorOf(mixed $id, bool $andSelf = false, string $boolean = 'and')
 	{
@@ -129,10 +128,10 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @param Tmodelkey|NodeModel $id
+	 * @param NodeModel $id
 	 * @param bool                $andSelf
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function orWhereAncestorOf(mixed $id, $andSelf = false): QueryBuilder
 	{
@@ -140,9 +139,9 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @param Tmodelkey|NodeModel $id
+	 * @param NodeModel $id
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function whereAncestorOrSelf(mixed $id): QueryBuilder
 	{
@@ -154,7 +153,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @since 2.0
 	 *
-	 * @param Tmodelkey $id
+	 * @param NodeModel $id
 	 * @param string[]  $columns
 	 *
 	 * @return EloquentCollection<int,NodeModel>
@@ -165,7 +164,7 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @param Tmodelkey $id
+	 * @param NodeModel $id
 	 * @param string[]  $columns
 	 *
 	 * @return EloquentCollection<int,NodeModel>
@@ -184,7 +183,7 @@ class QueryBuilder extends Builder
 	 * @param string $boolean
 	 * @param bool   $not
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function whereNodeBetween(array $values, $boolean = 'and', $not = false)
 	{
@@ -200,7 +199,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @param int[] $values
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function orWhereNodeBetween(array $values)
 	{
@@ -212,15 +211,15 @@ class QueryBuilder extends Builder
 	 *
 	 * @since 2.0
 	 *
-	 * @param Tmodelkey|NodeModel $id
+	 * @param ?NodeModel $id
 	 * @param string              $boolean
 	 * @param bool                $not
 	 * @param bool                $andSelf
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function whereDescendantOf(mixed $id, $boolean = 'and', $not = false,
-		$andSelf = false
+		$andSelf = false,
 	) {
 		if (NestedSet::isNode($id)) {
 			$data = $id->getBounds();
@@ -238,9 +237,9 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @param Tmodelkey|NodeModel $id
+	 * @param NodeModel $id
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function whereNotDescendantOf(mixed $id)
 	{
@@ -248,9 +247,9 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @param Tmodelkey|NodeModel $id
+	 * @param NodeModel $id
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function orWhereDescendantOf(mixed $id)
 	{
@@ -258,9 +257,9 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @param Tmodelkey $id
+	 * @param NodeModel $id
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function orWhereNotDescendantOf(mixed $id)
 	{
@@ -268,11 +267,11 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @param Tmodelkey $id
+	 * @param NodeModel $id
 	 * @param string    $boolean
 	 * @param bool      $not
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function whereDescendantOrSelf(mixed $id, string $boolean = 'and', bool $not = false)
 	{
@@ -284,11 +283,11 @@ class QueryBuilder extends Builder
 	 *
 	 * @since 2.0
 	 *
-	 * @param Tmodelkey $id
+	 * @param NodeModel $id
 	 * @param string[]  $columns
 	 * @param bool      $andSelf
 	 *
-	 * @return EloquentCollection<int,NodeModel>|Collection<int,Tmodelkey,Tmodel>
+	 * @return EloquentCollection<int,NodeModel>|Collection<Tmodel>
 	 */
 	public function descendantsOf(mixed $id, array $columns = ['*'], bool $andSelf = false)
 	{
@@ -300,7 +299,7 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @param Tmodelkey $id
+	 * @param NodeModel $id
 	 * @param string[]  $columns
 	 *
 	 * @return EloquentCollection<int,NodeModel>
@@ -311,11 +310,11 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @param Tmodelkey $id
+	 * @param NodeModel $id
 	 * @param string    $operator
 	 * @param string    $boolean
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	protected function whereIsBeforeOrAfter(mixed $id, string $operator, string $boolean)
 	{
@@ -348,10 +347,10 @@ class QueryBuilder extends Builder
 	 *
 	 * @since 2.0
 	 *
-	 * @param Tmodelkey $id
+	 * @param NodeModel $id
 	 * @param string    $boolean
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function whereIsAfter($id, $boolean = 'and')
 	{
@@ -363,10 +362,10 @@ class QueryBuilder extends Builder
 	 *
 	 * @since 2.0
 	 *
-	 * @param Tmodelkey $id
+	 * @param NodeModel $id
 	 * @param string    $boolean
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function whereIsBefore($id, $boolean = 'and')
 	{
@@ -374,7 +373,7 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function whereIsLeaf()
 	{
@@ -398,7 +397,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @param string $as
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function withDepth($as = 'depth')
 	{
@@ -469,7 +468,7 @@ class QueryBuilder extends Builder
 	/**
 	 * Exclude root node from the result.
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function withoutRoot(): QueryBuilder
 	{
@@ -484,7 +483,7 @@ class QueryBuilder extends Builder
 	 * @since 2.0
 	 * @deprecated since v4.1
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function hasParent(): QueryBuilder
 	{
@@ -499,7 +498,7 @@ class QueryBuilder extends Builder
 	 * @since 2.0
 	 * @deprecated since v4.1
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function hasChildren(): QueryBuilder
 	{
@@ -515,7 +514,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @param string $dir
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function defaultOrder($dir = 'asc'): QueryBuilder
 	{
@@ -529,7 +528,7 @@ class QueryBuilder extends Builder
 	/**
 	 * Order by reversed node position.
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function reversed(): QueryBuilder
 	{
@@ -735,7 +734,7 @@ class QueryBuilder extends Builder
 		$query = $this->model
 			->newNestedSetQuery($firstAlias)
 			->toBase()
-			->from($this->query->raw("{$table} as {$waFirst}, {$table} {$waSecond}")) /** @phpstan-ignore-line */
+			->from($this->query->raw("{$table} as {$waFirst}, {$table} {$waSecond}"))
 			->whereRaw("{$waFirst}.{$keyName} < {$waSecond}.{$keyName}")
 			->whereNested(function (BaseQueryBuilder $inner) use ($waFirst, $waSecond) {
 				list($lft, $rgt) = $this->wrappedColumns();
@@ -772,7 +771,7 @@ class QueryBuilder extends Builder
 		$query = $this->model
 			->newNestedSetQuery('c')
 			->toBase()
-			->from($this->query->raw("{$table} as {$waChild}, {$table} as {$waParent}, $table as {$waInterm}")) /** @phpstan-ignore-line */
+			->from($this->query->raw("{$table} as {$waChild}, {$table} as {$waParent}, $table as {$waInterm}"))
 			->whereRaw("{$waChild}.{$parentIdName}={$waParent}.{$keyName}")
 			->whereRaw("{$waInterm}.{$keyName} <> {$waParent}.{$keyName}")
 			->whereRaw("{$waInterm}.{$keyName} <> {$waChild}.{$keyName}")
@@ -811,7 +810,7 @@ class QueryBuilder extends Builder
 					->newNestedSetQuery()
 					->toBase()
 					->selectRaw('1')
-					->from($this->query->raw("{$table} as {$wrappedAlias}")) /** @phpstan-ignore-line */
+					->from($this->query->raw("{$table} as {$wrappedAlias}"))
 					->whereRaw("{$table}.{$parentIdName} = {$wrappedAlias}.{$keyName}")
 					->limit(1);
 
@@ -851,7 +850,7 @@ class QueryBuilder extends Builder
 	 *
 	 * Nodes with invalid parent are saved as roots.
 	 *
-	 * @param Tmodelkey|null $root
+	 * @param ?NodeModel $root
 	 *
 	 * @return int The number of changed nodes
 	 */
@@ -878,7 +877,7 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @param Tmodelkey $root
+	 * @param NodeModel $root
 	 *
 	 * @return int
 	 */
@@ -888,7 +887,7 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @param array<Tmodelkey,NodeModel[]> $dictionary
+	 * @param array<array-key,NodeModel[]> $dictionary
 	 * @param NodeModel|null               $parent
 	 *
 	 * @return int
@@ -926,9 +925,9 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @param array<Tmodelkey,NodeModel[]> $dictionary
+	 * @param array<array-key,NodeModel[]> $dictionary
 	 * @param NodeModel[]                  $updated
-	 * @param Tmodelkey|null               $parentId
+	 * @param ?NodeModel               $parentId
 	 * @param int                          $cut
 	 *
 	 * @return int
@@ -936,7 +935,7 @@ class QueryBuilder extends Builder
 	 * @internal param int $fixed
 	 */
 	protected static function reorderNodes(
-		array &$dictionary, array &$updated, $parentId = null, $cut = 1
+		array &$dictionary, array &$updated, $parentId = null, $cut = 1,
 	) {
 		if (!array_key_exists($parentId, $dictionary)) {
 			return $cut;
@@ -964,10 +963,9 @@ class QueryBuilder extends Builder
 	 *
 	 * If item data does not contain primary key, new node will be created.
 	 *
-	 * @param array<string,mixed>[] $data
-	 * @param bool                  $delete Whether to delete nodes that exists but not in the data
-	 *                                      array
-	 * @param Tmodelkey|null        $root
+	 * @param array<array-key,NodeModel[]>[] $data
+	 * @param bool                  $delete Whether to delete nodes that exists but not in the data array
+	 * @param ?NodeModel        $root
 	 *
 	 * @return int
 	 */
@@ -1014,7 +1012,7 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @param Tmodelkey|null        $root
+	 * @param null        $root
 	 * @param array<string,mixed>[] $data
 	 * @param bool                  $delete
 	 *
@@ -1026,15 +1024,15 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @param array<Tmodelkey,NodeModel[]> $dictionary
+	 * @param array<array-key,NodeModel[]> $dictionary
 	 * @param array<string,mixed>[]        $data
-	 * @param array<Tmodelkey,NodeModel>   $existing
-	 * @param Tmodelkey|null               $parentId
+	 * @param array<array-key,NodeModel>   $existing
+	 * @param ?NodeModel               $parentId
 	 */
 	protected function buildRebuildDictionary(array &$dictionary,
 		array $data,
 		array &$existing,
-		$parentId = null
+		$parentId = null,
 	): void {
 		$keyName = $this->model->getKeyName();
 
@@ -1046,7 +1044,6 @@ class QueryBuilder extends Builder
 				// Set some values that will be fixed later
 				$model->rawNode(0, 0, $parentId);
 			} else {
-				/** @var Tmodelkey */
 				$key = $itemData[$keyName];
 				if (!isset($existing[$key])) {
 					throw new ModelNotFoundException();
@@ -1078,7 +1075,7 @@ class QueryBuilder extends Builder
 	/**
 	 * @param string|null $table
 	 *
-	 * @return QueryBuilder<Tmodelkey,Tmodel>
+	 * @return QueryBuilder<Tmodel>
 	 */
 	public function applyNestedSetScope($table = null)
 	{

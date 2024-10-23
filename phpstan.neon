@@ -1,5 +1,5 @@
 includes:
-	- vendor/nunomaduro/larastan/extension.neon
+	- vendor/larastan/larastan/extension.neon
 	- vendor/lychee-org/phpstan-lychee/phpstan.neon
 
 parameters:
@@ -15,9 +15,3 @@ parameters:
 		# - '#Dynamic call to static method Kalnoy\\Nestedset\\QueryBuilder<.*>::whereRaw\(\).#'
 		- '#Dynamic call to static method Kalnoy\\Nestedset\\QueryBuilder<.*>::whereNested\(\).#'
 		- '#Dynamic call to static method Kalnoy\\Nestedset\\QueryBuilder<.*>::whereIn\(\).#'
-		- '#Parameter .* \$models .* of method .*::initRelation\(\) should be contravariant with parameter \$models .* of method .*::initRelation\(\)#'
-		- '#Parameter .* \$models .* of method .*::addEagerConstraints\(\) should be contravariant with parameter \$models .* of method .*::addEagerConstraints\(\)#'
-		- '#Parameter .* \$models .* of method .*::match\(\) should be contravariant with parameter \$models .* of method .*::match\(\)#'
-		- '#Parameter .* \$query .* of method .*::getRelationExistenceQuery\(\) should be contravariant with parameter \$query .* of method .*::getRelationExistenceQuery\(\)#'
-		- '#Parameter .* \$parentQuery .* of method .*::getRelationExistenceQuery\(\) should be contravariant with parameter \$parentQuery .* of method .*::getRelationExistenceQuery\(\)#'
-		- '#Parameter .* \$results .* of method .*::match\(\) should be contravariant with parameter \$results .* of method .*::match\(\)#'
