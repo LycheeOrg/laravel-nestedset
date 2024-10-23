@@ -31,7 +31,7 @@ class QueryBuilder extends Builder
 	 * @since 2.0
 	 *
 	 * @param NodeModel $id
-	 * @param bool                $required
+	 * @param bool      $required
 	 *
 	 * @return array<int,int>
 	 */
@@ -57,7 +57,7 @@ class QueryBuilder extends Builder
 	 * @since 2.0
 	 *
 	 * @param NodeModel $id
-	 * @param bool                $required
+	 * @param bool      $required
 	 *
 	 * @return array<int,int>
 	 */
@@ -84,8 +84,8 @@ class QueryBuilder extends Builder
 	 * @since 2.0
 	 *
 	 * @param NodeModel $id
-	 * @param bool                $andSelf
-	 * @param string              $boolean
+	 * @param bool      $andSelf
+	 * @param string    $boolean
 	 *
 	 * @return QueryBuilder<Tmodel>
 	 */
@@ -129,7 +129,7 @@ class QueryBuilder extends Builder
 
 	/**
 	 * @param NodeModel $id
-	 * @param bool                $andSelf
+	 * @param bool      $andSelf
 	 *
 	 * @return QueryBuilder<Tmodel>
 	 */
@@ -212,9 +212,9 @@ class QueryBuilder extends Builder
 	 * @since 2.0
 	 *
 	 * @param ?NodeModel $id
-	 * @param string              $boolean
-	 * @param bool                $not
-	 * @param bool                $andSelf
+	 * @param string     $boolean
+	 * @param bool       $not
+	 * @param bool       $andSelf
 	 *
 	 * @return QueryBuilder<Tmodel>
 	 */
@@ -927,7 +927,7 @@ class QueryBuilder extends Builder
 	/**
 	 * @param array<array-key,NodeModel[]> $dictionary
 	 * @param NodeModel[]                  $updated
-	 * @param ?NodeModel               $parentId
+	 * @param ?NodeModel                   $parentId
 	 * @param int                          $cut
 	 *
 	 * @return int
@@ -964,8 +964,8 @@ class QueryBuilder extends Builder
 	 * If item data does not contain primary key, new node will be created.
 	 *
 	 * @param array<array-key,NodeModel[]>[] $data
-	 * @param bool                  $delete Whether to delete nodes that exists but not in the data array
-	 * @param ?NodeModel        $root
+	 * @param bool                           $delete Whether to delete nodes that exists but not in the data array
+	 * @param ?NodeModel                     $root
 	 *
 	 * @return int
 	 */
@@ -1012,7 +1012,7 @@ class QueryBuilder extends Builder
 	}
 
 	/**
-	 * @param null        $root
+	 * @param null                  $root
 	 * @param array<string,mixed>[] $data
 	 * @param bool                  $delete
 	 *
@@ -1027,7 +1027,7 @@ class QueryBuilder extends Builder
 	 * @param array<array-key,NodeModel[]> $dictionary
 	 * @param array<string,mixed>[]        $data
 	 * @param array<array-key,NodeModel>   $existing
-	 * @param ?NodeModel               $parentId
+	 * @param ?NodeModel                   $parentId
 	 */
 	protected function buildRebuildDictionary(array &$dictionary,
 		array $data,

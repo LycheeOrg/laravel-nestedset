@@ -43,7 +43,7 @@ abstract class BaseRelation extends Relation
 	 * AncestorsRelation constructor.
 	 *
 	 * @param QueryBuilder<Tmodel> $builder
-	 * @param NodeModel                      $model
+	 * @param NodeModel            $model
 	 */
 	public function __construct(QueryBuilder $builder, Model $model)
 	{
@@ -64,7 +64,7 @@ abstract class BaseRelation extends Relation
 
 	/**
 	 * @param QueryBuilder<Tmodel> $query
-	 * @param NodeModel                      $model
+	 * @param NodeModel            $model
 	 *
 	 * @return void
 	 */
@@ -113,7 +113,7 @@ abstract class BaseRelation extends Relation
 	 * Initialize the relation on a set of models.
 	 *
 	 * @param array<int,NodeModel> $models
-	 * @param string            $relation
+	 * @param string               $relation
 	 *
 	 * @return array<int,NodeModel>
 	 */
@@ -143,6 +143,7 @@ abstract class BaseRelation extends Relation
 	{
 		/** @var Collection<NodeModel> */
 		$result = $this->query->get();
+
 		return $result;
 	}
 

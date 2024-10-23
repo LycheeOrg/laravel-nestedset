@@ -32,7 +32,7 @@ class DescendantsRelation extends BaseRelation
 
 	/**
 	 * @param QueryBuilder<Tmodel> $query
-	 * @param NodeModel                      $model
+	 * @param NodeModel            $model
 	 */
 	protected function addEagerConstraint($query, $model)
 	{
