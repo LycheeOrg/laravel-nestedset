@@ -22,17 +22,17 @@
         }
     ],
     "require": {
-        "php": "^8.2",
-        "illuminate/support": "^11.0",
-        "illuminate/database": "^11.0",
-        "illuminate/events": "^11.0"
+        "php": "^8.3",
+        "illuminate/support": "^11.0|^12.0",
+        "illuminate/database": "^11.0|^12.0",
+        "illuminate/events": "^11.0|^12.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.3",
         "php-parallel-lint/php-parallel-lint": "^1.2",
         "phpunit/phpunit": "^10.5",
-        "lychee-org/phpstan-lychee": "^1.0.4",
-        "larastan/larastan": "^2.0",
+        "lychee-org/phpstan-lychee": "^2.0.1",
+        "larastan/larastan": "^3.2",
         "orchestra/testbench": "^9.0"
     },
     "autoload": {
@@ -55,7 +55,7 @@
         ],
         "format": [
             "rm .php_cs.cache 2> /dev/null || true",
-            "vendor/bin/php-cs-fixer fix -v --config=.php-cs-fixer.php"
+            "PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer fix -v --config=.php-cs-fixer.php"
         ],
         "phpstan": [
             "vendor/bin/phpstan analyze"
@@ -65,16 +65,13 @@
     "prefer-stable": true,
     "config": {
         "platform": {
-            "php": "8.2"
+            "php": "8.3"
         },
         "preferred-install": "dist",
         "sort-packages": true,
         "optimize-autoloader": true
     },
     "extra": {
-        "branch-alias": {
-            "dev-master": "v8.0.x-dev"
-        },
         "laravel": {
             "providers": [
                 "Kalnoy\\Nestedset\\NestedSetServiceProvider"
