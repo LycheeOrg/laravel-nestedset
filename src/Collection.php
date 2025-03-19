@@ -37,8 +37,8 @@ final class Collection extends EloquentCollection
 				$node->setRelation('parent', null);
 			}
 
-			/** @var array<int,NodeModel> */
-			$children = $groupedNodes->get($node->getKey(), []);
+			/** @var array<int,NodeModel> */ 
+			$children = $groupedNodes->get($node->getKey(), []); /** @phpstan-ignore varTag.type */
 
 			foreach ($children as $child) {
 				$child->setRelation('parent', $node);
@@ -137,7 +137,7 @@ final class Collection extends EloquentCollection
 		/** @var NodeModel */
 		$first = $this->first();
 		/** @var Collection<NodeModel> */
-		$groupedNodes = $this->groupBy($first->getParentIdName());
+		$groupedNodes = $this->groupBy($first->getParentIdName()); /** @phpstan-ignore varTag.type */
 
 		return $result->flattenTree($groupedNodes, $this->getRootNodeId($root)); /** @phpstan-ignore-line */
 	}
@@ -153,7 +153,7 @@ final class Collection extends EloquentCollection
 	protected function flattenTree(Collection $groupedNodes, $parentId): Collection
 	{
 		/** @var array<int,NodeModel> */
-		$nodes = $groupedNodes->get($parentId, []);
+		$nodes = $groupedNodes->get($parentId, []); /** @phpstan-ignore varTag.type */
 		foreach ($nodes as $node) {
 			$this->push($node);
 
