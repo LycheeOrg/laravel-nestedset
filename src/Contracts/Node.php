@@ -419,7 +419,7 @@ interface Node
 	/**
 	 * Get whether a node is a descendant of other node.
 	 *
-	 * @param NodeModel $other
+	 * @param Node<Tmodel> $other
 	 *
 	 * @return bool
 	 */

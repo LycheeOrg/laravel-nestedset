@@ -214,7 +214,7 @@ class QueryBuilder extends Builder implements NodeQueryBuilder
 	 *
 	 * @since 2.0
 	 *
-	 * @param ?NodeModel $id
+	 * @param ?Node<Tmodel> $id
 	 * @param string     $boolean
 	 * @param bool       $not
 	 * @param bool       $andSelf
@@ -250,7 +250,7 @@ class QueryBuilder extends Builder implements NodeQueryBuilder
 	}
 
 	/**
-	 * @param NodeModel $id
+	 * @param Node<Tmodel> $id
 	 *
 	 * @return QueryBuilder<Tmodel>
 	 */
@@ -260,7 +260,7 @@ class QueryBuilder extends Builder implements NodeQueryBuilder
 	}
 
 	/**
-	 * @param NodeModel $id
+	 * @param Node<Tmodel> $id
 	 *
 	 * @return QueryBuilder<Tmodel>
 	 */
@@ -270,7 +270,7 @@ class QueryBuilder extends Builder implements NodeQueryBuilder
 	}
 
 	/**
-	 * @param NodeModel $id
+	 * @param Node<Tmodel> $id
 	 * @param string    $boolean
 	 * @param bool      $not
 	 *
@@ -868,7 +868,7 @@ class QueryBuilder extends Builder implements NodeQueryBuilder
 
 		$dictionary = $this->model
 			->newNestedSetQuery()
-			->when($root, function (self $query) use ($root) {
+			->when($root !== null, function (self $query) use ($root) { 
 				return $query->whereDescendantOf($root);
 			})
 			->defaultOrder()
@@ -876,7 +876,7 @@ class QueryBuilder extends Builder implements NodeQueryBuilder
 			->groupBy($this->model->getParentIdName())
 			->all();
 
-		return $this->fixNodes($dictionary, $root);
+		return $this->fixNodes($dictionary, $root);  /** @phpstan-ignore argument.type */
 	}
 
 	/**

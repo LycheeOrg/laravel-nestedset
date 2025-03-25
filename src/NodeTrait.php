@@ -16,7 +16,7 @@ use Kalnoy\Nestedset\Contracts\Node;
 use Kalnoy\Nestedset\Contracts\NodeQueryBuilder;
 
 /**
- * @template Tmodel extends Model
+ * @template Tmodel extends \Illuminate\Database\Eloquent\Model
  * @template Tmodelkey of array-key
  *
  * @method void setRelation(string $relation, mixed $value)
@@ -181,7 +181,7 @@ trait NodeTrait
 	/**
 	 * Apply parent model.
 	 *
-	 * @param Model|null $value
+	 * @param (Node&Tmodel)|null $value
 	 *
 	 * @return $this
 	 */
