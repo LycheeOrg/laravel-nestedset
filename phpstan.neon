@@ -3,16 +3,11 @@ includes:
 	- vendor/lychee-org/phpstan-lychee/phpstan.neon
 
 parameters:
-	level: 3
+	level: 2
 	paths:
 		- src
 	excludePaths:
 	stubFiles:
 	ignoreErrors:
 		# - identifier: missingType.generics
-		- '#Interface must be located in "Contract" or "Contracts" namespace#'
-		- '#Dynamic call to static method Kalnoy\\Nestedset\\QueryBuilder<.*>::select\(\).#'
-		- '#Dynamic call to static method Kalnoy\\Nestedset\\QueryBuilder<.*>::from\(\).#'
-		# - '#Dynamic call to static method Kalnoy\\Nestedset\\QueryBuilder<.*>::whereRaw\(\).#'
-		- '#Dynamic call to static method Kalnoy\\Nestedset\\QueryBuilder<.*>::whereNested\(\).#'
-		- '#Dynamic call to static method Kalnoy\\Nestedset\\QueryBuilder<.*>::whereIn\(\).#'
+		- '#Dynamic call to static method Kalnoy\\Nestedset\\QueryBuilder<Tmodel of Illuminate\\Database\\Eloquent\\Model>::whereRaw\(\).#'

@@ -1,12 +1,13 @@
 <?php
 
-namespace Kalnoy\Nestedset;
+namespace Kalnoy\Nestedset\Contracts;
 
+use Illuminate\Database\Query\Builder as BaseQueryBuilder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Query\Builder as BaseQueryBuilder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**
  * Accompanies {@link \Kalnoy\Nestedset\NodeTrait}.
@@ -22,7 +23,9 @@ use Illuminate\Database\Query\Builder as BaseQueryBuilder;
  *
  * @template Tmodel of \Illuminate\Database\Eloquent\Model
  *
- * @phpstan-type NodeModel Node<Tmodel>&Tmodel
+ * @phpstan-type NodeModel Node<Tmodel>
+ * 
+ * @require-extends \Illuminate\Database\Eloquent\Model
  */
 interface Node
 {
@@ -50,21 +53,21 @@ interface Node
 	 *
 	 * @return DescendantsRelation<Tmodel>
 	 */
-	public function descendants(): DescendantsRelation;
+	public function descendants(): Relation;
 
 	/**
 	 * Get query for siblings of the node.
 	 *
-	 * @return QueryBuilder<Tmodel>
+	 * @return NodeQueryBuilder<Tmodel>
 	 */
-	public function siblings(): QueryBuilder;
+	public function siblings(): NodeQueryBuilder;
 
 	/**
 	 * Get the node siblings and the node itself.
 	 *
-	 * @return QueryBuilder<Tmodel>
+	 * @return NodeQueryBuilder<Tmodel>
 	 */
-	public function siblingsAndSelf(): QueryBuilder;
+	public function siblingsAndSelf(): NodeQueryBuilder;
 
 	/**
 	 * Get query for the node siblings and the node itself.
@@ -78,37 +81,37 @@ interface Node
 	/**
 	 * Get query for siblings after the node.
 	 *
-	 * @return QueryBuilder<Tmodel>
+	 * @return NodeQueryBuilder<Tmodel>
 	 */
-	public function nextSiblings(): QueryBuilder;
+	public function nextSiblings(): NodeQueryBuilder;
 
 	/**
 	 * Get query for siblings before the node.
 	 *
-	 * @return QueryBuilder<Tmodel>
+	 * @return NodeQueryBuilder<Tmodel>
 	 */
-	public function prevSiblings(): QueryBuilder;
+	public function prevSiblings(): NodeQueryBuilder;
 
 	/**
 	 * Get query for nodes after current node.
 	 *
-	 * @return QueryBuilder<Tmodel>
+	 * @return NodeQueryBuilder<Tmodel>
 	 */
-	public function nextNodes(): QueryBuilder;
+	public function nextNodes(): NodeQueryBuilder;
 
 	/**
 	 * Get query for nodes before current node in reversed order.
 	 *
-	 * @return QueryBuilder<Tmodel>
+	 * @return NodeQueryBuilder<Tmodel>
 	 */
-	public function prevNodes(): QueryBuilder;
+	public function prevNodes(): NodeQueryBuilder;
 
 	/**
 	 * Get query ancestors of the node.
 	 *
 	 * @return AncestorsRelation<Tmodel>
 	 */
-	public function ancestors(): AncestorsRelation;
+	public function ancestors(): Relation;
 
 	/**
 	 * Make this node a root node.
@@ -154,27 +157,27 @@ interface Node
 	/**
 	 * @since 2.0
 	 *
-	 * @param BaseQueryBuilder|EloquentBuilder<Tmodel>|QueryBuilder<Tmodel> $query
+	 * @param BaseQueryBuilder|EloquentBuilder<Tmodel>|NodeQueryBuilder<Tmodel> $query
 	 *
-	 * @return QueryBuilder<Tmodel>
+	 * @return NodeQueryBuilder<Tmodel>
 	 */
-	public function newEloquentBuilder(BaseQueryBuilder|EloquentBuilder|QueryBuilder $query): QueryBuilder;
+	public function newEloquentBuilder(BaseQueryBuilder|EloquentBuilder|NodeQueryBuilder $query): NodeQueryBuilder;
 
 	/**
 	 * Get a new base query that includes deleted nodes.
 	 *
 	 * @since 1.1
 	 *
-	 * @param (QueryBuilder<Tmodel>)|string|null $table
+	 * @param NodeQueryBuilder<Tmodel>|string|null $table
 	 *
-	 * @return QueryBuilder<Tmodel>
+	 * @return NodeQueryBuilder<Tmodel>
 	 */
-	public function newNestedSetQuery(QueryBuilder|string|null $table = null): QueryBuilder;
+	public function newNestedSetQuery(NodeQueryBuilder|string|null $table = null): NodeQueryBuilder;
 
 	/**
 	 * @param ?string $table
 	 *
-	 * @return QueryBuilder<Tmodel>
+	 * @return NodeQueryBuilder<Tmodel>
 	 */
 	public function newScopedQuery($table = null);
 
@@ -189,16 +192,16 @@ interface Node
 	/**
 	 * @param string[] $attributes
 	 *
-	 * @return QueryBuilder<Tmodel>
+	 * @return NodeQueryBuilder<Tmodel>
 	 */
-	public static function scoped(array $attributes): QueryBuilder;
+	public static function scoped(array $attributes): NodeQueryBuilder;
 
 	/**
 	 * @param array<int,NodeModel> $models
 	 *
-	 * @return Collection<Tmodel>
+	 * @return NestedSetCollection<Tmodel>
 	 */
-	public function newCollection(array $models = []): Collection;
+	public function newCollection(array $models = []): NestedSetCollection;
 
 	/**
 	 * Get node height (rgt - lft + 1).
@@ -226,6 +229,9 @@ interface Node
 	 */
 	public function isRoot(): bool;
 
+	/**
+	 * Get whether node is a leaf.
+	 */
 	public function isLeaf(): bool;
 
 	/**
@@ -421,7 +427,23 @@ interface Node
 	/**
 	 * Create a new Query.
 	 *
-	 * @return QueryBuilder<Tmodel>
+	 * @return NodeQueryBuilder<Tmodel>
 	 */
 	public function newQuery();
+
+	/**
+     * Get the value of the model's primary key.
+	 * ! This is directly from Model method...
+     *
+     * @return mixed
+     */
+    public function getKey();
+
+	/**
+     * Get the value of the model's primary key.
+	 * ! This is directly from Model method...
+     *
+     * @return mixed
+     */
+    public function getKeyName();
 }

@@ -3,6 +3,7 @@
 namespace Kalnoy\Nestedset;
 
 use Illuminate\Database\Schema\Blueprint;
+use Kalnoy\Nestedset\Contracts\Node;
 
 class NestedSet
 {

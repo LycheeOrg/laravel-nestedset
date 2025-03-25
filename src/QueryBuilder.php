@@ -10,6 +10,9 @@ use Illuminate\Database\Query\Builder as BaseQueryBuilder;
 use Illuminate\Database\Query\Builder as Query;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Arr;
+use Kalnoy\Nestedset\Contracts\Node;
+use Kalnoy\Nestedset\Contracts\NodeQueryBuilder;
+use Kalnoy\Nestedset\Exceptions\NestedSetException;
 
 /**
  * @template Tmodel of \Illuminate\Database\Eloquent\Model
@@ -18,7 +21,7 @@ use Illuminate\Support\Arr;
  *
  * @extends Builder<NodeModel>
  */
-class QueryBuilder extends Builder
+class QueryBuilder extends Builder implements NodeQueryBuilder
 {
 	/**
 	 * @var NodeModel
@@ -35,7 +38,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @return array<int,int>
 	 */
-	public function getNodeData(mixed $id, $required = false)
+	public function getNodeData(mixed $id, $required = false): array
 	{
 		$query = $this->toBase();
 
@@ -61,7 +64,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @return array<int,int>
 	 */
-	public function getPlainNodeData(mixed $id, $required = false)
+	public function getPlainNodeData(mixed $id, $required = false): array
 	{
 		return array_values($this->getNodeData($id, $required));
 	}
@@ -69,9 +72,9 @@ class QueryBuilder extends Builder
 	/**
 	 * Scope limits query to select just root node.
 	 *
-	 * @return QueryBuilder<Tmodel>
+	 * @return NodeQueryBuilder<Tmodel>
 	 */
-	public function whereIsRoot(): QueryBuilder
+	public function whereIsRoot(): NodeQueryBuilder
 	{
 		$this->query->whereNull($this->model->getParentIdName());
 
@@ -87,9 +90,9 @@ class QueryBuilder extends Builder
 	 * @param bool      $andSelf
 	 * @param string    $boolean
 	 *
-	 * @return QueryBuilder<Tmodel>
+	 * @return NodeQueryBuilder<Tmodel>
 	 */
-	public function whereAncestorOf(mixed $id, bool $andSelf = false, string $boolean = 'and')
+	public function whereAncestorOf(mixed $id, bool $andSelf = false, string $boolean = 'and'): NodeQueryBuilder
 	{
 		$keyName = $this->model->getTable() . '.' . $this->model->getKeyName();
 
@@ -158,7 +161,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @return EloquentCollection<int,NodeModel>
 	 */
-	public function ancestorsOf(mixed $id, array $columns = ['*'])
+	public function ancestorsOf(mixed $id, array $columns = ['*']): EloquentCollection
 	{
 		return $this->whereAncestorOf($id)->get($columns);
 	}
@@ -169,7 +172,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @return EloquentCollection<int,NodeModel>
 	 */
-	public function ancestorsAndSelf(mixed $id, array $columns = ['*'])
+	public function ancestorsAndSelf(mixed $id, array $columns = ['*']): EloquentCollection
 	{
 		return $this->whereAncestorOf($id, true)->get($columns);
 	}
@@ -185,7 +188,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @return QueryBuilder<Tmodel>
 	 */
-	public function whereNodeBetween(array $values, $boolean = 'and', $not = false)
+	public function whereNodeBetween(array $values, $boolean = 'and', $not = false): NodeQueryBuilder
 	{
 		$this->query->whereBetween($this->model->getTable() . '.' . $this->model->getLftName(), $values, $boolean, $not);
 
@@ -201,7 +204,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @return QueryBuilder<Tmodel>
 	 */
-	public function orWhereNodeBetween(array $values)
+	public function orWhereNodeBetween(array $values): NodeQueryBuilder
 	{
 		return $this->whereNodeBetween($values, 'or');
 	}
@@ -220,7 +223,7 @@ class QueryBuilder extends Builder
 	 */
 	public function whereDescendantOf(mixed $id, $boolean = 'and', $not = false,
 		$andSelf = false,
-	) {
+	): NodeQueryBuilder {
 		if (NestedSet::isNode($id)) {
 			$data = $id->getBounds();
 		} else {
@@ -241,7 +244,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @return QueryBuilder<Tmodel>
 	 */
-	public function whereNotDescendantOf(mixed $id)
+	public function whereNotDescendantOf(mixed $id): NodeQueryBuilder
 	{
 		return $this->whereDescendantOf($id, 'and', true);
 	}
@@ -251,7 +254,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @return QueryBuilder<Tmodel>
 	 */
-	public function orWhereDescendantOf(mixed $id)
+	public function orWhereDescendantOf(mixed $id): NodeQueryBuilder
 	{
 		return $this->whereDescendantOf($id, 'or');
 	}
@@ -261,7 +264,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @return QueryBuilder<Tmodel>
 	 */
-	public function orWhereNotDescendantOf(mixed $id)
+	public function orWhereNotDescendantOf(mixed $id): NodeQueryBuilder
 	{
 		return $this->whereDescendantOf($id, 'or', true);
 	}
@@ -273,7 +276,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @return QueryBuilder<Tmodel>
 	 */
-	public function whereDescendantOrSelf(mixed $id, string $boolean = 'and', bool $not = false)
+	public function whereDescendantOrSelf(mixed $id, string $boolean = 'and', bool $not = false): NodeQueryBuilder
 	{
 		return $this->whereDescendantOf($id, $boolean, $not, true);
 	}
@@ -289,7 +292,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @return EloquentCollection<int,NodeModel>|Collection<Tmodel>
 	 */
-	public function descendantsOf(mixed $id, array $columns = ['*'], bool $andSelf = false)
+	public function descendantsOf(mixed $id, array $columns = ['*'], bool $andSelf = false): EloquentCollection
 	{
 		try {
 			return $this->whereDescendantOf($id, 'and', false, $andSelf)->get($columns);
@@ -304,7 +307,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @return EloquentCollection<int,NodeModel>
 	 */
-	public function descendantsAndSelf($id, array $columns = ['*'])
+	public function descendantsAndSelf($id, array $columns = ['*']): EloquentCollection
 	{
 		return $this->descendantsOf($id, $columns, true);
 	}
@@ -352,7 +355,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @return QueryBuilder<Tmodel>
 	 */
-	public function whereIsAfter($id, $boolean = 'and')
+	public function whereIsAfter($id, $boolean = 'and'): NodeQueryBuilder
 	{
 		return $this->whereIsBeforeOrAfter($id, '>', $boolean);
 	}
@@ -367,7 +370,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @return QueryBuilder<Tmodel>
 	 */
-	public function whereIsBefore($id, $boolean = 'and')
+	public function whereIsBefore($id, $boolean = 'and'): NodeQueryBuilder
 	{
 		return $this->whereIsBeforeOrAfter($id, '<', $boolean);
 	}
@@ -375,11 +378,11 @@ class QueryBuilder extends Builder
 	/**
 	 * @return QueryBuilder<Tmodel>
 	 */
-	public function whereIsLeaf()
+	public function whereIsLeaf(): NodeQueryBuilder
 	{
 		list($lft, $rgt) = $this->wrappedColumns();
 
-		return $this->whereRaw("$lft = $rgt - 1"); /** @phpstan-ignore-line */
+		return $this->whereRaw("$lft = $rgt - 1");
 	}
 
 	/**
@@ -387,7 +390,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @return EloquentCollection<int,NodeModel>
 	 */
-	public function leaves(array $columns = ['*'])
+	public function leaves(array $columns = ['*']): EloquentCollection
 	{
 		return $this->whereIsLeaf()->get($columns);
 	}
@@ -399,7 +402,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @return QueryBuilder<Tmodel>
 	 */
-	public function withDepth($as = 'depth')
+	public function withDepth($as = 'depth'): NodeQueryBuilder
 	{
 		if ($this->query->columns === null) {
 			$this->query->columns = ['*'];
@@ -543,7 +546,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @return int
 	 */
-	public function moveNode($key, $position)
+	public function moveNode($key, $position): int
 	{
 		list($lft, $rgt) = $this->model->newNestedSetQuery()
 									   ->getPlainNodeData($key, true);
@@ -595,7 +598,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @return int
 	 */
-	public function makeGap($cut, $height)
+	public function makeGap($cut, $height): int
 	{
 		$params = compact('cut', 'height');
 
@@ -828,7 +831,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @return int
 	 */
-	public function getTotalErrors()
+	public function getTotalErrors(): int
 	{
 		return array_sum($this->countErrors());
 	}
@@ -840,7 +843,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @return bool
 	 */
-	public function isBroken()
+	public function isBroken(): bool
 	{
 		return $this->getTotalErrors() > 0;
 	}
@@ -854,7 +857,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @return int The number of changed nodes
 	 */
-	public function fixTree($root = null)
+	public function fixTree($root = null): int
 	{
 		$columns = [
 			$this->model->getKeyName(),
@@ -881,7 +884,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @return int
 	 */
-	public function fixSubtree($root)
+	public function fixSubtree($root): int
 	{
 		return $this->fixTree($root);
 	}
@@ -892,7 +895,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @return int
 	 */
-	protected function fixNodes(array &$dictionary, $parent = null)
+	protected function fixNodes(array &$dictionary, $parent = null): int
 	{
 		$parentId = $parent !== null ? $parent->getKey() : null;
 		$cut = $parent !== null ? $parent->getLft() + 1 : 1;
@@ -969,10 +972,10 @@ class QueryBuilder extends Builder
 	 *
 	 * @return int
 	 */
-	public function rebuildTree(array $data, $delete = false, $root = null)
+	public function rebuildTree(array $data, $delete = false, $root = null): int
 	{
-		if ($this->model->usesSoftDelete()) { /** @phpstan-ignore-line */
-			$this->withTrashed(); /** @phpstan-ignore-line */
+		if ($this->model->usesSoftDelete()) {
+			$this->withTrashed(); /** @phpstan-ignore method.notFound (it does exists!) */
 		}
 
 		$existing = $this
@@ -988,7 +991,7 @@ class QueryBuilder extends Builder
 		$this->buildRebuildDictionary($dictionary, $data, $existing, $parentId);
 
 		if ($existing !== null && $existing !== []) {
-			if ($delete && !$this->model->usesSoftDelete()) { /** @phpstan-ignore-line */
+			if ($delete && !$this->model->usesSoftDelete()) {
 				$this->model
 					->newScopedQuery()
 					->whereIn($this->model->getKeyName(), array_keys($existing))
@@ -997,12 +1000,12 @@ class QueryBuilder extends Builder
 				foreach ($existing as $model) {
 					$dictionary[$model->getParentId()][] = $model;
 
-					if ($delete && $this->model->usesSoftDelete() && /** @phpstan-ignore-line */
-						!$model->{$model->getDeletedAtColumn()} /** @phpstan-ignore-line */
+					if ($delete && $this->model->usesSoftDelete() &&
+						!$model->{$model->getDeletedAtColumn()} /** @phpstan-ignore property.dynamicName */
 					) {
 						$time = $this->model->fromDateTime($this->model->freshTimestamp());
 
-						$model->{$model->getDeletedAtColumn()} = $time; /** @phpstan-ignore-line */
+						$model->{$model->getDeletedAtColumn()} = $time; /** @phpstan-ignore property.dynamicName */
 					}
 				}
 			}
@@ -1018,7 +1021,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @return int
 	 */
-	public function rebuildSubtree($root, array $data, $delete = false)
+	public function rebuildSubtree($root, array $data, $delete = false): int
 	{
 		return $this->rebuildTree($data, $delete, $root);
 	}
@@ -1077,7 +1080,7 @@ class QueryBuilder extends Builder
 	 *
 	 * @return QueryBuilder<Tmodel>
 	 */
-	public function applyNestedSetScope($table = null)
+	public function applyNestedSetScope($table = null): NodeQueryBuilder
 	{
 		return $this->model->applyNestedSetScope($this, $table);
 	}

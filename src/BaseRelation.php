@@ -7,23 +7,23 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder;
+use Kalnoy\Nestedset\Contracts\Node;
+use Kalnoy\Nestedset\Contracts\NodeQueryBuilder;
+use Kalnoy\Nestedset\Contracts\NestedSetCollection;
 
 /**
  * @template Tmodel of Model
  *
- * @phpstan-type NodeModel Node<Tmodel>&Tmodel
- *
- * @extends Relation<NodeModel,NodeModel,EloquentCollection<int,NodeModel>>
+ * @phpstan-type NodeModel  \Kalnoy\Nestedset\Contracts\Node<Tmodel>&Model
+ * @extends Relation<NodeModel,NodeModel,EloquentCollection<int,Node<Tmodel>>>
  *
  * @property NodeModel $related
  * @property NodeModel $parent
- *
- * @method NodeModel getParent()
  */
-abstract class BaseRelation extends Relation
+abstract class BaseRelation extends Relation // @phpstan-ignore generics.notSubtype (Phpstan does not recognise the require-extend on the interface)
 {
 	/**
-	 * @var QueryBuilder<Tmodel>
+	 * @var NodeQueryBuilder<Tmodel>
 	 */
 	protected $query;
 
@@ -60,10 +60,10 @@ abstract class BaseRelation extends Relation
 	 *
 	 * @return bool
 	 */
-	abstract protected function matches(Model&Node $model, Node $related): bool;
+	abstract protected function matches(Node $model, Node $related): bool;
 
 	/**
-	 * @param QueryBuilder<Tmodel> $query
+	 * @param NodeQueryBuilder<Tmodel> $query
 	 * @param NodeModel            $model
 	 *
 	 * @return void
@@ -90,6 +90,7 @@ abstract class BaseRelation extends Relation
 	public function getRelationExistenceQuery(EloquentBuilder $query, EloquentBuilder $parentQuery,
 		$columns = ['*'],
 	) {
+		/** @disregard P1006 */
 		$query = $this->getParent()->replicate()->newScopedQuery()->select($columns);
 
 		$table = $query->getModel()->getTable();
@@ -106,7 +107,7 @@ abstract class BaseRelation extends Relation
 			$grammar->wrap($this->parent->getLftName()),
 			$grammar->wrap($this->parent->getRgtName()));
 
-		return $query->whereRaw($condition); /** @phpstan-ignore-line */
+		return $query->whereRaw($condition);
 	}
 
 	/**
@@ -137,11 +138,11 @@ abstract class BaseRelation extends Relation
 	/**
 	 * Get the results of the relationship.
 	 *
-	 * @return Collection<NodeModel>
+	 * @return NestedSetCollection<NodeModel>
 	 */
 	public function getResults()
 	{
-		/** @var Collection<NodeModel> */
+		/** @disregard P1013 */
 		$result = $this->query->get();
 
 		return $result;
@@ -164,6 +165,7 @@ abstract class BaseRelation extends Relation
 		$this->query->whereNested(function (Builder $inner) use ($models) {
 			// We will use this query in order to apply constraints to the
 			// base query builder
+			/** @disregard P1013 */
 			$outer = $this->parent->newQuery()->setQuery($inner);
 
 			foreach ($models as $model) {
@@ -187,6 +189,7 @@ abstract class BaseRelation extends Relation
 			/** @disregard P1006 */
 			$related = $this->matchForModel($model, $results);
 
+			/** @disregard P1013 */
 			$model->setRelation($relation, $related);
 		}
 
@@ -197,16 +200,16 @@ abstract class BaseRelation extends Relation
 	 * @param NodeModel                         $model
 	 * @param EloquentCollection<int,NodeModel> $results
 	 *
-	 * @return Collection<Tmodel>
+	 * @return NestedSetCollection<Tmodel>
 	 */
 	protected function matchForModel(Model $model, EloquentCollection $results)
 	{
-		/** @var Collection<Tmodel> */
 		$result = $this->related->newCollection();
 
 		foreach ($results as $related) {
 			/** @disregard P1006 */
 			if ($this->matches($model, $related)) {
+				/** @disregard P1013 */
 				$result->push($related);
 			}
 		}

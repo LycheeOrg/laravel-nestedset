@@ -8,9 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
+use Kalnoy\Nestedset\Contracts\Node;
 
 /**
  * @template Tmodel extends Model
+ * 
+ * @method void setRelation(string $relation, mixed $value)
  */
 trait NodeTrait
 {

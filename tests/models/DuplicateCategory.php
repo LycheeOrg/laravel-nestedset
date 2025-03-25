@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Eloquent\Model;
-use Kalnoy\Nestedset\Node;
+use Kalnoy\Nestedset\Contracts\Node;
 use Kalnoy\Nestedset\NodeTrait;
 
 class DuplicateCategory extends Model implements Node

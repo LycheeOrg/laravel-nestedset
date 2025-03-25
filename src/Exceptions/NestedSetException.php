@@ -1,6 +1,6 @@
 <?php
 
-namespace Kalnoy\Nestedset;
+namespace Kalnoy\Nestedset\Exceptions;
 
 /**
  * Exception thrown when something really went wrong.

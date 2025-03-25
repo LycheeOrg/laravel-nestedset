@@ -4,15 +4,18 @@ namespace Kalnoy\Nestedset;
 
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
+use Kalnoy\Nestedset\Contracts\NestedSetCollection;
+use Kalnoy\Nestedset\Exceptions\NestedSetException;
 
 /**
+ * 
  * @template Tmodel of Model
  *
- * @phpstan-type NodeModel Node<Tmodel>&Tmodel
+ * @phpstan-type NodeModel \Kalnoy\Nestedset\Contracts\Node<Tmodel>
  *
  * @extends EloquentCollection<array-key,NodeModel>
  */
-final class Collection extends EloquentCollection
+final class Collection extends EloquentCollection implements NestedSetCollection
 {
 	/**
 	 * Fill `parent` and `children` relationships for every node in the collection.
@@ -34,16 +37,19 @@ final class Collection extends EloquentCollection
 		/** @var NodeModel $node */
 		foreach ($this->items as $node) {
 			if ($node->getParentId() === null) {
+				/** @disregard */
 				$node->setRelation('parent', null);
 			}
 
 			/** @var array<int,NodeModel> */ 
-			$children = $groupedNodes->get($node->getKey(), []); /** @phpstan-ignore varTag.type */
+			$children = $groupedNodes->get($node->getKey(), []);
 
 			foreach ($children as $child) {
+				/** @disregard */
 				$child->setRelation('parent', $node);
 			}
 
+			/** @disregard */
 			$node->setRelation('children', EloquentCollection::make($children));
 		}
 
@@ -61,7 +67,7 @@ final class Collection extends EloquentCollection
 	 *
 	 * @return Collection<Tmodel>
 	 */
-	public function toTree($root = false)
+	public function toTree($root = false): Collection
 	{
 		if ($this->isEmpty()) {
 			return new static();
@@ -131,15 +137,15 @@ final class Collection extends EloquentCollection
 		$result = new Collection();
 
 		if ($this->isEmpty()) {
-			return $result; /** @phpstan-ignore-line */
+			return $result;
 		}
 
 		/** @var NodeModel */
 		$first = $this->first();
 		/** @var Collection<NodeModel> */
-		$groupedNodes = $this->groupBy($first->getParentIdName()); /** @phpstan-ignore varTag.type */
+		$groupedNodes = $this->groupBy($first->getParentIdName());
 
-		return $result->flattenTree($groupedNodes, $this->getRootNodeId($root)); /** @phpstan-ignore-line */
+		return $result->flattenTree($groupedNodes, $this->getRootNodeId($root));
 	}
 
 	/**
@@ -153,7 +159,7 @@ final class Collection extends EloquentCollection
 	protected function flattenTree(Collection $groupedNodes, $parentId): Collection
 	{
 		/** @var array<int,NodeModel> */
-		$nodes = $groupedNodes->get($parentId, []); /** @phpstan-ignore varTag.type */
+		$nodes = $groupedNodes->get($parentId, []);
 		foreach ($nodes as $node) {
 			$this->push($node);
 

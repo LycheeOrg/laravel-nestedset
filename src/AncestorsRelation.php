@@ -3,17 +3,17 @@
 namespace Kalnoy\Nestedset;
 
 use Illuminate\Database\Eloquent\Model;
+use Kalnoy\Nestedset\Contracts\Node;
+use Kalnoy\Nestedset\Contracts\NodeQueryBuilder;
 
 /**
  * @template Tmodel of Model
  *
- * @phpstan-type NodeModel Node<Tmodel>&Tmodel
- *
- * @disregard P1037
+ * @phpstan-type NodeModel \Kalnoy\Nestedset\Contracts\Node<Tmodel>&Tmodel
  *
  * @extends BaseRelation<Tmodel>
  */
-class AncestorsRelation extends BaseRelation
+final class AncestorsRelation extends BaseRelation
 {
 	/**
 	 * Set the base constraints on the relation query.
@@ -36,13 +36,13 @@ class AncestorsRelation extends BaseRelation
 	 *
 	 * @return bool
 	 */
-	protected function matches(Model $model, $related): bool
+	protected function matches(Node $model, Node $related): bool
 	{
 		return $related->isAncestorOf($model);
 	}
 
 	/**
-	 * @param QueryBuilder<Tmodel> $query
+	 * @param NodeQueryBuilder<Tmodel> $query
 	 * @param NodeModel            $model
 	 *
 	 * @return void
@@ -57,6 +57,7 @@ class AncestorsRelation extends BaseRelation
 	 */
 	protected function relationExistenceCondition(string $hash, string $table, string $lft, string $rgt): string
 	{
+		/** @disregard P1013 */
 		$key = $this->getBaseQuery()->getGrammar()->wrap($this->parent->getKeyName());
 
 		return "{$table}.{$rgt} between {$hash}.{$lft} and {$hash}.{$rgt} and $table.$key <> $hash.$key";
