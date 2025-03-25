@@ -11,13 +11,14 @@ use Kalnoy\Nestedset\NodeTrait;
 class Category extends Model implements Node
 {
 	use SoftDeletes;
+	/** @use NodeTrait<Category,int> */
 	use NodeTrait;
 
 	protected $fillable = ['name', 'parent_id'];
 
 	public $timestamps = false;
 
-	public static function resetActionsPerformed()
+	public static function resetActionsPerformed(): void
 	{
 		static::$actionsPerformed = 0;
 	}

@@ -5,12 +5,12 @@ namespace Kalnoy\Nestedset\Contracts;
 /**
  * @template-covariant Tmodel of \Illuminate\Database\Eloquent\Model
  *
- * @phpstan-type NodeModel Node<Tmodel>
+ * @phpstan-type NodeModel Node<Tmodel>&Tmodel
  *
  * @require-extends \Illuminate\Database\Eloquent\Collection
  *
- * @method NestedSetCollection  groupBy(string $column)
- * @method array<int,NodeModel> all()
+ * @method NestedSetCollection<NodeModel> groupBy(string $column)
+ * @method array<int,NodeModel>           all()
  */
 interface NestedSetCollection
 {
@@ -19,7 +19,7 @@ interface NestedSetCollection
 	 *
 	 * This will overwrite any previously set relations.
 	 *
-	 * @return $this
+	 * @return NestedSetCollection<Tmodel>
 	 */
 	public function linkNodes();
 

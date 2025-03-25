@@ -13,6 +13,8 @@ use Kalnoy\Nestedset\Exceptions\NestedSetException;
  * @phpstan-type NodeModel \Kalnoy\Nestedset\Contracts\Node<Tmodel>&Model
  *
  * @extends EloquentCollection<array-key,NodeModel>
+ *
+ * @implements NestedSetCollection<Tmodel>
  */
 final class Collection extends EloquentCollection implements NestedSetCollection
 {

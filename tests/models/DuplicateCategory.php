@@ -9,6 +9,7 @@ use Kalnoy\Nestedset\NodeTrait;
  */
 class DuplicateCategory extends Model implements Node
 {
+	/** @use NodeTrait<DuplicateCategory,int> */
 	use NodeTrait;
 
 	protected $table = 'categories';

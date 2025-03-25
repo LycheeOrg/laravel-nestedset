@@ -215,9 +215,9 @@ class QueryBuilder extends Builder implements NodeQueryBuilder
 	 * @since 2.0
 	 *
 	 * @param ?Node<Tmodel> $id
-	 * @param string     $boolean
-	 * @param bool       $not
-	 * @param bool       $andSelf
+	 * @param string        $boolean
+	 * @param bool          $not
+	 * @param bool          $andSelf
 	 *
 	 * @return QueryBuilder<Tmodel>
 	 */
@@ -271,8 +271,8 @@ class QueryBuilder extends Builder implements NodeQueryBuilder
 
 	/**
 	 * @param Node<Tmodel> $id
-	 * @param string    $boolean
-	 * @param bool      $not
+	 * @param string       $boolean
+	 * @param bool         $not
 	 *
 	 * @return QueryBuilder<Tmodel>
 	 */
@@ -868,7 +868,7 @@ class QueryBuilder extends Builder implements NodeQueryBuilder
 
 		$dictionary = $this->model
 			->newNestedSetQuery()
-			->when($root !== null, function (self $query) use ($root) { 
+			->when($root !== null, function (self $query) use ($root) {
 				return $query->whereDescendantOf($root);
 			})
 			->defaultOrder()

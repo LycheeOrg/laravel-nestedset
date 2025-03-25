@@ -9,18 +9,22 @@ use Kalnoy\Nestedset\NodeTrait;
  */
 class MenuItem extends Model implements Node
 {
+	/** @use NodeTrait<MenuItem,int> */
 	use NodeTrait;
 
 	public $timestamps = false;
 
 	protected $fillable = ['menu_id', 'parent_id'];
 
-	public static function resetActionsPerformed()
+	public static function resetActionsPerformed(): void
 	{
 		static::$actionsPerformed = 0;
 	}
 
-	protected function getScopeAttributes()
+	/**
+	 * @return list<string>
+	 */
+	protected function getScopeAttributes(): array
 	{
 		return ['menu_id'];
 	}

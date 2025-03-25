@@ -27,15 +27,15 @@ use Illuminate\Database\Query\Builder as BaseQueryBuilder;
  *
  * @require-extends \Illuminate\Database\Eloquent\Model
  *
- * @method mixed  getKey()
- * @method mixed  getKeyName()
- * @method Node   setRelation($relation, $value)
- * @method mixed  save()
- * @method string getTable()
- * @method mixed  getAttribute($key)
- * @method string getDeletedAtColumn()
- * @method Node   getRelationValue($key)
- * @method bool   usesSoftDelete()
+ * @method mixed        getKey()
+ * @method mixed        getKeyName()
+ * @method Node<Tmodel> setRelation($relation, $value)
+ * @method mixed        save()
+ * @method string       getTable()
+ * @method mixed        getAttribute($key)
+ * @method string       getDeletedAtColumn()
+ * @method Node<Tmodel> getRelationValue($key)
+ * @method bool         usesSoftDelete()
  */
 interface Node
 {
