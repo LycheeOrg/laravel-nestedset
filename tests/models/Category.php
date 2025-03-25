@@ -5,6 +5,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Kalnoy\Nestedset\Contracts\Node;
 use Kalnoy\Nestedset\NodeTrait;
 
+/**
+ * @implements Node<Category>
+ */
 class Category extends Model implements Node
 {
 	use SoftDeletes;

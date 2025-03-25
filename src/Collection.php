@@ -8,10 +8,9 @@ use Kalnoy\Nestedset\Contracts\NestedSetCollection;
 use Kalnoy\Nestedset\Exceptions\NestedSetException;
 
 /**
- * 
  * @template Tmodel of Model
  *
- * @phpstan-type NodeModel \Kalnoy\Nestedset\Contracts\Node<Tmodel>
+ * @phpstan-type NodeModel \Kalnoy\Nestedset\Contracts\Node<Tmodel>&Model
  *
  * @extends EloquentCollection<array-key,NodeModel>
  */
@@ -41,12 +40,13 @@ final class Collection extends EloquentCollection implements NestedSetCollection
 				$node->setRelation('parent', null);
 			}
 
-			/** @var array<int,NodeModel> */ 
 			$children = $groupedNodes->get($node->getKey(), []);
 
-			foreach ($children as $child) {
-				/** @disregard */
-				$child->setRelation('parent', $node);
+			if (count($children) > 0) {
+				foreach ($children as $child) {
+					/** @disregard */
+					$child->setRelation('parent', $node);
+				}
 			}
 
 			/** @disregard */
@@ -65,9 +65,9 @@ final class Collection extends EloquentCollection implements NestedSetCollection
 	 *
 	 * @param mixed $root
 	 *
-	 * @return Collection<Tmodel>
+	 * @return NestedSetCollection<Tmodel>
 	 */
-	public function toTree($root = false): Collection
+	public function toTree($root = false): NestedSetCollection
 	{
 		if ($this->isEmpty()) {
 			return new static();
@@ -129,9 +129,9 @@ final class Collection extends EloquentCollection implements NestedSetCollection
 	 *
 	 * @param bool $root
 	 *
-	 * @return Collection<Tmodel>
+	 * @return NestedSetCollection<Tmodel>
 	 */
-	public function toFlatTree($root = false): Collection
+	public function toFlatTree($root = false): NestedSetCollection
 	{
 		/** @Var Collection<Tmodel> */
 		$result = new Collection();
@@ -142,7 +142,6 @@ final class Collection extends EloquentCollection implements NestedSetCollection
 
 		/** @var NodeModel */
 		$first = $this->first();
-		/** @var Collection<NodeModel> */
 		$groupedNodes = $this->groupBy($first->getParentIdName());
 
 		return $result->flattenTree($groupedNodes, $this->getRootNodeId($root));
@@ -154,16 +153,18 @@ final class Collection extends EloquentCollection implements NestedSetCollection
 	 * @param Collection<Tmodel> $groupedNodes
 	 * @param array-key          $parentId
 	 *
-	 * @return Collection<Tmodel>
+	 * @return NestedSetCollection<Tmodel>
 	 */
-	protected function flattenTree(Collection $groupedNodes, $parentId): Collection
+	protected function flattenTree(Collection $groupedNodes, $parentId): NestedSetCollection
 	{
-		/** @var array<int,NodeModel> */
 		$nodes = $groupedNodes->get($parentId, []);
-		foreach ($nodes as $node) {
-			$this->push($node);
 
-			$this->flattenTree($groupedNodes, $node->getKey());
+		if (count($nodes) > 0) {
+			foreach ($nodes as $node) {
+				$this->push($node);
+
+				$this->flattenTree($groupedNodes, $node->getKey());
+			}
 		}
 
 		return $this;

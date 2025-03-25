@@ -43,7 +43,7 @@ final class AncestorsRelation extends BaseRelation
 
 	/**
 	 * @param NodeQueryBuilder<Tmodel> $query
-	 * @param NodeModel            $model
+	 * @param NodeModel                $model
 	 *
 	 * @return void
 	 */

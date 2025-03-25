@@ -2,28 +2,37 @@
 
 namespace Kalnoy\Nestedset\Contracts;
 
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as BaseQueryBuilder;
 
 /**
  * @template Tmodel of \Illuminate\Database\Eloquent\Model
  *
  * @phpstan-type NodeModel Node<Tmodel>
  *
- * @require-extends \Illuminate\Database\Eloquent\Builder
- * @extends \Illuminate\Database\Eloquent\Builder<NodeModel>
- * 
- * @method NodeQueryBuilder select(array $columns)
- * @method Tmodel getModel()
- * @method NodeQueryBuilder from(string $table)
- * @method NodeQueryBuilder getQuery()
- * @method NodeQueryBuilder whereRaw(string $sql, array $bindings = [], string $boolean = 'and')
+ * @require-extends Illuminate\Database\Eloquent\Builder<NodeModel>
+ *
+ * @method NodeQueryBuilder                            select(array $columns)
+ * @method Tmodel                                      getModel()
+ * @method NodeQueryBuilder                            from(string $table)
+ * @method NodeQueryBuilder                            getQuery()
+ * @method NodeQueryBuilder                            whereRaw(string $sql, array $bindings = [], string $boolean = 'and')
  * @method \Illuminate\Database\Query\Grammars\Grammar getGrammar()
- * @method NodeQueryBuilder whereNested(\Closure|string $callback, string $boolean = 'and')
- * @method EloquentCollection<int,Tmodel> get()
+ * @method NodeQueryBuilder                            whereNested(\Closure|string $callback, string $boolean = 'and')
+ * @method NestedSetCollection<Tmodel>                 get(array $columns = ['*'])
+ * @method int                                         max(string $column)
+ * @method NodeQueryBuilder                            where(string|array|\Closure $column, mixed $operator = null, mixed $value = null, string $boolean = 'and')
+ * @method NodeModel|null                              first(array|string $columns = ['*'])
+ * @method NodeModel                                   findOrFail(array|string $columns = ['*'])
+ * @method NodeQueryBuilder                            skip(int $value)
+ * @method NodeQueryBuilder                            take(int $value)
+ * @method NodeQueryBuilder                            orderBy(string $column, string $direction = 'asc')
+ * @method NodeQueryBuilder                            when(bool $value, \Closure $callback)
+ * @method BaseQueryBuilder                            toBase()
  */
-interface NodeQueryBuilder
+interface NodeQueryBuilder extends Builder
 {
-    /**
+	/**
 	 * Get node's `lft` and `rgt` values.
 	 *
 	 * @since 2.0
@@ -90,17 +99,17 @@ interface NodeQueryBuilder
 	 * @param NodeModel $id
 	 * @param string[]  $columns
 	 *
-	 * @return EloquentCollection<int,NodeModel>
+	 * @return NestedSetCollection<Tmodel>
 	 */
-	public function ancestorsOf(mixed $id, array $columns = ['*']): EloquentCollection;
+	public function ancestorsOf(mixed $id, array $columns = ['*']): NestedSetCollection;
 
 	/**
 	 * @param NodeModel $id
 	 * @param string[]  $columns
 	 *
-	 * @return EloquentCollection<int,NodeModel>
+	 * @return NestedSetCollection<Tmodel>
 	 */
-	public function ancestorsAndSelf(mixed $id, array $columns = ['*']): EloquentCollection;
+	public function ancestorsAndSelf(mixed $id, array $columns = ['*']): NestedSetCollection;
 
 	/**
 	 * Add node selection statement between specified range.
@@ -139,7 +148,7 @@ interface NodeQueryBuilder
 	 * @return NodeQueryBuilder<Tmodel>
 	 */
 	public function whereDescendantOf(mixed $id, $boolean = 'and', $not = false, $andSelf = false): NodeQueryBuilder;
-    
+
 	/**
 	 * @param NodeModel $id
 	 *
@@ -179,17 +188,17 @@ interface NodeQueryBuilder
 	 * @param string[]  $columns
 	 * @param bool      $andSelf
 	 *
-	 * @return EloquentCollection<int,NodeModel>|Collection<Tmodel>
+	 * @return NestedSetCollection<Tmodel>
 	 */
-	public function descendantsOf(mixed $id, array $columns = ['*'], bool $andSelf = false): EloquentCollection;
+	public function descendantsOf(mixed $id, array $columns = ['*'], bool $andSelf = false): NestedSetCollection;
 
 	/**
 	 * @param NodeModel $id
 	 * @param string[]  $columns
 	 *
-	 * @return EloquentCollection<int,NodeModel>
+	 * @return NestedSetCollection<Tmodel>
 	 */
-	public function descendantsAndSelf($id, array $columns = ['*']): EloquentCollection;
+	public function descendantsAndSelf($id, array $columns = ['*']): NestedSetCollection;
 
 	/**
 	 * Constraint nodes to those that are after specified node.
@@ -223,9 +232,9 @@ interface NodeQueryBuilder
 	/**
 	 * @param string[] $columns
 	 *
-	 * @return EloquentCollection<int,NodeModel>
+	 * @return NestedSetCollection<Tmodel>
 	 */
-	public function leaves(array $columns = ['*']): EloquentCollection;
+	public function leaves(array $columns = ['*']): NestedSetCollection;
 
 	/**
 	 * Include depth level into the result.
@@ -288,7 +297,6 @@ interface NodeQueryBuilder
 	 * @return int
 	 */
 	public function moveNode($key, $position): int;
-
 
 	/**
 	 * Make or remove gap in the tree. Negative height will remove gap.

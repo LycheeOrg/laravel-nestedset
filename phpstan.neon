@@ -1,13 +1,17 @@
 includes:
 	- vendor/larastan/larastan/extension.neon
 	- vendor/lychee-org/phpstan-lychee/phpstan.neon
+	- phpstan-baseline.neon
 
 parameters:
-	level: 2
+	level: 4
 	paths:
 		- src
+		- tests/models/
 	excludePaths:
 	stubFiles:
 	ignoreErrors:
-		# - identifier: missingType.generics
-		- '#Dynamic call to static method Kalnoy\\Nestedset\\QueryBuilder<Tmodel of Illuminate\\Database\\Eloquent\\Model>::whereRaw\(\).#'
+		- '#.*covariant.*#'
+		- '#.*contravariant.*#'
+		-
+			message: '#^Call to an undefined method Kalnoy\\Nestedset\\Contracts\\Node::assert.*\(\)\.$#'

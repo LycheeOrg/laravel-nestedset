@@ -4,6 +4,9 @@ use Illuminate\Database\Eloquent\Model;
 use Kalnoy\Nestedset\Contracts\Node;
 use Kalnoy\Nestedset\NodeTrait;
 
+/**
+ * @implements Node<MenuItem>
+ */
 class MenuItem extends Model implements Node
 {
 	use NodeTrait;

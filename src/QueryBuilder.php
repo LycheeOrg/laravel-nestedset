@@ -3,13 +3,13 @@
 namespace Kalnoy\Nestedset;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Query\Builder as BaseQueryBuilder;
 use Illuminate\Database\Query\Builder as Query;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Arr;
+use Kalnoy\Nestedset\Contracts\NestedSetCollection;
 use Kalnoy\Nestedset\Contracts\Node;
 use Kalnoy\Nestedset\Contracts\NodeQueryBuilder;
 use Kalnoy\Nestedset\Exceptions\NestedSetException;
@@ -159,9 +159,9 @@ class QueryBuilder extends Builder implements NodeQueryBuilder
 	 * @param NodeModel $id
 	 * @param string[]  $columns
 	 *
-	 * @return EloquentCollection<int,NodeModel>
+	 * @return NestedSetCollection<Tmodel>
 	 */
-	public function ancestorsOf(mixed $id, array $columns = ['*']): EloquentCollection
+	public function ancestorsOf(mixed $id, array $columns = ['*']): NestedSetCollection
 	{
 		return $this->whereAncestorOf($id)->get($columns);
 	}
@@ -170,9 +170,9 @@ class QueryBuilder extends Builder implements NodeQueryBuilder
 	 * @param NodeModel $id
 	 * @param string[]  $columns
 	 *
-	 * @return EloquentCollection<int,NodeModel>
+	 * @return NestedSetCollection<Tmodel>
 	 */
-	public function ancestorsAndSelf(mixed $id, array $columns = ['*']): EloquentCollection
+	public function ancestorsAndSelf(mixed $id, array $columns = ['*']): NestedSetCollection
 	{
 		return $this->whereAncestorOf($id, true)->get($columns);
 	}
@@ -290,9 +290,9 @@ class QueryBuilder extends Builder implements NodeQueryBuilder
 	 * @param string[]  $columns
 	 * @param bool      $andSelf
 	 *
-	 * @return EloquentCollection<int,NodeModel>|Collection<Tmodel>
+	 * @return NestedSetCollection<Tmodel>
 	 */
-	public function descendantsOf(mixed $id, array $columns = ['*'], bool $andSelf = false): EloquentCollection
+	public function descendantsOf(mixed $id, array $columns = ['*'], bool $andSelf = false): NestedSetCollection
 	{
 		try {
 			return $this->whereDescendantOf($id, 'and', false, $andSelf)->get($columns);
@@ -305,9 +305,9 @@ class QueryBuilder extends Builder implements NodeQueryBuilder
 	 * @param NodeModel $id
 	 * @param string[]  $columns
 	 *
-	 * @return EloquentCollection<int,NodeModel>
+	 * @return NestedSetCollection<Tmodel>
 	 */
-	public function descendantsAndSelf($id, array $columns = ['*']): EloquentCollection
+	public function descendantsAndSelf($id, array $columns = ['*']): NestedSetCollection
 	{
 		return $this->descendantsOf($id, $columns, true);
 	}
@@ -388,9 +388,9 @@ class QueryBuilder extends Builder implements NodeQueryBuilder
 	/**
 	 * @param string[] $columns
 	 *
-	 * @return EloquentCollection<int,NodeModel>
+	 * @return NestedSetCollection<Tmodel>
 	 */
-	public function leaves(array $columns = ['*']): EloquentCollection
+	public function leaves(array $columns = ['*']): NestedSetCollection
 	{
 		return $this->whereIsLeaf()->get($columns);
 	}
@@ -990,7 +990,7 @@ class QueryBuilder extends Builder implements NodeQueryBuilder
 
 		$this->buildRebuildDictionary($dictionary, $data, $existing, $parentId);
 
-		if ($existing !== null && $existing !== []) {
+		if ($existing !== []) {
 			if ($delete && !$this->model->usesSoftDelete()) {
 				$this->model
 					->newScopedQuery()

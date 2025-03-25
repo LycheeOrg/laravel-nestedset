@@ -7,20 +7,21 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder;
+use Kalnoy\Nestedset\Contracts\NestedSetCollection;
 use Kalnoy\Nestedset\Contracts\Node;
 use Kalnoy\Nestedset\Contracts\NodeQueryBuilder;
-use Kalnoy\Nestedset\Contracts\NestedSetCollection;
 
 /**
  * @template Tmodel of Model
  *
- * @phpstan-type NodeModel  \Kalnoy\Nestedset\Contracts\Node<Tmodel>&Model
- * @extends Relation<NodeModel,NodeModel,EloquentCollection<int,Node<Tmodel>>>
+ * @phpstan-type NodeModel  Node<Tmodel>&Tmodel
+ *
+ * @extends Relation<NodeModel,NodeModel,EloquentCollection<int,NodeModel>>
  *
  * @property NodeModel $related
  * @property NodeModel $parent
  */
-abstract class BaseRelation extends Relation // @phpstan-ignore generics.notSubtype (Phpstan does not recognise the require-extend on the interface)
+abstract class BaseRelation extends Relation
 {
 	/**
 	 * @var NodeQueryBuilder<Tmodel>
@@ -42,8 +43,8 @@ abstract class BaseRelation extends Relation // @phpstan-ignore generics.notSubt
 	/**
 	 * AncestorsRelation constructor.
 	 *
-	 * @param QueryBuilder<Tmodel> $builder
-	 * @param NodeModel            $model
+	 * @param QueryBuilder<NodeModel> $builder
+	 * @param NodeModel               $model
 	 */
 	public function __construct(QueryBuilder $builder, Model $model)
 	{
@@ -64,7 +65,7 @@ abstract class BaseRelation extends Relation // @phpstan-ignore generics.notSubt
 
 	/**
 	 * @param NodeQueryBuilder<Tmodel> $query
-	 * @param NodeModel            $model
+	 * @param NodeModel                $model
 	 *
 	 * @return void
 	 */

@@ -1,14 +1,16 @@
 <?php
 
-
 namespace Kalnoy\Nestedset\Contracts;
 
 /**
- * @template Tmodel of \Illuminate\Database\Eloquent\Model
+ * @template-covariant Tmodel of \Illuminate\Database\Eloquent\Model
  *
  * @phpstan-type NodeModel Node<Tmodel>
  *
  * @require-extends \Illuminate\Database\Eloquent\Collection
+ *
+ * @method NestedSetCollection  groupBy(string $column)
+ * @method array<int,NodeModel> all()
  */
 interface NestedSetCollection
 {
@@ -21,7 +23,6 @@ interface NestedSetCollection
 	 */
 	public function linkNodes();
 
-
 	/**
 	 * Build a tree from a list of nodes. Each item will have set children relation.
 	 *
@@ -31,7 +32,7 @@ interface NestedSetCollection
 	 *
 	 * @param mixed $root
 	 *
-	 * @return Collection<NodeModel>
+	 * @return NestedSetCollection<Tmodel>
 	 */
 	public function toTree($root = false): NestedSetCollection;
 
@@ -41,7 +42,7 @@ interface NestedSetCollection
 	 *
 	 * @param bool $root
 	 *
-	 * @return Collection<NodeModel>
+	 * @return NestedSetCollection<Tmodel>
 	 */
 	public function toFlatTree($root = false): NestedSetCollection;
 }

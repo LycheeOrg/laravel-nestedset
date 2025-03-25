@@ -2,12 +2,12 @@
 
 namespace Kalnoy\Nestedset\Contracts;
 
-use Illuminate\Database\Query\Builder as BaseQueryBuilder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\Builder as BaseQueryBuilder;
 
 /**
  * Accompanies {@link \Kalnoy\Nestedset\NodeTrait}.
@@ -23,9 +23,19 @@ use Illuminate\Database\Eloquent\Relations\Relation;
  *
  * @template Tmodel of \Illuminate\Database\Eloquent\Model
  *
- * @phpstan-type NodeModel Node<Tmodel>
- * 
+ * @phpstan-type NodeModel Node<Tmodel>&Tmodel
+ *
  * @require-extends \Illuminate\Database\Eloquent\Model
+ *
+ * @method mixed  getKey()
+ * @method mixed  getKeyName()
+ * @method Node   setRelation($relation, $value)
+ * @method mixed  save()
+ * @method string getTable()
+ * @method mixed  getAttribute($key)
+ * @method string getDeletedAtColumn()
+ * @method Node   getRelationValue($key)
+ * @method bool   usesSoftDelete()
  */
 interface Node
 {
@@ -51,7 +61,7 @@ interface Node
 	/**
 	 * Get query for descendants of the node.
 	 *
-	 * @return DescendantsRelation<Tmodel>
+	 * @return Relation<NodeModel,NodeModel,EloquentCollection<int,Node<Tmodel>&Tmodel>>
 	 */
 	public function descendants(): Relation;
 
@@ -74,9 +84,9 @@ interface Node
 	 *
 	 * @param string[] $columns
 	 *
-	 * @return EloquentCollection<int,NodeModel>
+	 * @return NestedSetCollection<Tmodel>
 	 */
-	public function getSiblingsAndSelf(array $columns = ['*']): EloquentCollection;
+	public function getSiblingsAndSelf(array $columns = ['*']): NestedSetCollection;
 
 	/**
 	 * Get query for siblings after the node.
@@ -109,7 +119,7 @@ interface Node
 	/**
 	 * Get query ancestors of the node.
 	 *
-	 * @return AncestorsRelation<Tmodel>
+	 * @return Relation<NodeModel,NodeModel,EloquentCollection<int,Node<Tmodel>&Tmodel>>
 	 */
 	public function ancestors(): Relation;
 
@@ -291,35 +301,35 @@ interface Node
 	/**
 	 * @param string[] $columns
 	 *
-	 * @return Collection<Tmodel>
+	 * @return NestedSetCollection<Tmodel>
 	 */
 	public function getAncestors(array $columns = ['*']);
 
 	/**
 	 * @param string[] $columns
 	 *
-	 * @return Collection<Tmodel>
+	 * @return NestedSetCollection<Tmodel>
 	 */
 	public function getDescendants(array $columns = ['*']);
 
 	/**
 	 * @param string[] $columns
 	 *
-	 * @return Collection<Tmodel>
+	 * @return NestedSetCollection<Tmodel>
 	 */
 	public function getSiblings(array $columns = ['*']);
 
 	/**
 	 * @param string[] $columns
 	 *
-	 * @return Collection<Tmodel>
+	 * @return NestedSetCollection<Tmodel>
 	 */
 	public function getNextSiblings(array $columns = ['*']);
 
 	/**
 	 * @param string[] $columns
 	 *
-	 * @return Collection<Tmodel>
+	 * @return NestedSetCollection<Tmodel>
 	 */
 	public function getPrevSiblings(array $columns = ['*']);
 
@@ -430,20 +440,4 @@ interface Node
 	 * @return NodeQueryBuilder<Tmodel>
 	 */
 	public function newQuery();
-
-	/**
-     * Get the value of the model's primary key.
-	 * ! This is directly from Model method...
-     *
-     * @return mixed
-     */
-    public function getKey();
-
-	/**
-     * Get the value of the model's primary key.
-	 * ! This is directly from Model method...
-     *
-     * @return mixed
-     */
-    public function getKeyName();
 }
