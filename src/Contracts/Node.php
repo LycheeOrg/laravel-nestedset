@@ -128,7 +128,7 @@ interface Node
 	 *
 	 * @return $this
 	 */
-	public function makeRoot(): Node;
+	public function makeRoot(): self;
 
 	/**
 	 * Save node as root.
@@ -144,7 +144,7 @@ interface Node
 	 *
 	 * @return $this
 	 */
-	public function rawNode(int $lft, int $rgt, mixed $parentId): Node;
+	public function rawNode(int $lft, int $rgt, mixed $parentId): self;
 
 	/**
 	 * Move node up given amount of positions.
@@ -338,14 +338,14 @@ interface Node
 	 *
 	 * @return NodeModel
 	 */
-	public function getNextSibling(array $columns = ['*']);
+	public function getNextSibling(array $columns = ['*']): Node;
 
 	/**
 	 * @param string[] $columns
 	 *
 	 * @return NodeModel
 	 */
-	public function getPrevSibling(array $columns = ['*']);
+	public function getPrevSibling(array $columns = ['*']): Node;
 
 	/**
 	 * @return array<int>
@@ -357,21 +357,21 @@ interface Node
 	 *
 	 * @return NodeModel
 	 */
-	public function setLft(int $value): Node;
+	public function setLft(int $value): self;
 
 	/**
 	 * @param $value
 	 *
 	 * @return NodeModel
 	 */
-	public function setRgt(int $value): Node;
+	public function setRgt(int $value): self;
 
 	/**
 	 * @param array-key|null $id
 	 *
 	 * @return NodeModel
 	 */
-	public function setParentId(mixed $id): Node;
+	public function setParentId(mixed $id): self;
 
 	/**
 	 * @param string[]|null $except
@@ -396,7 +396,7 @@ interface Node
 	 *
 	 * @return NodeModel
 	 */
-	public function appendToNode(Node $parent): Node;
+	public function appendToNode(Node $parent): self;
 
 	/**
 	 * Prepend a node to the new parent.
@@ -405,7 +405,7 @@ interface Node
 	 *
 	 * @return NodeModel
 	 */
-	public function prependToNode(Node $parent): Node;
+	public function prependToNode(Node $parent): self;
 
 	/**
 	 * Get whether the node is an ancestor of other node, including immediate parent.

@@ -73,9 +73,9 @@ trait NodeTrait
 	 *
 	 * @param string $action
 	 *
-	 * @return Node
+	 * @return self
 	 */
-	protected function setNodeAction($action): Node
+	protected function setNodeAction($action): self
 	{
 		$this->pending = func_get_args();
 
@@ -400,9 +400,9 @@ trait NodeTrait
 	 *
 	 * @param Node&Tmodel $parent
 	 *
-	 * @return Node&Tmodel
+	 * @return self
 	 */
-	public function appendToNode(Node $parent): Node
+	public function appendToNode(Node $parent): self
 	{
 		return $this->appendOrPrependTo($parent);
 	}
@@ -423,9 +423,9 @@ trait NodeTrait
 	 * @param Node $parent
 	 * @param bool $prepend
 	 *
-	 * @return Node
+	 * @return self
 	 */
-	public function appendOrPrependTo(Node $parent, bool $prepend = false)
+	public function appendOrPrependTo(Node $parent, bool $prepend = false): self
 	{
 		$this->assertNodeExists($parent)
 			->assertNotDescendant($parent)
@@ -740,7 +740,7 @@ trait NodeTrait
 	public function applyNestedSetScope($query, $table = null)
 	{
 		$scoped = $this->getScopeAttributes();
-		if ($scoped === null || $scoped === []) {
+		if ($scoped === null || $scoped === []) { /** @phpstan-ignore identical.alwaysFalse */
 			return $query;
 		}
 
@@ -855,7 +855,7 @@ trait NodeTrait
 			return;
 		}
 
-		if ($value !== null && $value !== 0 && $value !== '') {
+		if ($value !== null) {
 			$node = $this->newScopedQuery()->findOrFail($value);
 			$this->appendToNode($node);
 		} else {
@@ -1009,7 +1009,7 @@ trait NodeTrait
 	 *
 	 * @return Node
 	 */
-	public function getNextSibling(array $columns = ['*'])
+	public function getNextSibling(array $columns = ['*']): Node
 	{
 		return $this->nextSiblings()->defaultOrder()->first($columns);
 	}
@@ -1019,7 +1019,7 @@ trait NodeTrait
 	 *
 	 * @return Node
 	 */
-	public function getPrevSibling(array $columns = ['*'])
+	public function getPrevSibling(array $columns = ['*']): Node
 	{
 		return $this->prevSiblings()->defaultOrder('desc')->first($columns);
 	}
@@ -1222,7 +1222,7 @@ trait NodeTrait
 	protected function assertSameScope(Node $node): void
 	{
 		$scoped = $this->getScopeAttributes();
-		if ($scoped === null || $scoped === []) {
+		if ($scoped === null || $scoped === []) { /** @phpstan-ignore identical.alwaysFalse */
 			return;
 		}
 

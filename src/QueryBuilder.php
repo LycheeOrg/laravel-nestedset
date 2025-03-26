@@ -876,7 +876,7 @@ class QueryBuilder extends Builder implements NodeQueryBuilder
 			->groupBy($this->model->getParentIdName())
 			->all();
 
-		return $this->fixNodes($dictionary, $root);  /** @phpstan-ignore argument.type */
+		return $this->fixNodes($dictionary, $root);
 	}
 
 	/**
