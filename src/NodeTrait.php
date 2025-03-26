@@ -5,7 +5,6 @@ namespace Kalnoy\Nestedset;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -181,7 +180,7 @@ trait NodeTrait
 	/**
 	 * Apply parent model.
 	 *
-	 * @param (Node&Tmodel)|null $value
+	 * @param Node|null $value
 	 *
 	 * @return $this
 	 */
@@ -373,7 +372,7 @@ trait NodeTrait
 	/**
 	 * Append and save a node.
 	 *
-	 * @param Node&Tmodel $node
+	 * @param Node $node
 	 *
 	 * @return bool
 	 */
@@ -398,7 +397,7 @@ trait NodeTrait
 	/**
 	 * Append a node to the new parent.
 	 *
-	 * @param Node&Tmodel $parent
+	 * @param Node $parent
 	 *
 	 * @return self
 	 */
@@ -425,7 +424,7 @@ trait NodeTrait
 	 *
 	 * @return self
 	 */
-	public function appendOrPrependTo(Node $parent, bool $prepend = false): self
+	protected function appendOrPrependTo(Node $parent, bool $prepend = false): self
 	{
 		$this->assertNodeExists($parent)
 			->assertNotDescendant($parent)
@@ -461,7 +460,7 @@ trait NodeTrait
 	}
 
 	/**
-	 * @param Node&Tmodel $node
+	 * @param Node $node
 	 * @param bool        $after
 	 *
 	 * @return Node

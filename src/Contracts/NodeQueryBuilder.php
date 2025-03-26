@@ -23,7 +23,7 @@ use Illuminate\Database\Query\Builder as BaseQueryBuilder;
  * @method int                                         max(string $column)
  * @method NodeQueryBuilder                            where(string|array|\Closure $column, mixed $operator = null, mixed $value = null, string $boolean = 'and')
  * @method NodeModel|null                              first(array|string $columns = ['*'])
- * @method NodeModel                                   findOrFail(array|string $columns = ['*'])
+ * @method NodeModel                                   findOrFail(int|string $id)
  * @method NodeQueryBuilder                            skip(int $value)
  * @method NodeQueryBuilder                            take(int $value)
  * @method NodeQueryBuilder                            orderBy(string $column, string $direction = 'asc')
