@@ -16,7 +16,7 @@ use Kalnoy\Nestedset\Contracts\NodeQueryBuilder;
  *
  * @phpstan-type NodeModel  Node<Tmodel>&Tmodel
  *
- * @extends Relation<NodeModel,NodeModel,EloquentCollection<int,NodeModel>>
+ * @extends Relation<NodeModel,NodeModel,NestedSetCollection<Tmodel>>
  *
  * @property NodeModel $related
  * @property NodeModel $parent

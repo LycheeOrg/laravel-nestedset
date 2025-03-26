@@ -3,7 +3,6 @@
 namespace Kalnoy\Nestedset\Contracts;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -61,7 +60,7 @@ interface Node
 	/**
 	 * Get query for descendants of the node.
 	 *
-	 * @return Relation<NodeModel,NodeModel,EloquentCollection<int,Node<Tmodel>&Tmodel>>
+	 * @return Relation<NodeModel,NodeModel,NestedSetCollection<Tmodel>>
 	 */
 	public function descendants(): Relation;
 
@@ -119,7 +118,7 @@ interface Node
 	/**
 	 * Get query ancestors of the node.
 	 *
-	 * @return Relation<NodeModel,NodeModel,EloquentCollection<int,Node<Tmodel>&Tmodel>>
+	 * @return Relation<NodeModel,NodeModel,NestedSetCollection<Tmodel>>
 	 */
 	public function ancestors(): Relation;
 

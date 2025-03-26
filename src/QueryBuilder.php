@@ -20,6 +20,7 @@ use Kalnoy\Nestedset\Exceptions\NestedSetException;
  * @phpstan-type NodeModel Node<Tmodel>&Tmodel
  *
  * @extends Builder<NodeModel>
+ *
  * @implements NodeQueryBuilder<Tmodel>
  */
 class QueryBuilder extends Builder implements NodeQueryBuilder

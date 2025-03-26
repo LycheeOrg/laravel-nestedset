@@ -14,4 +14,4 @@ parameters:
 		- '#.*covariant.*#'
 		- '#.*contravariant.*#'
 		-
-			message: '#^Call to an undefined method Kalnoy\\Nestedset\\Contracts\\Node::assert.*\(\)\.$#'
+			message: '#^Call to an undefined method Kalnoy\\Nestedset\\Contracts\\Node<.*>::assert.*\(\)\.$#'
