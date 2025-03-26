@@ -1,0 +1,15 @@
+parameters:
+	ignoreErrors:
+
+		-
+			message: '#^Call to an undefined method Kalnoy\\Nestedset\\Contracts\\NodeQueryBuilder\<Tmodel of Illuminate\\Database\\Eloquent\\Model\>\:\:whereIn\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/QueryBuilder.php
+
+		-
+			message: '#^Dynamic call to static method Kalnoy\\Nestedset\\QueryBuilder\<Tmodel of Illuminate\\Database\\Eloquent\\Model\>\:\:whereRaw\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: src/QueryBuilder.php
+

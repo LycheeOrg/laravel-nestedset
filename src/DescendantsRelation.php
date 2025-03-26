@@ -3,17 +3,18 @@
 namespace Kalnoy\Nestedset;
 
 use Illuminate\Database\Eloquent\Model;
+use Kalnoy\Nestedset\Contracts\Node;
 
 /**
  * @template Tmodel of Model
  *
- * @phpstan-type NodeModel Node<Tmodel>&Tmodel
+ * @phpstan-type NodeModel \Kalnoy\Nestedset\Contracts\Node<Tmodel>
  *
  * @disregard P1037
  *
  * @extends BaseRelation<Tmodel>
  */
-class DescendantsRelation extends BaseRelation
+final class DescendantsRelation extends BaseRelation
 {
 	/**
 	 * Set the base constraints on the relation query.
@@ -45,7 +46,7 @@ class DescendantsRelation extends BaseRelation
 	 *
 	 * @return bool
 	 */
-	protected function matches(Model $model, $related): bool
+	protected function matches(Node $model, Node $related): bool
 	{
 		return $related->isDescendantOf($model);
 	}

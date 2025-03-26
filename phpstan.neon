@@ -1,18 +1,17 @@
 includes:
 	- vendor/larastan/larastan/extension.neon
 	- vendor/lychee-org/phpstan-lychee/phpstan.neon
+	- phpstan-baseline.neon
 
 parameters:
-	level: 3
+	level: 6
 	paths:
 		- src
+		- tests/models/
 	excludePaths:
 	stubFiles:
 	ignoreErrors:
-		# - identifier: missingType.generics
-		- '#Interface must be located in "Contract" or "Contracts" namespace#'
-		- '#Dynamic call to static method Kalnoy\\Nestedset\\QueryBuilder<.*>::select\(\).#'
-		- '#Dynamic call to static method Kalnoy\\Nestedset\\QueryBuilder<.*>::from\(\).#'
-		# - '#Dynamic call to static method Kalnoy\\Nestedset\\QueryBuilder<.*>::whereRaw\(\).#'
-		- '#Dynamic call to static method Kalnoy\\Nestedset\\QueryBuilder<.*>::whereNested\(\).#'
-		- '#Dynamic call to static method Kalnoy\\Nestedset\\QueryBuilder<.*>::whereIn\(\).#'
+		- '#.*covariant.*#'
+		- '#.*contravariant.*#'
+		-
+			message: '#^Call to an undefined method Kalnoy\\Nestedset\\Contracts\\Node<.*>::assert.*\(\)\.$#'
