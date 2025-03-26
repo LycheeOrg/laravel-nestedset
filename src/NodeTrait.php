@@ -461,7 +461,7 @@ trait NodeTrait
 
 	/**
 	 * @param Node $node
-	 * @param bool        $after
+	 * @param bool $after
 	 *
 	 * @return Node
 	 */
