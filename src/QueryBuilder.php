@@ -20,6 +20,7 @@ use Kalnoy\Nestedset\Exceptions\NestedSetException;
  * @phpstan-type NodeModel Node<Tmodel>&Tmodel
  *
  * @extends Builder<NodeModel>
+ * @implements NodeQueryBuilder<Tmodel>
  */
 class QueryBuilder extends Builder implements NodeQueryBuilder
 {
@@ -617,7 +618,7 @@ class QueryBuilder extends Builder implements NodeQueryBuilder
 	 *
 	 * @param array{height:int,cut?:int,distance?:int,lft?:int,rgt?:int,to?:int,from?:int} $params
 	 *
-	 * @return array<string,Expression>
+	 * @return array<string,Expression<non-falsy-string>>
 	 */
 	protected function patch(array $params): array
 	{
@@ -640,7 +641,7 @@ class QueryBuilder extends Builder implements NodeQueryBuilder
 	 * @param string                                                                       $col
 	 * @param array{height:int,cut?:int,distance?:int,lft?:int,rgt?:int,to?:int,from?:int} $params
 	 *
-	 * @return Expression
+	 * @return Expression<non-falsy-string>
 	 */
 	protected function columnPatch(string $col, array $params): Expression
 	{
