@@ -384,7 +384,7 @@ class QueryBuilder extends Builder implements NodeQueryBuilder
 	{
 		list($lft, $rgt) = $this->wrappedColumns();
 
-		return $this->whereRaw("$lft = $rgt - 1");
+		return $this->whereRaw("$lft = $rgt - 1"); /** @phpstan-ignore staticMethod.dynamicCall */
 	}
 
 	/**
