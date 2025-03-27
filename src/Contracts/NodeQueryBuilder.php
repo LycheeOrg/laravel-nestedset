@@ -31,7 +31,7 @@ use Illuminate\Database\Query\Builder as BaseQueryBuilder;
  * @method BaseQueryBuilder                            toBase()
  * @method NodeQueryBuilder<Tmodel>                    whereIn(string $column, array<int,string> $values, string $boolean = 'and', string $not = false)
  * @method NodeQueryBuilder<Tmodel>                    whereRaw(string $sql, string[] $bindings = [], string $boolean = 'and')
- * @method int delete(null|mixed $id = null)
+ * @method int                                         delete(null|mixed $id = null)
  */
 interface NodeQueryBuilder extends Builder
 {

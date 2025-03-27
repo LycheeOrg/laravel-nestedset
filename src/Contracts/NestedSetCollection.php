@@ -9,8 +9,8 @@ namespace Kalnoy\Nestedset\Contracts;
  *
  * @require-extends \Illuminate\Database\Eloquent\Collection
  *
- * @method NestedSetCollection<NodeModel> groupBy(string $column)
- * @method array<int,NodeModel>           all()
+ * @method NestedSetCollection<NodeModel>                      groupBy(string $column)
+ * @method array<int,NodeModel>                                all()
  * @method \Illuminate\Support\Collection<array-key,NodeModel> toBase()
  */
 interface NestedSetCollection
