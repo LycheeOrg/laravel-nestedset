@@ -1,5 +1,7 @@
 <?php
 
+namespace tests\models;
+
 use Illuminate\Database\Eloquent\Model;
 use Kalnoy\Nestedset\Contracts\Node;
 use Kalnoy\Nestedset\NodeTrait;
