@@ -46,4 +46,32 @@ interface NestedSetCollection
 	 * @return NestedSetCollection<Tmodel>
 	 */
 	public function toFlatTree($root = false): NestedSetCollection;
+
+	/**
+	 * Count the number of items in the collection.
+	 *
+	 * @return int
+	 */
+	public function count(): int;
+
+	/**
+	 * Get the values of a given key.
+	 *
+	 * @param string|int|array<array-key, string>|null $value
+	 * @param string|null                              $key
+	 *
+	 * @return \Illuminate\Support\Collection<array-key, mixed>
+	 */
+	public function pluck($value, $key = null);
+
+	/**
+	 * Run a map over each of the items.
+	 *
+	 * @template TMapValue
+	 *
+	 * @param callable(NodeModel, int): TMapValue $callback
+	 *
+	 * @return \Illuminate\Support\Collection<int, TMapValue>
+	 */
+	public function map(callable $callback);
 }

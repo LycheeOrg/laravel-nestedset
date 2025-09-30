@@ -1,11 +1,13 @@
 <?php
 
+namespace tests;
+
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Kalnoy\Nestedset\NestedSet;
+use PHPUnit\Framework\TestCase;
+use tests\models\MenuItem;
 
-include __DIR__ . '/models/MenuItem.php';
-
-class ScopedNodeTest extends PHPUnit\Framework\TestCase
+class ScopedNodeTest extends TestCase
 {
 	public static function setUpBeforeClass(): void
 	{
@@ -15,7 +17,7 @@ class ScopedNodeTest extends PHPUnit\Framework\TestCase
 
 		Capsule::disableQueryLog();
 
-		$schema->create('menu_items', function (Illuminate\Database\Schema\Blueprint $table) {
+		$schema->create('menu_items', function (\Illuminate\Database\Schema\Blueprint $table) {
 			$table->increments('id');
 			$table->unsignedInteger('menu_id');
 			$table->string('title')->nullable();
@@ -204,7 +206,7 @@ class ScopedNodeTest extends PHPUnit\Framework\TestCase
 
 	public function testAppendingToAnotherScopeFails()
 	{
-		$this->expectException(LogicException::class);
+		$this->expectException(\LogicException::class);
 
 		$a = MenuItem::find(1);
 		$b = MenuItem::find(3);
@@ -214,7 +216,7 @@ class ScopedNodeTest extends PHPUnit\Framework\TestCase
 
 	public function testInsertingBeforeAnotherScopeFails()
 	{
-		$this->expectException(LogicException::class);
+		$this->expectException(\LogicException::class);
 
 		$a = MenuItem::find(1);
 		$b = MenuItem::find(3);

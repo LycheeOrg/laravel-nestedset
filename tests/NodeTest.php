@@ -1,9 +1,14 @@
 <?php
 
-use Illuminate\Database\Capsule\Manager as Capsule;
-use Kalnoy\Nestedset\NestedSet;
+namespace tests;
 
-class NodeTest extends PHPUnit\Framework\TestCase
+use Illuminate\Database\Capsule\Manager as Capsule;
+use Illuminate\Database\Schema\Blueprint;
+use Kalnoy\Nestedset\NestedSet;
+use PHPUnit\Framework\TestCase;
+use tests\models\Category;
+
+class NodeTest extends TestCase
 {
 	public static function setUpBeforeClass(): void
 	{
@@ -13,7 +18,7 @@ class NodeTest extends PHPUnit\Framework\TestCase
 
 		Capsule::disableQueryLog();
 
-		$schema->create('categories', function (Illuminate\Database\Schema\Blueprint $table) {
+		$schema->create('categories', function (Blueprint $table) {
 			$table->increments('id');
 			$table->string('name');
 			$table->softDeletes();
@@ -225,7 +230,7 @@ class NodeTest extends PHPUnit\Framework\TestCase
 
 	public function testFailsToInsertIntoChild()
 	{
-		$this->expectException(Exception::class);
+		$this->expectException(\Exception::class);
 
 		$node = $this->findCategory('notebooks');
 		$target = $node->children()->first();
@@ -235,7 +240,7 @@ class NodeTest extends PHPUnit\Framework\TestCase
 
 	public function testFailsToAppendIntoItself()
 	{
-		$this->expectException(Exception::class);
+		$this->expectException(\Exception::class);
 
 		$node = $this->findCategory('notebooks');
 
@@ -244,7 +249,7 @@ class NodeTest extends PHPUnit\Framework\TestCase
 
 	public function testFailsToPrependIntoItself()
 	{
-		$this->expectException(Exception::class);
+		$this->expectException(\Exception::class);
 
 		$node = $this->findCategory('notebooks');
 
@@ -339,7 +344,7 @@ class NodeTest extends PHPUnit\Framework\TestCase
 
 	public function testFailsToSaveNodeUntilNotInserted()
 	{
-		$this->expectException(Exception::class);
+		$this->expectException(\Exception::class);
 
 		$node = new Category();
 		$node->save();
@@ -405,7 +410,7 @@ class NodeTest extends PHPUnit\Framework\TestCase
 
 	public function testFailsToSaveNodeUntilParentIsSaved()
 	{
-		$this->expectException(Exception::class);
+		$this->expectException(\Exception::class);
 
 		$node = new Category(['title' => 'Node']);
 		$parent = new Category(['title' => 'Parent']);
