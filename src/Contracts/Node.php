@@ -35,6 +35,7 @@ use Illuminate\Database\Query\Builder as BaseQueryBuilder;
  * @method string       getDeletedAtColumn()
  * @method Node<Tmodel> getRelationValue($key)
  * @method bool         usesSoftDelete()
+ * @method void         forceDelete()
  */
 interface Node
 {

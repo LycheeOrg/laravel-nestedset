@@ -663,7 +663,7 @@ trait NodeTrait
 		// need for it.
 		// The grammar compiler removes the superfluous "ORDER BY" for
 		// PostgreSQL.
-		/** @phpstan-ignore method.dynamicName, staticMethod.dynamicCall */
+		/** @phpstan-ignore method.dynamicName, staticMethod.dynamicCall, method.notFound */
 		$this->descendants()
 			->orderBy($this->getLftName(), 'desc')
 			->{$method}();
