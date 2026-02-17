@@ -909,7 +909,10 @@ class QueryBuilder extends Builder implements NodeQueryBuilder
 
 		// Save nodes that have invalid parent as roots
 		while ($dictionary !== []) {
-			$dictionary[null] = reset($dictionary);
+			// used to be null
+			// According to the manual: https://www.php.net/manual/en/language.types.array.php
+			// Null will be cast to the empty string, i.e. the key null will actually be stored under "".
+			$dictionary[''] = reset($dictionary);
 
 			unset($dictionary[key($dictionary)]);
 
@@ -1064,7 +1067,7 @@ class QueryBuilder extends Builder implements NodeQueryBuilder
 
 			$model->fill(Arr::except($itemData, 'children'))->save();
 
-			$dictionary[$parentId][] = $model;
+			$dictionary[$parentId ?? ''][] = $model;
 
 			if (!isset($itemData['children'])) {
 				continue;
