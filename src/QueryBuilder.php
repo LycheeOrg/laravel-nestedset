@@ -912,7 +912,7 @@ class QueryBuilder extends Builder implements NodeQueryBuilder
 			// used to be null
 			// According to the manual: https://www.php.net/manual/en/language.types.array.php
 			// Null will be cast to the empty string, i.e. the key null will actually be stored under "".
-			$dictionary[null ?? ''] = reset($dictionary);
+			$dictionary[''] = reset($dictionary);
 
 			unset($dictionary[key($dictionary)]);
 
