@@ -619,7 +619,7 @@ class QueryBuilder extends Builder implements NodeQueryBuilder
 	 *
 	 * @param array{height:int,cut?:int,distance?:int,lft?:int,rgt?:int,to?:int,from?:int} $params
 	 *
-	 * @return array<string,Expression<non-falsy-string>>
+	 * @return array<string,Expression<literal-string|int|float>>
 	 */
 	protected function patch(array $params): array
 	{
@@ -642,7 +642,7 @@ class QueryBuilder extends Builder implements NodeQueryBuilder
 	 * @param string                                                                       $col
 	 * @param array{height:int,cut?:int,distance?:int,lft?:int,rgt?:int,to?:int,from?:int} $params
 	 *
-	 * @return Expression<non-falsy-string>
+	 * @return Expression<literal-string|int|float>
 	 */
 	protected function columnPatch(string $col, array $params): Expression
 	{
@@ -868,11 +868,13 @@ class QueryBuilder extends Builder implements NodeQueryBuilder
 			$this->model->getRgtName(),
 		];
 
-		$dictionary = $this->model
-			->newNestedSetQuery()
-			->when($root !== null, function (self $query) use ($root) {
-				return $query->whereDescendantOf($root);
-			})
+		$query = $this->model->newNestedSetQuery();
+
+		if ($root !== null) {
+			$query->whereDescendantOf($root);
+		}
+
+		$dictionary = $query
 			->defaultOrder()
 			->get($columns)
 			->groupBy($this->model->getParentIdName())
@@ -935,7 +937,7 @@ class QueryBuilder extends Builder implements NodeQueryBuilder
 	/**
 	 * @param array<array-key,NodeModel[]> $dictionary
 	 * @param NodeModel[]                  $updated
-	 * @param ?NodeModel                   $parentId
+	 * @param array-key|null               $parentId
 	 * @param int                          $cut
 	 *
 	 * @return int
@@ -945,11 +947,14 @@ class QueryBuilder extends Builder implements NodeQueryBuilder
 	protected static function reorderNodes(
 		array &$dictionary, array &$updated, $parentId = null, $cut = 1,
 	) {
-		if (!array_key_exists($parentId, $dictionary)) {
+		// Null keys are stored under "" (see fixNodes).
+		$key = $parentId ?? '';
+
+		if (!array_key_exists($key, $dictionary)) {
 			return $cut;
 		}
 
-		foreach ($dictionary[$parentId] as $model) {
+		foreach ($dictionary[$key] as $model) {
 			$lft = $cut;
 
 			$cut = self::reorderNodes($dictionary, $updated, $model->getKey(), $cut + 1);
@@ -961,7 +966,7 @@ class QueryBuilder extends Builder implements NodeQueryBuilder
 			$cut++;
 		}
 
-		unset($dictionary[$parentId]);
+		unset($dictionary[$key]);
 
 		return $cut;
 	}
@@ -1035,7 +1040,7 @@ class QueryBuilder extends Builder implements NodeQueryBuilder
 	 * @param array<array-key,NodeModel[]> $dictionary
 	 * @param array<string,mixed>[]        $data
 	 * @param array<array-key,NodeModel>   $existing
-	 * @param ?NodeModel                   $parentId
+	 * @param array-key|null               $parentId
 	 */
 	protected function buildRebuildDictionary(array &$dictionary,
 		array $data,

@@ -138,9 +138,9 @@ interface Node
 	public function saveAsRoot(): bool;
 
 	/**
-	 * @param int       $lft
-	 * @param int       $rgt
-	 * @param array-key $parentId
+	 * @param int            $lft
+	 * @param int            $rgt
+	 * @param array-key|null $parentId
 	 *
 	 * @return $this
 	 */

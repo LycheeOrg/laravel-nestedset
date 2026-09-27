@@ -46,27 +46,32 @@ trait NodeTrait
 	 */
 	public static function bootNodeTrait(): void
 	{
-		static::saving(function ($model) {
-			return $model->callPendingAction();
-		});
-
-		static::deleting(function ($model) {
-			// We will need fresh data to delete node safely
-			// We must delete the descendants BEFORE we delete the actual
-			// album to avoid failing FOREIGN key constraints.
-			$model->refreshNode();
-			$model->deleteDescendants();
-		});
-
-		if (static::usesSoftDelete()) {
-			static::restoring(function ($model) { /** @phpstan-ignore staticMethod.notFound */
-				static::$deletedAt = $model->{$model->getDeletedAtColumn()}; /** @phpstan-ignore property.dynamicName */
+		static::whenBooted(function () {
+			static::saving(function ($model) {
+				return $model->callPendingAction();
 			});
 
-			static::restored(function ($model) { /** @phpstan-ignore staticMethod.notFound */
-				$model->restoreDescendants(static::$deletedAt);
+			static::deleting(function ($model) {
+				// We will need fresh data to delete node safely
+				// We must delete the descendants BEFORE we delete the actual
+				// album to avoid failing FOREIGN key constraints.
+				$model->refreshNode();
 			});
-		}
+
+			static::deleted(function ($model) {
+				$model->deleteDescendants();
+			});
+
+			if (static::usesSoftDelete()) {
+				static::restoring(function ($model) { /** @phpstan-ignore staticMethod.notFound */
+					static::$deletedAt = $model->{$model->getDeletedAtColumn()};  /** @phpstan-ignore property.dynamicName */
+				});
+
+				static::restored(function ($model) { /** @phpstan-ignore staticMethod.notFound */
+					$model->restoreDescendants(static::$deletedAt);
+				});
+			}
+		});
 	}
 
 	/**
@@ -666,7 +671,7 @@ trait NodeTrait
 		/** @phpstan-ignore method.dynamicName, staticMethod.dynamicCall, method.notFound */
 		$this->descendants()
 			->orderBy($this->getLftName(), 'desc')
-			->{$method}();
+			->{$method}();  /** @phpstan-ignore method.notFound */
 
 		if ($this->hardDeleting()) {
 			$height = $rgt - $lft + 1;
@@ -689,7 +694,7 @@ trait NodeTrait
 	{
 		$this->descendants() 		/** @phpstan-ignore staticMethod.dynamicCall, method.notFound */
 			->where($this->getDeletedAtColumn(), '>=', $deletedAt)
-			->restore();
+			->restore();  /** @phpstan-ignore method.notFound */
 	}
 
 	/**
