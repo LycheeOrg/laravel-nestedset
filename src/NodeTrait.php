@@ -672,7 +672,6 @@ trait NodeTrait
 		$this->descendants()
 			->orderBy($this->getLftName(), 'desc')
 			->{$method}();  /** @phpstan-ignore method.notFound */
-
 		if ($this->hardDeleting()) {
 			$height = $rgt - $lft + 1;
 
